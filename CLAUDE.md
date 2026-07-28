@@ -20,8 +20,11 @@ Personal emotional-intelligence trainer based on Daniel Goleman's framework. Sou
 ## Data shape
 ```js
 { lang: 'en'|'ru',
-  journey: { startDate: 'YYYY-MM-DD'|null, days: { [n]: { fields: {}, done: bool } }, ritual: '' },
+  journey: { startDate: 'YYYY-MM-DD'|null, days: { [n]: { fields: {}, done: bool } }, ritual: { morning, day, evening } },
   entries: { anger: [], shame: [], fear: [] } }
+```
+Text-field convention: every question is pre-filled with a sentence start (field `ph`, rendered via `starterFor()`) that the user finishes by typing; one sentence per field — never combine two thoughts in one starter (no "and…" inside a template). Untouched starters count as empty and are stripped on save.
+```js
 ```
 Journal entries: `{ id, date: ISO, intensity? (only if slider touched), ...fieldValues }`. Fear entries add `tookDate` when "I took this step" is checked.
 

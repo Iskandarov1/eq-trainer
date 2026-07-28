@@ -104,11 +104,14 @@ export const UI = {
   ritualMorning: { en: 'Morning: 2-min intention', ru: 'Утро: 2-минутное намерение' },
   ritualDay: { en: 'Daytime: 1 emotional check-in', ru: 'День: 1 эмоциональный чек-ин' },
   ritualEvening: { en: 'Evening: 5-min reflection journal', ru: 'Вечер: 5-минутная рефлексия' },
-  ritualPlaceholder: { en: 'My EI ritual: in the morning I will… during the day I will… in the evening I will…', ru: 'Мой ритуал ЭИ: утром я буду… днём я буду… вечером я буду…' },
+  ritualMorningPh: { en: 'In the morning I will…', ru: 'Утром я буду…' },
+  ritualDayPh: { en: 'During the day I will…', ru: 'Днём я буду…' },
+  ritualEveningPh: { en: 'In the evening I will…', ru: 'Вечером я буду…' },
   congratsJourney: { en: 'You completed the 30-day journey!', ru: 'Вы прошли 30-дневный путь!' },
   yourEntry: { en: 'Your entry', ru: 'Ваша запись' },
   optionalNote: { en: 'Optional note…', ru: 'Заметка (необязательно)…' },
   weeks: { en: 'Weeks', ru: 'Недели' },
+  pathTab: { en: 'Path', ru: 'Путь' },
   entriesWord: { en: 'entries', ru: 'записей' },
   goToNextLevel: { en: 'Open Next Level', ru: 'Открыть Новый уровень' },
   goToJourney: { en: 'Open Journey', ru: 'Открыть путь' },
@@ -192,9 +195,15 @@ export const WEEKS = [
           ru: 'Остановитесь утром, днём и вечером. Спросите себя: Что я чувствую прямо сейчас? Почему я могу это чувствовать? Как эта эмоция влияет на моё поведение? Запишите. Не судите. Просто замечайте.',
         },
         fields: [
-          { id: 'morning', t: 'textarea', label: { en: 'Morning check-in', ru: 'Утренний чек-ин' }, ph: { en: 'I feel… because… it affects my behavior by…', ru: 'Я чувствую… потому что… это влияет на моё поведение так…' } },
-          { id: 'noon', t: 'textarea', label: { en: 'Noon check-in', ru: 'Дневной чек-ин' }, ph: { en: 'I feel… because… it affects my behavior by…', ru: 'Я чувствую… потому что… это влияет на моё поведение так…' } },
-          { id: 'evening', t: 'textarea', label: { en: 'Evening check-in', ru: 'Вечерний чек-ин' }, ph: { en: 'I feel… because… it affects my behavior by…', ru: 'Я чувствую… потому что… это влияет на моё поведение так…' } },
+          { id: 'morningFeel', t: 'text', label: { en: 'Morning check-in', ru: 'Утренний чек-ин' }, ph: { en: 'I feel…', ru: 'Я чувствую…' } },
+          { id: 'morningWhy', t: 'text', ph: { en: 'I might be feeling this because…', ru: 'Возможно, я чувствую это, потому что…' } },
+          { id: 'morningHow', t: 'text', ph: { en: 'It affects my behavior by…', ru: 'На моё поведение это влияет так…' } },
+          { id: 'noonFeel', t: 'text', label: { en: 'Noon check-in', ru: 'Дневной чек-ин' }, ph: { en: 'I feel…', ru: 'Я чувствую…' } },
+          { id: 'noonWhy', t: 'text', ph: { en: 'I might be feeling this because…', ru: 'Возможно, я чувствую это, потому что…' } },
+          { id: 'noonHow', t: 'text', ph: { en: 'It affects my behavior by…', ru: 'На моё поведение это влияет так…' } },
+          { id: 'eveningFeel', t: 'text', label: { en: 'Evening check-in', ru: 'Вечерний чек-ин' }, ph: { en: 'I feel…', ru: 'Я чувствую…' } },
+          { id: 'eveningWhy', t: 'text', ph: { en: 'I might be feeling this because…', ru: 'Возможно, я чувствую это, потому что…' } },
+          { id: 'eveningHow', t: 'text', ph: { en: 'It affects my behavior by…', ru: 'На моё поведение это влияет так…' } },
         ],
       },
       {
@@ -238,7 +247,8 @@ export const WEEKS = [
         desc: { en: 'Every time you’re triggered: Pause. Take 3 deep breaths. Ask: What’s the best response here?', ru: 'Каждый раз при триггере: Пауза. 3 глубоких вдоха. Вопрос: какой ответ здесь наилучший?' },
         fields: [
           { id: 'used', t: 'check', label: { en: 'I used the Pause today', ru: 'Сегодня я использовал(а) паузу' } },
-          { id: 'when', t: 'textarea', label: { en: 'When, and what changed?', ru: 'Когда, и что изменилось?' }, ph: { en: 'I used the pause when… and it changed…', ru: 'Я использовал(а) паузу, когда… и это изменило…' } },
+          { id: 'when', t: 'textarea', label: { en: 'When?', ru: 'Когда?' }, ph: { en: 'I used the pause when…', ru: 'Я использовал(а) паузу, когда…' } },
+          { id: 'changed', t: 'textarea', label: { en: 'What changed?', ru: 'Что изменилось?' }, ph: { en: 'It changed…', ru: 'Это изменило…' } },
         ],
       },
       {
@@ -255,7 +265,12 @@ export const WEEKS = [
         title: { en: 'Gratitude Reframe (evening)', ru: 'Рефрейминг благодарности (вечером)' },
         desc: { en: 'Write 3 things that frustrated you today — and then one silver lining or lesson from each.', ru: 'Запишите 3 вещи, которые вас сегодня расстроили, — и по одному плюсу или уроку из каждой.' },
         fields: [
-          { id: 'items', t: 'textarea', label: { en: '3 frustrations → 3 silver linings', ru: '3 разочарования → 3 урока' }, ph: { en: '1) I was frustrated by… → the lesson is…\n2) I was frustrated by… → the lesson is…\n3) I was frustrated by… → the lesson is…', ru: '1) Меня расстроило… → урок в том, что…\n2) Меня расстроило… → урок в том, что…\n3) Меня расстроило… → урок в том, что…' } },
+          { id: 'fr1', t: 'text', label: { en: 'Frustration 1', ru: 'Разочарование 1' }, ph: { en: 'I was frustrated by…', ru: 'Меня расстроило…' } },
+          { id: 'ls1', t: 'text', ph: { en: 'The lesson is…', ru: 'Урок в том, что…' } },
+          { id: 'fr2', t: 'text', label: { en: 'Frustration 2', ru: 'Разочарование 2' }, ph: { en: 'I was frustrated by…', ru: 'Меня расстроило…' } },
+          { id: 'ls2', t: 'text', ph: { en: 'The lesson is…', ru: 'Урок в том, что…' } },
+          { id: 'fr3', t: 'text', label: { en: 'Frustration 3', ru: 'Разочарование 3' }, ph: { en: 'I was frustrated by…', ru: 'Меня расстроило…' } },
+          { id: 'ls3', t: 'text', ph: { en: 'The lesson is…', ru: 'Урок в том, что…' } },
         ],
       },
       {
@@ -285,7 +300,8 @@ export const WEEKS = [
         title: { en: 'Empathy Practice (1 conversation/day)', ru: 'Практика эмпатии (1 разговор в день)' },
         desc: { en: 'Drop your internal monologue. Be fully present in one interaction. Reflect back what the other person is feeling, not just what they said.', ru: 'Отключите внутренний монолог. Будьте полностью присутствующим в одном разговоре. Отразите, что человек чувствует, а не только что он сказал.' },
         fields: [
-          { id: 'note', t: 'textarea', label: { en: 'Who was it, and what were they feeling?', ru: 'С кем это было, и что чувствовал собеседник?' }, ph: { en: 'I was fully present with… and I sensed they felt…', ru: 'Я был(а) полностью присутствующим с… и почувствовал(а), что он(а) испытывает…' } },
+          { id: 'with', t: 'text', label: { en: 'Who was it?', ru: 'С кем это было?' }, ph: { en: 'I was fully present with…', ru: 'Я был(а) полностью присутствующим с…' } },
+          { id: 'felt', t: 'textarea', label: { en: 'What were they feeling?', ru: 'Что чувствовал собеседник?' }, ph: { en: 'I sensed they felt…', ru: 'Я почувствовал(а), что он(а) испытывает…' } },
         ],
       },
       {
@@ -293,7 +309,9 @@ export const WEEKS = [
         title: { en: 'Observe Non-Verbal Cues', ru: 'Наблюдение невербальных сигналов' },
         desc: { en: 'In every conversation: What’s their tone? What’s their body saying? What’s unsaid?', ru: 'В каждом разговоре: Какой у собеседника тон? Что говорит его тело? Что осталось невысказанным?' },
         fields: [
-          { id: 'cues', t: 'textarea', label: { en: 'Tone / body language / the unsaid', ru: 'Тон / язык тела / невысказанное' }, ph: { en: 'Their tone was… their body said… what stayed unsaid was…', ru: 'Тон был… тело говорило… невысказанным осталось…' } },
+          { id: 'tone', t: 'text', label: { en: 'Tone', ru: 'Тон' }, ph: { en: 'Their tone was…', ru: 'Тон собеседника был…' } },
+          { id: 'body', t: 'text', label: { en: 'Body language', ru: 'Язык тела' }, ph: { en: 'Their body said…', ru: 'Тело говорило…' } },
+          { id: 'unsaid', t: 'text', label: { en: 'The unsaid', ru: 'Невысказанное' }, ph: { en: 'What stayed unsaid was…', ru: 'Невысказанным осталось…' } },
         ],
       },
       {
@@ -343,7 +361,8 @@ export const WEEKS = [
         desc: { en: 'Practice saying hard things with clarity, kindness, calmness. (Use a mirror or record yourself.)', ru: 'Практикуйте говорить сложные вещи с ясностью, добротой и спокойствием. (Перед зеркалом или на запись.)' },
         fields: [
           { id: 'done', t: 'check', label: { en: 'I rehearsed a difficult conversation', ru: 'Я отрепетировал(а) трудный разговор' } },
-          { id: 'topic', t: 'textarea', label: { en: 'What conversation, and how did it feel?', ru: 'Какой разговор, и каково это было?' }, ph: { en: 'I rehearsed saying… and it felt…', ru: 'Я репетировал(а), как сказать… и это ощущалось…' } },
+          { id: 'topic', t: 'textarea', label: { en: 'What conversation?', ru: 'Какой разговор?' }, ph: { en: 'I rehearsed saying…', ru: 'Я репетировал(а), как сказать…' } },
+          { id: 'feltLike', t: 'textarea', label: { en: 'How did it feel?', ru: 'Каково это было?' }, ph: { en: 'It felt…', ru: 'Это ощущалось…' } },
         ],
       },
       {

@@ -295,6 +295,11 @@ label.field-label { display: block; font-weight: 600; font-size: 13.5px; margin-
 .path-node.clickable { cursor: pointer; }
 .path-node.clickable:hover { transform: scale(1.08); }
 .path-node.locked { opacity: 0.55; }
+.path-node.sel { box-shadow: 0 0 0 3px var(--ink); }
+
+/* week tab: compact row of day nodes */
+.week-days { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 14px; }
+.week-days .path-node { margin-top: 0; }
 @keyframes pulse { 50% { box-shadow: 0 0 0 8px rgba(20, 20, 20, 0.12); } }
 
 /* ---------- hero: dark poster surface (Mindvalley) ---------- */

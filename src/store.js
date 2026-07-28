@@ -4,7 +4,7 @@ const KEY = 'eqTrainerData'
 
 const DEFAULTS = {
   lang: 'en',
-  journey: { startDate: null, days: {}, ritual: '' },
+  journey: { startDate: null, days: {}, ritual: { morning: '', day: '', evening: '' } },
   entries: { anger: [], shame: [], fear: [] },
 }
 
@@ -25,7 +25,7 @@ export function normalizeData(d) {
     journey: {
       startDate: typeof d.journey?.startDate === 'string' ? d.journey.startDate : null,
       days: d.journey?.days && typeof d.journey.days === 'object' && !Array.isArray(d.journey.days) ? d.journey.days : {},
-      ritual: typeof d.journey?.ritual === 'string' ? d.journey.ritual : '',
+      ritual: normalizeRitual(d.journey?.ritual),
     },
     entries: {
       anger: validEntries(d.entries?.anger),
@@ -33,6 +33,13 @@ export function normalizeData(d) {
       fear: validEntries(d.entries?.fear),
     },
   }
+}
+
+// ritual was a single string before it split into morning/day/evening parts
+function normalizeRitual(r) {
+  if (typeof r === 'string') return { morning: r, day: '', evening: '' }
+  const part = (x) => (typeof x === 'string' ? x : '')
+  return { morning: part(r?.morning), day: part(r?.day), evening: part(r?.evening) }
 }
 
 export function loadData() {

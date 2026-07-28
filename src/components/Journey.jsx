@@ -1,6 +1,6 @@
 import React, { useContext, useState } from 'react'
 import { AppCtx } from '../App.jsx'
-import { L, WEEKS, starterFor } from '../content.js'
+import { L, WEEKS, UI, starterFor } from '../content.js'
 import { weekForDay, journeyStats } from '../store.js'
 
 export default function Journey() {
@@ -8,6 +8,7 @@ export default function Journey() {
   const j = data.journey
   const { done, cur, streak } = journeyStats(j)
   const [openDay, setOpenDay] = useState(null)
+  const [tabId, setTabId] = useState(() => weekForDay(Math.min(Math.max(cur, 1), 30))?.id || WEEKS[0].id)
 
   if (!j.startDate) {
     return (
@@ -28,8 +29,13 @@ export default function Journey() {
     )
   }
 
-  const day = openDay ?? Math.min(cur, 30)
   const journeyDone = done >= 30 || cur > 30
+  const activeWeek = WEEKS.find((w) => w.id === tabId) || WEEKS[0]
+  const inWeek = (d, w) => d >= w.days[0] && d <= w.days[1]
+  const day = openDay ?? (inWeek(Math.min(cur, 30), activeWeek) ? Math.min(cur, 30) : activeWeek.days[0])
+  const selectDay = (d) => { setTabId(weekForDay(d).id); setOpenDay(d) }
+  const pickWeek = (w) => { setTabId(w.id); setOpenDay(inWeek(Math.min(cur, 30), w) ? Math.min(cur, 30) : w.days[0]) }
+  const weekState = (w) => (Math.min(cur, 30) > w.days[1] ? 'done' : inWeek(Math.min(cur, 30), w) ? 'current' : 'locked')
 
   return (
     <div>
@@ -50,10 +56,49 @@ export default function Journey() {
         </div>
       )}
 
-      <DayView day={day} isToday={day === cur} />
+      <div className="tabs">
+        {WEEKS.map((w, i) => (
+          <button key={w.id} className={tabId === w.id ? 'active' : ''} onClick={() => pickWeek(w)}>
+            {t('weekWord')} {i + 1}
+          </button>
+        ))}
+        <button className={tabId === 'path' ? 'active' : ''} onClick={() => setTabId('path')}>{t('pathTab')}</button>
+      </div>
 
-      <h2 style={{ margin: '26px 0 12px' }}>{t('weeks')}</h2>
-      <JourneyPath cur={cur} days={j.days} onOpenDay={(d) => { setOpenDay(d); window.scrollTo({ top: 0, behavior: 'smooth' }) }} />
+      {tabId === 'path' ? (
+        <JourneyPath cur={cur} days={j.days} onOpenDay={(d) => { selectDay(d); window.scrollTo({ top: 0, behavior: 'smooth' }) }} />
+      ) : (
+        <>
+          <div className="card week-card" style={{ '--wcolor': activeWeek.color, marginBottom: 14 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
+              <div style={{ flex: 1, minWidth: 200 }}>
+                <div className="caps">{t('weekWord')} {WEEKS.indexOf(activeWeek) + 1}</div>
+                <h3 className="serif" style={{ fontSize: 18, marginTop: 2 }}>{L(lang, activeWeek.title)}</h3>
+              </div>
+              <span className={`week-state ${weekState(activeWeek)}`}>
+                {weekState(activeWeek) === 'current' ? t('currentWeek') : weekState(activeWeek) === 'done' ? t('completedW') : t('upcoming')}
+              </span>
+            </div>
+            <p className="muted" style={{ margin: '8px 0 4px', fontStyle: 'italic' }}>{L(lang, activeWeek.quote)}</p>
+            <p className="small" style={{ margin: '4px 0' }}>{L(lang, activeWeek.intro)}</p>
+            <p className="small muted">{t('weekGoal')}: {L(lang, activeWeek.goal)}</p>
+            <div className="week-days">
+              {Array.from({ length: activeWeek.days[1] - activeWeek.days[0] + 1 }, (_, i) => activeWeek.days[0] + i).map((d) => (
+                <button
+                  key={d}
+                  type="button"
+                  className={`path-node ${j.days[d]?.done ? 'done' : ''} ${d === cur ? 'today' : ''} ${[7, 14, 21, 30].includes(d) ? 'milestone' : ''} ${d === day ? 'sel' : ''} clickable`}
+                  title={`${t('browseDay')} ${d}`}
+                  onClick={() => setOpenDay(d)}
+                >
+                  {j.days[d]?.done ? ([7, 14, 21, 30].includes(d) ? '★' : '✓') : d}
+                </button>
+              ))}
+            </div>
+          </div>
+          <DayView day={day} isToday={day === cur} />
+        </>
+      )}
 
       <Ritual visible={cur > 30 || done >= 30} />
     </div>
@@ -87,18 +132,17 @@ function JourneyPath({ cur, days, onOpenDay }) {
               {state !== 'locked' && <p className="small muted" style={{ marginTop: 6 }}>{t('weekGoal')}: {L(lang, w.goal)}</p>}
             </div>
             {range.map((d, i) => {
-              const unlocked = d <= cur
+              const future = d > cur
               const isDone = !!days[d]?.done
               const milestone = [7, 14, 21, 30].includes(d)
               return (
                 <button
                   key={d}
                   type="button"
-                  className={`path-node ${isDone ? 'done' : ''} ${d === cur ? 'today' : ''} ${milestone ? 'milestone' : ''} ${unlocked ? 'clickable' : 'locked'}`}
+                  className={`path-node clickable ${isDone ? 'done' : ''} ${d === cur ? 'today' : ''} ${milestone ? 'milestone' : ''} ${future ? 'locked' : ''}`}
                   style={{ transform: `translateX(${PATH_OFFSETS[i % PATH_OFFSETS.length] * 36}px)` }}
-                  title={unlocked ? `${t('browseDay')} ${d}` : t('locked')}
-                  disabled={!unlocked}
-                  onClick={() => unlocked && onOpenDay(d)}
+                  title={`${t('browseDay')} ${d}`}
+                  onClick={() => onOpenDay(d)}
                 >
                   {isDone ? (milestone ? '★' : '✓') : d}
                 </button>
@@ -169,13 +213,13 @@ function DayView({ day, isToday }) {
                 if (f.t === 'text')
                   return (
                     <div key={f.id}>
-                      <label className="field-label">{L(lang, f.label)}</label>
+                      {f.label && <label className="field-label">{L(lang, f.label)}</label>}
                       <input type="text" value={val ?? prefill} onChange={(e) => setField(p.id, f.id, e.target.value)} />
                     </div>
                   )
                 return (
                   <div key={f.id}>
-                    <label className="field-label">{L(lang, f.label)}</label>
+                    {f.label && <label className="field-label">{L(lang, f.label)}</label>}
                     <textarea value={val ?? prefill} onChange={(e) => setField(p.id, f.id, e.target.value)} />
                   </div>
                 )
@@ -230,21 +274,29 @@ function Celebrate({ day, onClose }) {
 }
 
 function Ritual({ visible }) {
-  const { data, update, t } = useContext(AppCtx)
+  const { data, update, lang, t } = useContext(AppCtx)
   if (!visible) return null
+  const r = data.journey.ritual
+  const parts = [
+    ['morning', 'ritualMorning', UI.ritualMorningPh],
+    ['day', 'ritualDay', UI.ritualDayPh],
+    ['evening', 'ritualEvening', UI.ritualEveningPh],
+  ]
   return (
     <div className="card" style={{ marginTop: 22 }}>
       <h2>{t('ritualTitle')}</h2>
-      <p className="muted" style={{ margin: '8px 0' }}>{t('ritualIntro')}</p>
-      <ul style={{ margin: '0 0 12px 20px', fontSize: 14.5 }}>
-        <li>{t('ritualMorning')}</li>
-        <li>{t('ritualDay')}</li>
-        <li>{t('ritualEvening')}</li>
-      </ul>
-      <textarea
-        value={data.journey.ritual || t('ritualPlaceholder')}
-        onChange={(e) => update((d) => { d.journey.ritual = e.target.value })}
-      />
+      <p className="muted" style={{ margin: '8px 0 14px' }}>{t('ritualIntro')}</p>
+      <div className="grid" style={{ gap: 12 }}>
+        {parts.map(([key, labelKey, ph]) => (
+          <div key={key}>
+            <label className="field-label">{t(labelKey)}</label>
+            <textarea
+              value={r[key] || starterFor(lang, ph)}
+              onChange={(e) => update((d) => { d.journey.ritual[key] = e.target.value })}
+            />
+          </div>
+        ))}
+      </div>
       <div className="quote" style={{ marginTop: 14 }}>{t('finalWords')}</div>
     </div>
   )
