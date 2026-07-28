@@ -57,7 +57,7 @@ export const UI = {
   trendNone: { en: 'Complete practices this week to see your trend.', ru: 'Выполняйте практики на этой неделе, чтобы увидеть тренд.' },
   nextMilestone: { en: 'Next milestone', ru: 'Следующая цель' },
   milestoneText: { en: (n, b) => `${n} more practice${n === 1 ? '' : 's'} to earn “${b}”`, ru: (n, b) => `Ещё ${n} практик до значка «${b}»` },
-  allBadges: { en: 'All badges earned — you are an Emotion Master! 🏆', ru: 'Все значки получены — вы Мастер эмоций! 🏆' },
+  allBadges: { en: 'All badges earned — you are an Emotion Master!', ru: 'Все значки получены — вы Мастер эмоций!' },
   achievements: { en: 'Achievement badges', ru: 'Значки достижений' },
   earned: { en: 'Earned', ru: 'Получен' },
   notYet: { en: (n) => `${n} practices needed`, ru: (n) => `Нужно практик: ${n}` },
@@ -98,7 +98,7 @@ export const UI = {
   ritualDay: { en: 'Daytime: 1 emotional check-in', ru: 'День: 1 эмоциональный чек-ин' },
   ritualEvening: { en: 'Evening: 5-min reflection journal', ru: 'Вечер: 5-минутная рефлексия' },
   ritualPlaceholder: { en: 'Write your personal ritual here…', ru: 'Опишите здесь свой личный ритуал…' },
-  congratsJourney: { en: 'You completed the 30-day journey! 🎉', ru: 'Вы прошли 30-дневный путь! 🎉' },
+  congratsJourney: { en: 'You completed the 30-day journey!', ru: 'Вы прошли 30-дневный путь!' },
   yourEntry: { en: 'Your entry', ru: 'Ваша запись' },
   optionalNote: { en: 'Optional note…', ru: 'Заметка (необязательно)…' },
   weeks: { en: 'Weeks', ru: 'Недели' },
@@ -127,7 +127,7 @@ export const UI = {
   weekWord: { en: 'Week', ru: 'Неделя' },
   begin: { en: 'Begin', ru: 'Начать' },
   estPractice: { en: '≈ 5–10 min · guided practice', ru: '≈ 5–10 мин · практика с подсказками' },
-  trustNote: { en: '🔒 Your journal never leaves this device — everything is stored locally.', ru: '🔒 Ваш дневник не покидает это устройство — всё хранится локально.' },
+  trustNote: { en: 'Your journal never leaves this device — everything is stored locally.', ru: 'Ваш дневник не покидает это устройство — всё хранится локально.' },
   milestoneTitle: { en: (d) => `Day ${d} complete!`, ru: (d) => `День ${d} завершён!` },
   milestoneBody: { en: 'A milestone on your journey. Consistency is the practice.', ru: 'Веха на вашем пути. Постоянство и есть практика.' },
   continueWord: { en: 'Continue', ru: 'Продолжить' },
@@ -168,7 +168,6 @@ export const WEEKS = [
   {
     id: 'w1',
     days: [1, 7],
-    emoji: '🧠',
     color: '#0ca678',
     title: { en: 'Week 1 · Build the Foundation — Self-Awareness', ru: 'Неделя 1 · Фундамент — Самоосознание' },
     quote: {
@@ -186,9 +185,9 @@ export const WEEKS = [
           ru: 'Остановитесь утром, днём и вечером. Спросите себя: Что я чувствую прямо сейчас? Почему я могу это чувствовать? Как эта эмоция влияет на моё поведение? Запишите. Не судите. Просто замечайте.',
         },
         fields: [
-          { id: 'morning', t: 'textarea', label: { en: '🌅 Morning check-in', ru: '🌅 Утренний чек-ин' }, ph: { en: 'I feel… because… it affects my behavior by…', ru: 'Я чувствую… потому что… это влияет на моё поведение так…' } },
-          { id: 'noon', t: 'textarea', label: { en: '☀️ Noon check-in', ru: '☀️ Дневной чек-ин' }, ph: { en: 'I feel… because… it affects my behavior by…', ru: 'Я чувствую… потому что… это влияет на моё поведение так…' } },
-          { id: 'evening', t: 'textarea', label: { en: '🌙 Evening check-in', ru: '🌙 Вечерний чек-ин' }, ph: { en: 'I feel… because… it affects my behavior by…', ru: 'Я чувствую… потому что… это влияет на моё поведение так…' } },
+          { id: 'morning', t: 'textarea', label: { en: 'Morning check-in', ru: 'Утренний чек-ин' }, ph: { en: 'I feel… because… it affects my behavior by…', ru: 'Я чувствую… потому что… это влияет на моё поведение так…' } },
+          { id: 'noon', t: 'textarea', label: { en: 'Noon check-in', ru: 'Дневной чек-ин' }, ph: { en: 'I feel… because… it affects my behavior by…', ru: 'Я чувствую… потому что… это влияет на моё поведение так…' } },
+          { id: 'evening', t: 'textarea', label: { en: 'Evening check-in', ru: 'Вечерний чек-ин' }, ph: { en: 'I feel… because… it affects my behavior by…', ru: 'Я чувствую… потому что… это влияет на моё поведение так…' } },
         ],
       },
       {
@@ -217,7 +216,6 @@ export const WEEKS = [
   {
     id: 'w2',
     days: [8, 14],
-    emoji: '🔥',
     color: '#e8590c',
     title: { en: 'Week 2 · Master the Inner World — Self-Management', ru: 'Неделя 2 · Внутренний мир — Саморегуляция' },
     quote: {
@@ -266,7 +264,6 @@ export const WEEKS = [
   {
     id: 'w3',
     days: [15, 21],
-    emoji: '🌍',
     color: '#1971c2',
     title: { en: 'Week 3 · Understand Others — Social Awareness', ru: 'Неделя 3 · Понимание других — Социальная осознанность' },
     quote: {
@@ -315,7 +312,6 @@ export const WEEKS = [
   {
     id: 'w4',
     days: [22, 30],
-    emoji: '❤️',
     color: '#c2255c',
     title: { en: 'Week 4 · Lead with Connection — Relationship Management', ru: 'Неделя 4 · Сила связи — Управление отношениями' },
     quote: {
@@ -369,7 +365,6 @@ export const WEEKS = [
 // ---------------- NEXT LEVEL MODULES (from the "Next Level" spec docx) ----------------
 export const MODULES = {
   anger: {
-    emoji: '🔥',
     color: '#e8590c',
     colorSoft: '#fff0e6',
     subtitle: { en: 'The Fire That Burns — or Builds', ru: 'Огонь, который сжигает — или созидает' },
@@ -433,7 +428,6 @@ export const MODULES = {
     journalFields: ['situation', 'protecting', 'plan'],
   },
   shame: {
-    emoji: '😔',
     color: '#7048e8',
     colorSoft: '#f3f0ff',
     subtitle: { en: 'The Silent Saboteur', ru: 'Тихий саботажник' },
@@ -493,7 +487,6 @@ export const MODULES = {
     journalFields: ['critic', 'compassion', 'need'],
   },
   fear: {
-    emoji: '😨',
     color: '#1971c2',
     colorSoft: '#e7f5ff',
     subtitle: { en: 'The Ancient Protector', ru: 'Древний защитник' },
@@ -566,8 +559,8 @@ for (const m of Object.values(MODULES))
 export const optionLabel = (lang, v) => (OPTION_LABELS[v] ? L(lang, OPTION_LABELS[v]) : v)
 
 export const BADGES = [
-  { id: 'angerAlchemist', emoji: '🔥', need: 10, scope: 'anger', name: { en: 'Anger Alchemist', ru: 'Алхимик гнева' }, desc: { en: '10 anger practices', ru: '10 практик с гневом' } },
-  { id: 'shameShifter', emoji: '💜', need: 10, scope: 'shame', name: { en: 'Shame Shifter', ru: 'Преобразователь стыда' }, desc: { en: '10 shame practices', ru: '10 практик со стыдом' } },
-  { id: 'fearFacer', emoji: '🛡️', need: 10, scope: 'fear', name: { en: 'Fear Facer', ru: 'Лицом к страху' }, desc: { en: '10 fear practices', ru: '10 практик со страхом' } },
-  { id: 'emotionMaster', emoji: '🏆', need: 30, scope: 'total', name: { en: 'Emotion Master', ru: 'Мастер эмоций' }, desc: { en: '30 total practices across all three', ru: '30 практик по всем трём эмоциям' } },
+  { id: 'angerAlchemist', need: 10, scope: 'anger', name: { en: 'Anger Alchemist', ru: 'Алхимик гнева' }, desc: { en: '10 anger practices', ru: '10 практик с гневом' } },
+  { id: 'shameShifter', need: 10, scope: 'shame', name: { en: 'Shame Shifter', ru: 'Преобразователь стыда' }, desc: { en: '10 shame practices', ru: '10 практик со стыдом' } },
+  { id: 'fearFacer', need: 10, scope: 'fear', name: { en: 'Fear Facer', ru: 'Лицом к страху' }, desc: { en: '10 fear practices', ru: '10 практик со страхом' } },
+  { id: 'emotionMaster', need: 30, scope: 'total', name: { en: 'Emotion Master', ru: 'Мастер эмоций' }, desc: { en: '30 total practices across all three', ru: '30 практик по всем трём эмоциям' } },
 ]

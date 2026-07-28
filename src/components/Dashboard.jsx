@@ -43,14 +43,14 @@ export default function Dashboard() {
             ? `${t('todayLabel')} · ${t('day')} ${day} ${t('of30')} · ${t('weekWord')} ${WEEKS.indexOf(week) + 1}`
             : `${t('todayLabel')} · ${t('day')} 1`}
         </div>
-        <div className="title">{started ? `${week.emoji} ${L(lang, week.title)}` : `🌱 ${t('journeyCard')}`}</div>
+        <div className="title">{started ? L(lang, week.title) : t('journeyCard')}</div>
         <div className="caps">{t('estPractice')}</div>
         <button className="btn brand" style={{ marginTop: 8 }}>{started ? t('viewDay') : t('startJourney')} →</button>
       </div>
 
       {/* Compact stats */}
       <div className="stat-row" style={{ marginBottom: 18 }}>
-        <div className="stat"><div className="n">🔥 {streak}</div><div className="l">{t('streak')}</div></div>
+        <div className="stat"><div className="n" style={{ color: 'var(--amber)' }}>{streak}</div><div className="l">{t('streak')}</div></div>
         <div className="stat"><div className="n">{done}</div><div className="l">{t('daysCompleted')}</div></div>
         <div className="stat"><div className="n">{total}</div><div className="l">{t('entriesWord')}</div></div>
       </div>
@@ -58,7 +58,7 @@ export default function Dashboard() {
       {/* Next Level entry point */}
       <div className="card" style={{ cursor: 'pointer', marginBottom: 18, display: 'flex', alignItems: 'center', gap: 16, flexWrap: 'wrap' }} onClick={() => go({ page: 'nextlevel' })}>
         <div style={{ flex: 1, minWidth: 220 }}>
-          <h2>⚡ {t('nextLevelCard')}</h2>
+          <h2>{t('nextLevelCard')}</h2>
           <p className="muted small" style={{ marginTop: 6 }}>{t('nextLevelIntro')}</p>
         </div>
         <button className="btn sm" style={{ background: '#7048e8', color: '#fff' }}>{t('goToNextLevel')} →</button>
@@ -66,14 +66,13 @@ export default function Dashboard() {
 
       {/* Overall progress */}
       <div className="card" style={{ marginBottom: 18 }}>
-        <h2 style={{ marginBottom: 16 }}>📊 {t('overallProgress')}</h2>
+        <h2 style={{ marginBottom: 16 }}>{t('overallProgress')}</h2>
         <div className="rings">
           {['anger', 'shame', 'fear'].map((k) => (
             <Ring
               key={k}
               value={masteryScore(entries[k])}
               color={MODULES[k].color}
-              emoji={MODULES[k].emoji}
               label={L(lang, EMOTION_NAMES[k])}
               sub={`${entries[k].length} ${t('entriesWord')}`}
               onClick={() => go({ page: 'module', emotion: k })}
@@ -82,12 +81,12 @@ export default function Dashboard() {
         </div>
         <div className="grid grid-2" style={{ marginTop: 18 }}>
           <div className="quote">
-            🏅 {t('mostImproved')}:{' '}
-            <b>{improved ? `${MODULES[improved.emotion].emoji} ${L(lang, EMOTION_NAMES[improved.emotion])} (${improved.change}%)` : t('notEnoughData')}</b>
+            {t('mostImproved')}:{' '}
+            <b>{improved ? `${L(lang, EMOTION_NAMES[improved.emotion])} (${improved.change}%)` : t('notEnoughData')}</b>
           </div>
           {focus && (
             <div className="quote" style={{ borderColor: MODULES[focus].color }}>
-              🎯 {t('focusSuggestion', L(lang, EMOTION_NAMES[focus]).toLowerCase())}
+              {t('focusSuggestion', L(lang, EMOTION_NAMES[focus]).toLowerCase())}
             </div>
           )}
         </div>
@@ -95,7 +94,7 @@ export default function Dashboard() {
 
       {/* Weekly summary */}
       <div className="card" style={{ marginBottom: 18 }}>
-        <h2 style={{ marginBottom: 4 }}>🗓️ {t('weeklySummary')}</h2>
+        <h2 style={{ marginBottom: 4 }}>{t('weeklySummary')}</h2>
         <p className="muted small" style={{ marginBottom: 12 }}>{t('practicesPerEmotion')}</p>
         <ResponsiveContainer width="100%" height={220}>
           <BarChart data={weeklyData} margin={{ top: 8, right: 16, bottom: 0, left: -24 }}>
@@ -109,21 +108,21 @@ export default function Dashboard() {
         </ResponsiveContainer>
         <div className="grid grid-2" style={{ marginTop: 10 }}>
           <div className="quote">
-            📈 {weekly[weeklyTop] > 0 ? t('trendText', L(lang, EMOTION_NAMES[weeklyTop]).toLowerCase()) : t('trendNone')}
+            {weekly[weeklyTop] > 0 ? t('trendText', L(lang, EMOTION_NAMES[weeklyTop]).toLowerCase()) : t('trendNone')}
           </div>
           <div className="quote" style={{ borderColor: '#f5b301' }}>
-            🚀 {t('nextMilestone')}: {nextBadge ? t('milestoneText', nextBadge.remaining, L(lang, nextBadge.name)) : t('allBadges')}
+            {t('nextMilestone')}: {nextBadge ? t('milestoneText', nextBadge.remaining, L(lang, nextBadge.name)) : t('allBadges')}
           </div>
         </div>
       </div>
 
       {/* Badges */}
       <div className="card">
-        <h2 style={{ marginBottom: 14 }}>🏆 {t('achievements')}</h2>
+        <h2 style={{ marginBottom: 14 }}>{t('achievements')}</h2>
         <div className="badge-grid">
           {badges.map((b) => (
             <div key={b.id} className={`badge ${b.earned ? 'earned' : ''}`}>
-              <div className="bemoji">{b.emoji}</div>
+              <div className="bmark">{b.earned ? '★' : '✧'}</div>
               <div className="bname">{L(lang, b.name)}</div>
               <div className="bdesc">{L(lang, b.desc)}</div>
               <div className="bstate">{b.earned ? `✓ ${t('earned')}` : t('notYet', b.remaining)}</div>
@@ -135,7 +134,7 @@ export default function Dashboard() {
   )
 }
 
-function Ring({ value, color, emoji, label, sub, onClick }) {
+function Ring({ value, color, label, sub, onClick }) {
   const R = 52
   const C = 2 * Math.PI * R
   return (
@@ -147,8 +146,7 @@ function Ring({ value, color, emoji, label, sub, onClick }) {
           strokeDasharray={C} strokeDashoffset={C * (1 - value / 100)}
           transform="rotate(-90 65 65)" style={{ transition: 'stroke-dashoffset 0.8s ease' }}
         />
-        <text x="65" y="58" textAnchor="middle" fontSize="22">{emoji}</text>
-        <text x="65" y="84" textAnchor="middle" fontSize="19" fontWeight="800" fill={color}>{value}</text>
+        <text x="65" y="74" textAnchor="middle" fontSize="28" fontWeight="800" fill={color}>{value}</text>
       </svg>
       <div className="lbl">{label}</div>
       <div className="val">{sub}</div>

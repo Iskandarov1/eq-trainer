@@ -17,11 +17,10 @@ export default function Journey() {
           <div className="q">{t('heroQuote')}</div>
         </div>
         <div className="card" style={{ textAlign: 'center', padding: 40 }}>
-          <div style={{ fontSize: 44 }}>🌱</div>
           <h2 style={{ margin: '10px 0 6px' }}>{t('journey')}</h2>
           <p className="muted" style={{ maxWidth: 460, margin: '0 auto 18px' }}>{t('startJourneyHint')}</p>
           <button className="btn brand" onClick={() => update((d) => { d.journey.startDate = new Date().toISOString().slice(0, 10) })}>
-            🚀 {t('startJourney')}
+            {t('startJourney')}
           </button>
         </div>
         <WeekPreviews lang={lang} />
@@ -42,12 +41,12 @@ export default function Journey() {
       <div className="stat-row" style={{ marginBottom: 18 }}>
         <div className="stat"><div className="n">{Math.min(cur, 30)}<span className="muted" style={{ fontSize: 15 }}> / 30</span></div><div className="l">{t('day')}</div></div>
         <div className="stat"><div className="n">{done}</div><div className="l">{t('daysCompleted')}</div></div>
-        <div className="stat"><div className="n">🔥 {streak}</div><div className="l">{t('streak')}</div></div>
+        <div className="stat"><div className="n" style={{ color: 'var(--amber)' }}>{streak}</div><div className="l">{t('streak')}</div></div>
       </div>
 
       {journeyDone && (
         <div className="card" style={{ marginBottom: 18, borderColor: 'var(--amber)', background: 'var(--surface-2)' }}>
-          <h2>🎉 {t('congratsJourney')}</h2>
+          <h2>{t('congratsJourney')}</h2>
         </div>
       )}
 
@@ -79,13 +78,13 @@ function JourneyPath({ cur, days, onOpenDay }) {
               <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
                 <div style={{ flex: 1, minWidth: 200 }}>
                   <div className="caps">{t('weekWord')} {wi + 1}</div>
-                  <h3 className="serif" style={{ fontSize: 18, marginTop: 2 }}>{w.emoji} {L(lang, w.title)}</h3>
+                  <h3 className="serif" style={{ fontSize: 18, marginTop: 2 }}>{L(lang, w.title)}</h3>
                 </div>
                 <span className={`week-state ${state}`}>
                   {state === 'current' ? t('currentWeek') : state === 'done' ? t('completedW') : t('upcoming')}
                 </span>
               </div>
-              {state !== 'locked' && <p className="small muted" style={{ marginTop: 6 }}>🎯 {t('weekGoal')}: {L(lang, w.goal)}</p>}
+              {state !== 'locked' && <p className="small muted" style={{ marginTop: 6 }}>{t('weekGoal')}: {L(lang, w.goal)}</p>}
             </div>
             {range.map((d, i) => {
               const unlocked = d <= cur
@@ -117,9 +116,9 @@ function WeekPreviews({ lang }) {
     <div className="grid" style={{ marginTop: 18 }}>
       {WEEKS.map((w) => (
         <div key={w.id} className="card week-card" style={{ '--wcolor': w.color }}>
-          <h3>{w.emoji} {L(lang, w.title)}</h3>
+          <h3>{L(lang, w.title)}</h3>
           <p className="muted" style={{ margin: '6px 0' }}>{L(lang, w.quote)}</p>
-          <p className="small muted">🎯 {L(lang, w.goal)}</p>
+          <p className="small muted">{L(lang, w.goal)}</p>
         </div>
       ))}
     </div>
@@ -145,7 +144,7 @@ function DayView({ day, isToday }) {
       <div style={{ display: 'flex', alignItems: 'baseline', gap: 10, flexWrap: 'wrap' }}>
         <div>
           <div className="caps">{t('day')} {day} {t('of30')}</div>
-          <h2 className="serif" style={{ marginTop: 2 }}>{w.emoji} {L(lang, w.title)}</h2>
+          <h2 className="serif" style={{ marginTop: 2 }}>{L(lang, w.title)}</h2>
         </div>
         {dayData.done && <span className="week-state done" style={{ marginLeft: 'auto' }}>{t('dayDone')}</span>}
       </div>
@@ -221,7 +220,7 @@ function Celebrate({ day, onClose }) {
             }}
           />
         ))}
-        <div className="big">🎉</div>
+        <div className="big" style={{ color: 'var(--amber)' }}>★</div>
         <h2>{t('milestoneTitle', day)}</h2>
         <p className="muted" style={{ marginBottom: 18 }}>{t('milestoneBody')}</p>
         <button className="btn brand" onClick={onClose}>{t('continueWord')}</button>
@@ -235,7 +234,7 @@ function Ritual({ visible }) {
   if (!visible) return null
   return (
     <div className="card" style={{ marginTop: 22 }}>
-      <h2>🎯 {t('ritualTitle')}</h2>
+      <h2>{t('ritualTitle')}</h2>
       <p className="muted" style={{ margin: '8px 0' }}>{t('ritualIntro')}</p>
       <ul style={{ margin: '0 0 12px 20px', fontSize: 14.5 }}>
         <li>{t('ritualMorning')}</li>

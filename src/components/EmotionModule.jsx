@@ -13,7 +13,6 @@ export default function EmotionModule({ emotion }) {
   return (
     <div style={{ '--accent': m.color }}>
       <div className="module-hero" style={{ '--accent': m.color }}>
-        <div className="emoji">{m.emoji}</div>
         <h1>{L(lang, EMOTION_NAMES[emotion])}: {L(lang, m.subtitle)}</h1>
         <p className="expl">{L(lang, m.explanation)}</p>
       </div>
@@ -38,7 +37,7 @@ function Learn({ m }) {
   const [open, setOpen] = useState(0)
   return (
     <div className="card">
-      <h2>🎯 {t('golemanApproach')}</h2>
+      <h2>{t('golemanApproach')}</h2>
       <p className="muted small" style={{ margin: '6px 0 14px' }}>{t('tapCard')}</p>
       <div className="learn-grid">
         {m.steps.map((s, i) => (
@@ -86,7 +85,7 @@ function Practice({ emotion, m, onSaved }) {
       ))}
       <div style={{ marginTop: 16, textAlign: 'right' }}>
         <button className="btn" style={{ background: m.color, color: '#fff' }} disabled={!hasContent} onClick={save}>
-          💾 {t('save')}
+          {t('save')}
         </button>
       </div>
     </div>
@@ -223,7 +222,7 @@ function Journal({ emotion, m }) {
     <div>
       <div className="filters">
         <div style={{ flex: 2 }}>
-          <label className="field-label">🔎</label>
+          <label className="field-label">{t('searchEntries').replace('…', '')}</label>
           <input type="search" placeholder={t('searchEntries')} value={q} onChange={(e) => setQ(e.target.value)} />
         </div>
         <div>
@@ -236,7 +235,7 @@ function Journal({ emotion, m }) {
         </div>
         {entries.length >= 2 && (
           <button className="btn ghost sm" style={{ height: 44 }} onClick={() => setCompare(true)}>
-            ⚖️ {t('compare')}
+            {t('compare')}
           </button>
         )}
       </div>
@@ -244,7 +243,7 @@ function Journal({ emotion, m }) {
         {[...filtered].reverse().map((e) => (
           <div key={e.id} className="entry" onClick={() => setOpenId(openId === e.id ? null : e.id)}>
             <div className="date">
-              📅 {new Date(e.date).toLocaleString(lang === 'ru' ? 'ru-RU' : 'en-GB', { dateStyle: 'medium', timeStyle: 'short' })}
+              {new Date(e.date).toLocaleString(lang === 'ru' ? 'ru-RU' : 'en-GB', { dateStyle: 'medium', timeStyle: 'short' })}
               {e.intensity ? ` · ${t('intensity')}: ${e.intensity}/10` : ''}
             </div>
             <div className="preview">{preview(e, m)}</div>
@@ -255,7 +254,7 @@ function Journal({ emotion, m }) {
       {compare && (
         <div className="modal-bg" onClick={() => setCompare(false)}>
           <div className="modal" onClick={(ev) => ev.stopPropagation()}>
-            <h2 style={{ marginBottom: 14 }}>⚖️ {t('compare')}</h2>
+            <h2 style={{ marginBottom: 14 }}>{t('compare')}</h2>
             <div className="grid grid-2">
               <div>
                 <h3 style={{ color: m.color }}>{t('firstEntry')}</h3>
@@ -332,7 +331,7 @@ function Progress({ emotion, m }) {
       </div>
 
       <div className="card">
-        <h3 style={{ marginBottom: 12 }}>📈 {t('intensityOverTime')}</h3>
+        <h3 style={{ marginBottom: 12 }}>{t('intensityOverTime')}</h3>
         {series.length < 2 ? (
           <p className="muted">{t('needMore')}</p>
         ) : (
@@ -347,7 +346,7 @@ function Progress({ emotion, m }) {
               </LineChart>
             </ResponsiveContainer>
             <div className="quote" style={{ marginTop: 12, borderColor: m.color }}>
-              💡 {change === null ? t('insightFlat') : change < 0 ? t('insightDown', Math.abs(change), name) : change > 0 ? t('insightUp', change, name) : t('insightFlat')}
+              {change === null ? t('insightFlat') : change < 0 ? t('insightDown', Math.abs(change), name) : change > 0 ? t('insightUp', change, name) : t('insightFlat')}
             </div>
           </>
         )}

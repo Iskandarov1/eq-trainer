@@ -11,7 +11,6 @@ export default class ErrorBoundary extends React.Component {
     const lang = loadData().lang // loadData never throws
     return (
       <div className="card" style={{ margin: 40, textAlign: 'center', padding: 40 }}>
-        <div style={{ fontSize: 44 }}>😵</div>
         <h2 style={{ margin: '10px 0 16px' }}>{L(lang, UI.errorTitle)}</h2>
         <button className="btn brand" onClick={() => location.reload()}>{L(lang, UI.errorReload)}</button>
       </div>

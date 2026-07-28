@@ -1,4 +1,4 @@
-# 🧠 EQ Trainer
+# EQ Trainer
 
 Grow your emotional intelligence — the Daniel Goleman way. A private, offline-friendly web app with:
 

@@ -56,7 +56,7 @@ export default function App() {
     <AppCtx.Provider value={ctx}>
       <header className="header">
         <div className="logo" onClick={() => go({ page: 'home' })}>
-          <div className="logo-mark">🧠</div>
+          <div className="logo-mark">EQ</div>
           <div>
             <div className="logo-name">{t('appName')}</div>
             <div className="logo-tag">{t('tagline')}</div>
@@ -83,8 +83,8 @@ export default function App() {
       </main>
 
       <div className="footer-actions">
-        <button className="btn ghost sm" onClick={() => exportJSON(data)}>⬇️ {t('exportData')}</button>
-        <button className="btn ghost sm" onClick={() => importRef.current?.click()}>⬆️ {t('importData')}</button>
+        <button className="btn ghost sm" onClick={() => exportJSON(data)}>{t('exportData')}</button>
+        <button className="btn ghost sm" onClick={() => importRef.current?.click()}>{t('importData')}</button>
         <input ref={importRef} type="file" accept=".json" style={{ display: 'none' }} onChange={onImport} />
       </div>
       <div className="trust-note">{t('trustNote')}</div>
@@ -101,7 +101,7 @@ function Breadcrumbs() {
   if (route.page === 'nextlevel') parts.push({ label: t('nextLevel') })
   if (route.page === 'module') {
     parts.push({ label: t('nextLevel'), r: { page: 'nextlevel' } })
-    parts.push({ label: `${MODULES[route.emotion].emoji} ${L(lang, EMOTION_NAMES[route.emotion])}` })
+    parts.push({ label: L(lang, EMOTION_NAMES[route.emotion]) })
   }
   return (
     <div className="crumbs">

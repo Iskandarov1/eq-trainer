@@ -8,7 +8,7 @@ export default function NextLevel() {
   return (
     <div>
       <div className="hero" style={{ background: 'radial-gradient(600px 300px at 90% -20%, rgba(255,255,255,.15), transparent 60%), linear-gradient(125deg, #343a8f, #7048e8 55%, #c2255c)' }}>
-        <h1>⚡ {t('nextLevel')}</h1>
+        <h1>{t('nextLevel')}</h1>
         <div className="q">{t('nextLevelIntro')}</div>
         <div className="q" style={{ marginTop: 8 }}>{t('nlQuote')}</div>
       </div>
@@ -23,8 +23,8 @@ export default function NextLevel() {
               style={{ cursor: 'pointer', '--accent': m.color, borderTop: `4px solid ${m.color}` }}
               onClick={() => go({ page: 'module', emotion: key })}
             >
-              <div style={{ fontSize: 36 }}>{m.emoji}</div>
-              <h2 style={{ margin: '8px 0 2px' }}>{L(lang, EMOTION_NAMES[key])}</h2>
+              <div style={{ width: 14, height: 14, borderRadius: '50%', background: m.color }} />
+              <h2 style={{ margin: '10px 0 2px' }}>{L(lang, EMOTION_NAMES[key])}</h2>
               <div className="muted" style={{ fontWeight: 600, fontSize: 14 }}>{L(lang, m.subtitle)}</div>
               <p className="small muted" style={{ margin: '10px 0 14px' }}>{L(lang, m.explanation).split('.')[0]}.</p>
               <div className="meter"><div style={{ width: `${score}%` }} /></div>
@@ -37,21 +37,21 @@ export default function NextLevel() {
       </div>
 
       <div className="card" style={{ marginTop: 18 }}>
-        <h2>💪 {t('finalTipsTitle')}</h2>
+        <h2>{t('finalTipsTitle')}</h2>
         <div className="grid grid-3" style={{ marginTop: 14 }}>
           {[
-            ['🧭', 'tipCheckin', 'tipCheckinDesc'],
-            ['🧘', 'tipMeditate', 'tipMeditateDesc'],
-            ['🎭', 'tipRehearse', 'tipRehearseDesc'],
-          ].map(([emoji, title, desc]) => (
+            ['tipCheckin', 'tipCheckinDesc'],
+            ['tipMeditate', 'tipMeditateDesc'],
+            ['tipRehearse', 'tipRehearseDesc'],
+          ].map(([title, desc], i) => (
             <div key={title} className="pstep">
-              <div style={{ fontSize: 28 }}>{emoji}</div>
+              <div className="caps">{`0${i + 1}`}</div>
               <h3 style={{ margin: '8px 0 6px' }}>{t(title)}</h3>
               <p className="muted small">{t(desc)}</p>
             </div>
           ))}
         </div>
-        <div className="quote" style={{ marginTop: 16 }}>📌 {t('wavesQuote')}</div>
+        <div className="quote" style={{ marginTop: 16 }}>{t('wavesQuote')}</div>
       </div>
     </div>
   )
