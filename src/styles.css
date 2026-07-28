@@ -227,9 +227,9 @@ label.field-label { display: block; font-weight: 600; font-size: 13.5px; margin-
 .breath-wrap:not(.playing) .breath-circle { background: var(--accent, var(--session-bg)); }
 .breath-count { font-size: 64px; font-weight: 300; letter-spacing: -0.02em; line-height: 1; }
 .breath-cycles { color: rgba(255, 255, 255, 0.7); }
-.breath-circle.inhale { transition-duration: 4s; transform: scale(1.32); }
-.breath-circle.hold { transition-duration: 7s; transform: scale(1.32); }
-.breath-circle.exhale { transition-duration: 8s; transform: scale(1); }
+.breath-circle.inhale { transform: scale(1.32); }
+.breath-circle.hold { transform: scale(1.32); }
+.breath-circle.exhale { transform: scale(1); }
 .breath-wrap.playing .btn { background: rgba(255, 255, 255, 0.14); color: #fff; border: 1px solid rgba(255, 255, 255, 0.35); box-shadow: none; }
 
 /* ---------- journal ---------- */

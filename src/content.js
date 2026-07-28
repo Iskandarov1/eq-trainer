@@ -82,6 +82,7 @@ export const UI = {
   tapCard: { en: 'Tap a card to explore each step', ru: 'Нажмите на карточку, чтобы раскрыть шаг' },
   breathe: { en: 'Breathing guide · 4-7-8', ru: 'Дыхание · 4-7-8' },
   breatheNav: { en: 'Breathe', ru: 'Дыхание' },
+  threeBreaths: { en: '3 deep breaths', ru: '3 глубоких вдоха' },
   breatheIntro: {
     en: 'The 4-7-8 breath: inhale for 4, hold for 7, exhale for 8. Deep belly breathing tells the brain: you are safe now.',
     ru: 'Дыхание 4-7-8: вдох на 4, задержка на 7, выдох на 8. Глубокое дыхание животом говорит мозгу: сейчас ты в безопасности.',
@@ -251,6 +252,7 @@ export const WEEKS = [
         title: { en: 'The Pause Power', ru: 'Сила паузы' },
         desc: { en: 'Every time you’re triggered: Pause. Take 3 deep breaths. Ask: What’s the best response here?', ru: 'Каждый раз при триггере: Пауза. 3 глубоких вдоха. Вопрос: какой ответ здесь наилучший?' },
         fields: [
+          { id: 'breath', t: 'breathing', pattern: 'three' },
           { id: 'used', t: 'check', label: { en: 'I used the Pause today', ru: 'Сегодня я использовал(а) паузу' } },
           { id: 'when', t: 'textarea', label: { en: 'When?', ru: 'Когда?' }, ph: { en: 'I used the pause when…', ru: 'Я использовал(а) паузу, когда…' } },
           { id: 'changed', t: 'textarea', label: { en: 'What changed?', ru: 'Что изменилось?' }, ph: { en: 'It changed…', ru: 'Это изменило…' } },
@@ -261,6 +263,7 @@ export const WEEKS = [
         title: { en: 'Visualization for Composure (10 min/day)', ru: 'Визуализация спокойствия (10 мин/день)' },
         desc: { en: 'Visualize a stressful situation and rehearse staying calm, empathetic, and clear-headed.', ru: 'Представьте стрессовую ситуацию и отрепетируйте спокойствие, эмпатию и ясность мышления.' },
         fields: [
+          { id: 'breath', t: 'breathing', pattern: 'calm478', target: 1 },
           { id: 'done', t: 'check', label: { en: 'Visualization completed', ru: 'Визуализация выполнена' } },
           { id: 'scene', t: 'textarea', label: { en: 'What situation did you rehearse?', ru: 'Какую ситуацию вы репетировали?' }, ph: { en: 'I rehearsed staying calm in the situation where…', ru: 'Я репетировал(а) спокойствие в ситуации, где…' } },
         ],
@@ -365,6 +368,7 @@ export const WEEKS = [
         title: { en: 'Difficult Conversation Rehearsal', ru: 'Репетиция трудного разговора' },
         desc: { en: 'Practice saying hard things with clarity, kindness, calmness. (Use a mirror or record yourself.)', ru: 'Практикуйте говорить сложные вещи с ясностью, добротой и спокойствием. (Перед зеркалом или на запись.)' },
         fields: [
+          { id: 'breath', t: 'breathing', pattern: 'three' },
           { id: 'done', t: 'check', label: { en: 'I rehearsed a difficult conversation', ru: 'Я отрепетировал(а) трудный разговор' } },
           { id: 'topic', t: 'textarea', label: { en: 'What conversation?', ru: 'Какой разговор?' }, ph: { en: 'I rehearsed saying…', ru: 'Я репетировал(а), как сказать…' } },
           { id: 'feltLike', t: 'textarea', label: { en: 'How did it feel?', ru: 'Каково это было?' }, ph: { en: 'It felt…', ru: 'Это ощущалось…' } },
@@ -434,6 +438,7 @@ export const MODULES = {
             { k: 'frustrated', en: 'frustrated', ru: 'фрустрация' }, { k: 'betrayed', en: 'betrayed', ru: 'предательство' },
           ] },
           { id: 'intensity', t: 'slider' },
+          { id: 'breathing', t: 'breathing', pattern: 'three' },
         ],
       },
       {
@@ -495,7 +500,10 @@ export const MODULES = {
       {
         title: { en: '2 · Activate self-compassion', ru: '2 · Включите сострадание к себе' },
         hint: { en: 'Rewrite the critic’s phrase with compassion:', ru: 'Перепишите фразу критика с состраданием:' },
-        fields: [{ id: 'compassion', t: 'textarea', ph: { en: 'The truth is, I am still worthy because…', ru: 'На самом деле я по-прежнему ценен, потому что…' } }],
+        fields: [
+          { id: 'breathing', t: 'breathing', pattern: 'three' },
+          { id: 'compassion', t: 'textarea', ph: { en: 'The truth is, I am still worthy because…', ru: 'На самом деле я по-прежнему ценен, потому что…' } },
+        ],
       },
       {
         title: { en: '3 · What unmet need is this revealing?', ru: '3 · Какую потребность это обнажает?' },
@@ -557,7 +565,7 @@ export const MODULES = {
       {
         title: { en: '2 · Ground yourself physically', ru: '2 · Заземлитесь физически' },
         fields: [
-          { id: 'breathing', t: 'breathing' },
+          { id: 'breathing', t: 'breathing', pattern: 'calm478' },
           { id: 'grounding', t: 'inputs5', label: { en: 'Grounding checklist: name 5 things you see', ru: 'Заземление: назовите 5 вещей, которые видите' }, ph: { en: 'I see…', ru: 'Я вижу…' } },
         ],
       },

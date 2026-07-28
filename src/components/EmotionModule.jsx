@@ -206,7 +206,7 @@ function Field({ f, value, set }) {
       )
     }
     case 'breathing':
-      return <BreathingGuide />
+      return <BreathingGuide pattern={f.pattern} target={f.target} />
     default:
       return null
   }

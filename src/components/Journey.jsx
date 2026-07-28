@@ -2,6 +2,7 @@ import React, { useContext, useState } from 'react'
 import { AppCtx } from '../App.jsx'
 import { L, WEEKS, UI, starterFor } from '../content.js'
 import { weekForDay, journeyStats } from '../store.js'
+import BreathingGuide from './BreathingGuide.jsx'
 
 export default function Journey() {
   const { data, update, lang, t } = useContext(AppCtx)
@@ -202,6 +203,8 @@ function DayView({ day, isToday }) {
             <div className="grid" style={{ gap: 12 }}>
               {p.fields.map((f) => {
                 const val = dayData.fields[`${p.id}.${f.id}`]
+                if (f.t === 'breathing')
+                  return <BreathingGuide key={f.id} pattern={f.pattern} target={f.target} />
                 if (f.t === 'check')
                   return (
                     <label key={f.id} className={`opt-row ${val ? 'on' : ''}`} style={{ '--accent': w.color }}>
