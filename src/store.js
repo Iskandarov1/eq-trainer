@@ -5,8 +5,10 @@ const KEY = 'eqTrainerData'
 const DEFAULTS = {
   lang: 'en',
   journey: { startDate: null, days: {}, ritual: { morning: '', day: '', evening: '' } },
-  entries: { anger: [], shame: [], fear: [] },
+  entries: { anger: [], shame: [], fear: [], jealousy: [] },
 }
+
+export const EMOTION_KEYS = ['anger', 'shame', 'fear', 'jealousy']
 
 // crypto.randomUUID is unavailable on file:// and plain-HTTP origins (dist is opened from disk)
 export const newId = () =>
@@ -31,6 +33,7 @@ export function normalizeData(d) {
       anger: validEntries(d.entries?.anger),
       shame: validEntries(d.entries?.shame),
       fear: validEntries(d.entries?.fear),
+      jealousy: validEntries(d.entries?.jealousy),
     },
   }
 }
@@ -121,12 +124,8 @@ export function intensityChange(entries) {
 }
 
 export function earnedBadges(entries) {
-  const counts = {
-    anger: entries.anger.length,
-    shame: entries.shame.length,
-    fear: entries.fear.length,
-  }
-  const total = counts.anger + counts.shame + counts.fear
+  const counts = Object.fromEntries(EMOTION_KEYS.map((k) => [k, entries[k].length]))
+  const total = EMOTION_KEYS.reduce((s, k) => s + counts[k], 0)
   return BADGES.map((b) => {
     const have = b.scope === 'total' ? total : counts[b.scope]
     return { ...b, have, earned: have >= b.need, remaining: Math.max(0, b.need - have) }
@@ -136,13 +135,13 @@ export function earnedBadges(entries) {
 export function weeklyCounts(entries) {
   const weekAgo = Date.now() - 7 * 86400000
   const count = (arr) => arr.filter((e) => new Date(e.date).getTime() >= weekAgo).length
-  return { anger: count(entries.anger), shame: count(entries.shame), fear: count(entries.fear) }
+  return Object.fromEntries(EMOTION_KEYS.map((k) => [k, count(entries[k])]))
 }
 
 // emotion with the biggest intensity decrease (most improved); null if no data
 export function mostImproved(entries) {
   let best = null
-  for (const k of ['anger', 'shame', 'fear']) {
+  for (const k of EMOTION_KEYS) {
     const ch = intensityChange(entries[k])
     if (ch !== null && ch < 0 && (best === null || ch < best.change)) best = { emotion: k, change: ch }
   }
@@ -151,9 +150,8 @@ export function mostImproved(entries) {
 
 // emotion with lowest practice count → focus suggestion; null until the user has any practice
 export function focusEmotion(entries) {
-  const ks = ['anger', 'shame', 'fear']
-  if (ks.every((k) => !entries[k].length)) return null
-  return ks.reduce((min, k) => (entries[k].length < entries[min].length ? k : min), 'anger')
+  if (EMOTION_KEYS.every((k) => !entries[k].length)) return null
+  return EMOTION_KEYS.reduce((min, k) => (entries[k].length < entries[min].length ? k : min), 'anger')
 }
 
 export function exportJSON(data) {

@@ -12,7 +12,7 @@ export default function NextLevel() {
         <div className="q">{t('nextLevelIntro')}</div>
         <div className="q" style={{ marginTop: 8 }}>{t('nlQuote')}</div>
       </div>
-      <div className="grid grid-3">
+      <div className="grid grid-2">
         {Object.entries(MODULES).map(([key, m]) => {
           const entries = data.entries[key]
           const score = masteryScore(entries)

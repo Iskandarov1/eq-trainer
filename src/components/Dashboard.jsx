@@ -2,12 +2,12 @@ import React, { useContext } from 'react'
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from 'recharts'
 import { AppCtx } from '../App.jsx'
 import { L, MODULES, EMOTION_NAMES, WEEKS } from '../content.js'
-import { masteryScore, earnedBadges, weeklyCounts, mostImproved, focusEmotion, journeyStats, weekForDay } from '../store.js'
+import { masteryScore, earnedBadges, weeklyCounts, mostImproved, focusEmotion, journeyStats, weekForDay, EMOTION_KEYS } from '../store.js'
 
 export default function Dashboard() {
   const { data, lang, t, go } = useContext(AppCtx)
   const entries = data.entries
-  const total = entries.anger.length + entries.shame.length + entries.fear.length
+  const total = EMOTION_KEYS.reduce((s, k) => s + entries[k].length, 0)
   const badges = earnedBadges(entries)
   const weekly = weeklyCounts(entries)
   const improved = mostImproved(entries)
@@ -16,12 +16,12 @@ export default function Dashboard() {
   const started = !!data.journey.startDate
 
   const nextBadge = badges.filter((b) => !b.earned).sort((a, b) => a.remaining - b.remaining)[0]
-  const weeklyData = ['anger', 'shame', 'fear'].map((k) => ({
+  const weeklyData = EMOTION_KEYS.map((k) => ({
     name: L(lang, EMOTION_NAMES[k]),
     count: weekly[k],
     color: MODULES[k].color,
   }))
-  const weeklyTop = ['anger', 'shame', 'fear'].reduce((a, b) => (weekly[b] > weekly[a] ? b : a), 'anger')
+  const weeklyTop = EMOTION_KEYS.reduce((a, b) => (weekly[b] > weekly[a] ? b : a), 'anger')
 
   const hour = new Date().getHours()
   const greet = hour < 12 ? 'goodMorning' : hour < 18 ? 'goodAfternoon' : 'goodEvening'
@@ -77,7 +77,7 @@ export default function Dashboard() {
       <div className="card" style={{ marginBottom: 18 }}>
         <h2 style={{ marginBottom: 16 }}>{t('overallProgress')}</h2>
         <div className="rings">
-          {['anger', 'shame', 'fear'].map((k) => (
+          {EMOTION_KEYS.map((k) => (
             <Ring
               key={k}
               value={masteryScore(entries[k])}

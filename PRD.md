@@ -25,7 +25,7 @@ A personal emotional-intelligence trainer that turns Daniel Goleman's EI framewo
 
 ### 3.2 Next Level (from the docx spec)
 - Reachable from nav **and breadcrumbs**; breadcrumb "Next Level" shows the 3 modules.
-- Three emotion modules — **Anger** ("The Fire That Burns — or Builds"), **Shame** ("The Silent Saboteur"), **Fear** ("The Ancient Protector") — each with:
+- Four emotion modules — **Anger** ("The Fire That Burns — or Builds"), **Shame** ("The Silent Saboteur"), **Fear** ("The Ancient Protector"), and **Jealousy** ("The Green-Eyed Messenger", added 2026-07-28 by owner request; content authored in-house following the same signal→name→reframe→redirect structure since the source PDF covers only the first three — no attributed quotes in it) — each with:
   - **Learn:** explanation + the 4-step Goleman approach as interactive expandable cards.
   - **Practice:** the guided form exactly as specified (textareas with prescribed placeholders, quick-select chips, intensity slider 1–10, checkboxes, fear's 4-7-8 animated breathing guide + 5 grounding inputs, "I took this step" with date tracker). Saves to journal with date/time.
   - **Journal:** entry list, date-range filter, search, click-to-expand, "First time vs Most recent" compare.
