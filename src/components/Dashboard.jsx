@@ -45,7 +45,7 @@ export default function Dashboard() {
         </div>
         <div className="title">{started ? L(lang, week.title) : t('journeyCard')}</div>
         <div className="caps">{t('estPractice')}</div>
-        <button className="btn brand" style={{ marginTop: 8 }}>{started ? t('viewDay') : t('startJourney')} →</button>
+        <button className="btn light" style={{ marginTop: 8 }}>{started ? t('viewDay') : t('startJourney')} →</button>
       </div>
 
       {/* Compact stats */}
@@ -61,7 +61,7 @@ export default function Dashboard() {
           <h2>{t('nextLevelCard')}</h2>
           <p className="muted small" style={{ marginTop: 6 }}>{t('nextLevelIntro')}</p>
         </div>
-        <button className="btn sm" style={{ background: '#7048e8', color: '#fff' }}>{t('goToNextLevel')} →</button>
+        <button className="btn sm">{t('goToNextLevel')} →</button>
       </div>
 
       {/* Overall progress */}
@@ -72,7 +72,7 @@ export default function Dashboard() {
             <Ring
               key={k}
               value={masteryScore(entries[k])}
-              color={MODULES[k].color}
+              color="#dca6d6"
               label={L(lang, EMOTION_NAMES[k])}
               sub={`${entries[k].length} ${t('entriesWord')}`}
               onClick={() => go({ page: 'module', emotion: k })}
@@ -85,7 +85,7 @@ export default function Dashboard() {
             <b>{improved ? `${L(lang, EMOTION_NAMES[improved.emotion])} (${improved.change}%)` : t('notEnoughData')}</b>
           </div>
           {focus && (
-            <div className="quote" style={{ borderColor: MODULES[focus].color }}>
+            <div className="insight-tint">
               {t('focusSuggestion', L(lang, EMOTION_NAMES[focus]).toLowerCase())}
             </div>
           )}
@@ -102,7 +102,7 @@ export default function Dashboard() {
             <YAxis allowDecimals={false} tick={{ fontSize: 12 }} />
             <Tooltip cursor={{ fill: 'rgba(0,0,0,0.04)' }} />
             <Bar dataKey="count" radius={[8, 8, 0, 0]}>
-              {weeklyData.map((d, i) => <Cell key={i} fill={d.color} />)}
+              {weeklyData.map((d, i) => <Cell key={i} fill="#dca6d6" />)}
             </Bar>
           </BarChart>
         </ResponsiveContainer>
@@ -146,7 +146,7 @@ function Ring({ value, color, label, sub, onClick }) {
           strokeDasharray={C} strokeDashoffset={C * (1 - value / 100)}
           transform="rotate(-90 65 65)" style={{ transition: 'stroke-dashoffset 0.8s ease' }}
         />
-        <text x="65" y="74" textAnchor="middle" fontSize="28" fontWeight="800" fill={color}>{value}</text>
+        <text x="65" y="74" textAnchor="middle" fontSize="28" fontWeight="300" fill="#141414">{value}</text>
       </svg>
       <div className="lbl">{label}</div>
       <div className="val">{sub}</div>

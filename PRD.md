@@ -74,7 +74,16 @@ Per the owner's direction, quotes and phrases in the app are sourced from these 
 7. **Temporal-distancing prompt** — "How will this matter in a week / a year?" optional field (evidence-based reappraisal).
 8. **Uzbek localization** — third language using the existing `{en, ru}` → `{en, ru, uz}` string convention.
 
-## 8. Design system (v1.1 redesign, 2026-07-28)
+## 8a. Design system v2 (owner-directed re-theme, 2026-07-28 — CURRENT)
+
+Sources fixed by the owner (studied live on Mobbin): **Mindvalley iOS** = overall design language, **Cosmos iOS** = brand colors, **Breathwrk iOS** = breathing session. No emojis anywhere (owner directive).
+
+- **Palette (Cosmos):** page `#FAF7F1` warm cream; surfaces pure white, borderless, soft shadow, radius 14; text `#141414` / `#8A8A84`; single interactive accent pink-lilac `#DCA6D6`; completion olive `#565A2B`; earth tones for modules/weeks (clay `#B0563C`, brown `#5C4632`, olive, mauve `#9A6B93`); gold `#F5A623` reserved for badges/streak. Single theme (no dark mode toggle — dark exists only as poster/session surfaces, like the sources).
+- **Structure (Mindvalley):** heavy grotesk headlines, no serif in UI chrome; tiny-caps metadata; every button a pill — black `#111` fill primary, white-on-dark, outlined secondary on dark; dark `#101014` hero surfaces with abstract violet/mauve blur blobs; emotion modules as full-color "quest poster" cards (caps subtitle + heavy white title + white progress meter); one lavender gradient (`#C7C2EF→#F5F3FB`) insight card per screen, everything else flat.
+- **Session (Breathwrk):** constant `#1F242E` blue-charcoal field with smoky blobs; three concentric white-opacity circles (0.22/0.12/0.05) that scale with the 4-7-8 phases; letterspaced phase word; 64px light-weight per-second countdown; translucent pill Stop; Escape exits.
+- **Charts:** single accent series `#DCA6D6`, gridlines `#EFEBE3`, large light-weight numerals.
+
+## 8b. Design system v1.1 (superseded, kept for history)
 
 Grounded in two research passes: live pattern research on Mobbin (How We Feel, Stoic, Finch, Calm, Headspace, Duolingo, 5 Minute Journal) and UX-teardown research on the same category. Implemented:
 

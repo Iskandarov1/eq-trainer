@@ -186,7 +186,6 @@ function DayView({ day, isToday }) {
       <div style={{ marginTop: 16, textAlign: 'right' }}>
         <button
           className="btn"
-          style={{ background: w.color, color: '#fff' }}
           disabled={dayData.done}
           onClick={() => {
             update((d) => { (d.journey.days[day] ||= { fields: {} }).done = true })

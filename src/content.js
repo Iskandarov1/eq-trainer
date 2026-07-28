@@ -76,9 +76,9 @@ export const UI = {
   breathe: { en: 'Breathing guide · 4-7-8', ru: 'Дыхание · 4-7-8' },
   breatheStart: { en: 'Start breathing', ru: 'Начать дыхание' },
   breatheStop: { en: 'Stop', ru: 'Стоп' },
-  inhale: { en: 'Inhale · 4', ru: 'Вдох · 4' },
-  hold: { en: 'Hold · 7', ru: 'Задержка · 7' },
-  exhale: { en: 'Exhale · 8', ru: 'Выдох · 8' },
+  inhale: { en: 'Inhale', ru: 'Вдох' },
+  hold: { en: 'Hold', ru: 'Задержка' },
+  exhale: { en: 'Exhale', ru: 'Выдох' },
   cycles: { en: 'cycles completed', ru: 'циклов завершено' },
   exportData: { en: 'Export backup', ru: 'Экспорт данных' },
   importData: { en: 'Import backup', ru: 'Импорт данных' },
@@ -168,7 +168,7 @@ export const WEEKS = [
   {
     id: 'w1',
     days: [1, 7],
-    color: '#0ca678',
+    color: '#565a2b',
     title: { en: 'Week 1 · Build the Foundation — Self-Awareness', ru: 'Неделя 1 · Фундамент — Самоосознание' },
     quote: {
       en: '“Self-awareness means you know what you’re feeling.” — Daniel Goleman',
@@ -216,7 +216,7 @@ export const WEEKS = [
   {
     id: 'w2',
     days: [8, 14],
-    color: '#e8590c',
+    color: '#b0563c',
     title: { en: 'Week 2 · Master the Inner World — Self-Management', ru: 'Неделя 2 · Внутренний мир — Саморегуляция' },
     quote: {
       en: '“Maturity is sometimes defined as widening the gap between impulse and action.” — Daniel Goleman',
@@ -264,7 +264,7 @@ export const WEEKS = [
   {
     id: 'w3',
     days: [15, 21],
-    color: '#1971c2',
+    color: '#5c4632',
     title: { en: 'Week 3 · Understand Others — Social Awareness', ru: 'Неделя 3 · Понимание других — Социальная осознанность' },
     quote: {
       en: '“Emotional empathy is an immediate felt sense of what’s going on in the other person.” — Daniel Goleman',
@@ -312,7 +312,7 @@ export const WEEKS = [
   {
     id: 'w4',
     days: [22, 30],
-    color: '#c2255c',
+    color: '#9a6b93',
     title: { en: 'Week 4 · Lead with Connection — Relationship Management', ru: 'Неделя 4 · Сила связи — Управление отношениями' },
     quote: {
       en: '“Emotions drive the quality of our relationships.” — Marc Brackett',
@@ -365,8 +365,8 @@ export const WEEKS = [
 // ---------------- NEXT LEVEL MODULES (from the "Next Level" spec docx) ----------------
 export const MODULES = {
   anger: {
-    color: '#e8590c',
-    colorSoft: '#fff0e6',
+    color: '#b0563c',
+    colorSoft: '#f6ece7',
     subtitle: { en: 'The Fire That Burns — or Builds', ru: 'Огонь, который сжигает — или созидает' },
     explanation: {
       en: 'Anger often masks hurt, injustice, or unmet needs. But unmanaged, it hijacks your prefrontal cortex — the part of your brain that makes wise decisions. Anger wisely channeled = Courage.',
@@ -428,8 +428,8 @@ export const MODULES = {
     journalFields: ['situation', 'protecting', 'plan'],
   },
   shame: {
-    color: '#7048e8',
-    colorSoft: '#f3f0ff',
+    color: '#5c4632',
+    colorSoft: '#f2ede7',
     subtitle: { en: 'The Silent Saboteur', ru: 'Тихий саботажник' },
     explanation: {
       en: 'Shame says “I am bad.” It’s different from guilt, which says “I did something bad.” Shame can freeze us — emotionally and neurologically. It shrinks empathy, creativity, and connection. Shame loses power in the presence of empathy.',
@@ -487,8 +487,8 @@ export const MODULES = {
     journalFields: ['critic', 'compassion', 'need'],
   },
   fear: {
-    color: '#1971c2',
-    colorSoft: '#e7f5ff',
+    color: '#565a2b',
+    colorSoft: '#eff0e6',
     subtitle: { en: 'The Ancient Protector', ru: 'Древний защитник' },
     explanation: {
       en: 'Fear evolved to keep us alive. But modern fear is often not about survival — it’s about ego, failure, rejection. Fear hijacks the brain’s reasoning center and narrows attention. Courage is fear transformed by purpose.',

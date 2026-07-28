@@ -84,7 +84,7 @@ function Practice({ emotion, m, onSaved }) {
         </div>
       ))}
       <div style={{ marginTop: 16, textAlign: 'right' }}>
-        <button className="btn" style={{ background: m.color, color: '#fff' }} disabled={!hasContent} onClick={save}>
+        <button className="btn" disabled={!hasContent} onClick={save}>
           {t('save')}
         </button>
       </div>
@@ -324,9 +324,9 @@ function Progress({ emotion, m }) {
       <div className="stat-row">
         <div className="stat"><div className="n">{entries.length}</div><div className="l">{t('practiceCount', entries.length, name)}</div></div>
         <div className="stat">
-          <div className="n" style={{ color: m.color }}>{score}<span className="muted" style={{ fontSize: 15 }}>/100</span></div>
+          <div className="n">{score}<span className="muted" style={{ fontSize: 15 }}>/100</span></div>
           <div className="l">{t('masteryScore')} · {t('masteryHint')}</div>
-          <div className="meter" style={{ marginTop: 8 }}><div style={{ width: `${score}%`, background: m.color }} /></div>
+          <div className="meter" style={{ marginTop: 8 }}><div style={{ width: `${score}%` }} /></div>
         </div>
       </div>
 
@@ -338,14 +338,14 @@ function Progress({ emotion, m }) {
           <>
             <ResponsiveContainer width="100%" height={260}>
               <LineChart data={series} margin={{ top: 8, right: 16, bottom: 0, left: -18 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#e6e9f0" />
+                <CartesianGrid strokeDasharray="3 3" stroke="#efebe3" />
                 <XAxis dataKey="date" tick={{ fontSize: 12 }} />
                 <YAxis domain={[0, 10]} tick={{ fontSize: 12 }} />
                 <Tooltip />
-                <Line type="monotone" dataKey="intensity" stroke={m.color} strokeWidth={3} dot={{ r: 5, fill: m.color }} />
+                <Line type="monotone" dataKey="intensity" stroke="#dca6d6" strokeWidth={3} dot={{ r: 5, fill: '#dca6d6' }} />
               </LineChart>
             </ResponsiveContainer>
-            <div className="quote" style={{ marginTop: 12, borderColor: m.color }}>
+            <div className="insight-tint" style={{ marginTop: 12 }}>
               {change === null ? t('insightFlat') : change < 0 ? t('insightDown', Math.abs(change), name) : change > 0 ? t('insightUp', change, name) : t('insightFlat')}
             </div>
           </>

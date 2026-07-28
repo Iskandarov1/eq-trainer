@@ -7,7 +7,7 @@ export default function NextLevel() {
   const { data, lang, t, go } = useContext(AppCtx)
   return (
     <div>
-      <div className="hero" style={{ background: 'radial-gradient(600px 300px at 90% -20%, rgba(255,255,255,.15), transparent 60%), linear-gradient(125deg, #343a8f, #7048e8 55%, #c2255c)' }}>
+      <div className="hero">
         <h1>{t('nextLevel')}</h1>
         <div className="q">{t('nextLevelIntro')}</div>
         <div className="q" style={{ marginTop: 8 }}>{t('nlQuote')}</div>
@@ -20,16 +20,15 @@ export default function NextLevel() {
             <div
               key={key}
               className="card"
-              style={{ cursor: 'pointer', '--accent': m.color, borderTop: `4px solid ${m.color}` }}
+              style={{ cursor: 'pointer', background: m.color, color: '#fff' }}
               onClick={() => go({ page: 'module', emotion: key })}
             >
-              <div style={{ width: 14, height: 14, borderRadius: '50%', background: m.color }} />
-              <h2 style={{ margin: '10px 0 2px' }}>{L(lang, EMOTION_NAMES[key])}</h2>
-              <div className="muted" style={{ fontWeight: 600, fontSize: 14 }}>{L(lang, m.subtitle)}</div>
-              <p className="small muted" style={{ margin: '10px 0 14px' }}>{L(lang, m.explanation).split('.')[0]}.</p>
-              <div className="meter"><div style={{ width: `${score}%` }} /></div>
-              <div className="small muted" style={{ marginTop: 6 }}>
-                {t('masteryScore')}: <b style={{ color: m.color }}>{score}/100</b> · {entries.length} {t('entriesWord')}
+              <div className="caps" style={{ color: 'rgba(255,255,255,0.6)' }}>{L(lang, m.subtitle)}</div>
+              <h2 style={{ margin: '8px 0 2px', color: '#fff', fontSize: 24 }}>{L(lang, EMOTION_NAMES[key])}</h2>
+              <p className="small" style={{ margin: '10px 0 14px', color: 'rgba(255,255,255,0.78)' }}>{L(lang, m.explanation).split('.')[0]}.</p>
+              <div className="meter" style={{ background: 'rgba(255,255,255,0.25)' }}><div style={{ width: `${score}%`, background: '#fff' }} /></div>
+              <div className="small" style={{ marginTop: 6, color: 'rgba(255,255,255,0.8)' }}>
+                {t('masteryScore')}: <b>{score}/100</b> · {entries.length} {t('entriesWord')}
               </div>
             </div>
           )
