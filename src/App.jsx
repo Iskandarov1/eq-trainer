@@ -5,6 +5,7 @@ import Dashboard from './components/Dashboard.jsx'
 import Journey from './components/Journey.jsx'
 import NextLevel from './components/NextLevel.jsx'
 import EmotionModule from './components/EmotionModule.jsx'
+import Breathe from './components/Breathe.jsx'
 
 export const AppCtx = React.createContext(null)
 
@@ -66,6 +67,7 @@ export default function App() {
           <button className={route.page === 'home' ? 'active' : ''} onClick={() => go({ page: 'home' })}>{t('home')}</button>
           <button className={route.page === 'journey' ? 'active' : ''} onClick={() => go({ page: 'journey' })}>{t('journey')}</button>
           <button className={route.page === 'nextlevel' || route.page === 'module' ? 'active' : ''} onClick={() => go({ page: 'nextlevel' })}>{t('nextLevel')}</button>
+          <button className={route.page === 'breathe' ? 'active' : ''} onClick={() => go({ page: 'breathe' })}>{t('breatheNav')}</button>
         </nav>
         <div className="lang">
           <button className={lang === 'en' ? 'active' : ''} onClick={() => update((d) => { d.lang = 'en' })}>EN</button>
@@ -80,6 +82,7 @@ export default function App() {
         {route.page === 'journey' && <Journey />}
         {route.page === 'nextlevel' && <NextLevel />}
         {route.page === 'module' && <EmotionModule emotion={route.emotion} />}
+        {route.page === 'breathe' && <Breathe />}
       </main>
 
       <div className="footer-actions">
@@ -99,6 +102,7 @@ function Breadcrumbs() {
   const parts = [{ label: t('home'), r: { page: 'home' } }]
   if (route.page === 'journey') parts.push({ label: t('journey') })
   if (route.page === 'nextlevel') parts.push({ label: t('nextLevel') })
+  if (route.page === 'breathe') parts.push({ label: t('breatheNav') })
   if (route.page === 'module') {
     parts.push({ label: t('nextLevel'), r: { page: 'nextlevel' } })
     parts.push({ label: L(lang, EMOTION_NAMES[route.emotion]) })

@@ -55,13 +55,22 @@ export default function Dashboard() {
         <div className="stat"><div className="n">{total}</div><div className="l">{t('entriesWord')}</div></div>
       </div>
 
-      {/* Next Level entry point */}
-      <div className="card" style={{ cursor: 'pointer', marginBottom: 18, display: 'flex', alignItems: 'center', gap: 16, flexWrap: 'wrap' }} onClick={() => go({ page: 'nextlevel' })}>
-        <div style={{ flex: 1, minWidth: 220 }}>
-          <h2>{t('nextLevelCard')}</h2>
-          <p className="muted small" style={{ marginTop: 6 }}>{t('nextLevelIntro')}</p>
+      {/* Next Level + Breathe entry points */}
+      <div className="grid grid-2" style={{ marginBottom: 18 }}>
+        <div className="card" style={{ cursor: 'pointer', display: 'flex', flexDirection: 'column', gap: 10, alignItems: 'flex-start' }} onClick={() => go({ page: 'nextlevel' })}>
+          <div style={{ flex: 1 }}>
+            <h2>{t('nextLevelCard')}</h2>
+            <p className="muted small" style={{ marginTop: 6 }}>{t('nextLevelIntro')}</p>
+          </div>
+          <button className="btn sm">{t('goToNextLevel')} →</button>
         </div>
-        <button className="btn sm">{t('goToNextLevel')} →</button>
+        <div className="card" style={{ cursor: 'pointer', display: 'flex', flexDirection: 'column', gap: 10, alignItems: 'flex-start' }} onClick={() => go({ page: 'breathe' })}>
+          <div style={{ flex: 1 }}>
+            <h2>{t('breathe')}</h2>
+            <p className="muted small" style={{ marginTop: 6 }}>{t('breatheIntro')}</p>
+          </div>
+          <button className="btn sm">{t('breatheStart')} →</button>
+        </div>
       </div>
 
       {/* Overall progress */}

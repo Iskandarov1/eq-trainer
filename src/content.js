@@ -81,6 +81,11 @@ export const UI = {
   golemanApproach: { en: 'The Goleman Approach — 4 steps', ru: 'Подход Гоулмана — 4 шага' },
   tapCard: { en: 'Tap a card to explore each step', ru: 'Нажмите на карточку, чтобы раскрыть шаг' },
   breathe: { en: 'Breathing guide · 4-7-8', ru: 'Дыхание · 4-7-8' },
+  breatheNav: { en: 'Breathe', ru: 'Дыхание' },
+  breatheIntro: {
+    en: 'The 4-7-8 breath: inhale for 4, hold for 7, exhale for 8. Deep belly breathing tells the brain: you are safe now.',
+    ru: 'Дыхание 4-7-8: вдох на 4, задержка на 7, выдох на 8. Глубокое дыхание животом говорит мозгу: сейчас ты в безопасности.',
+  },
   breatheStart: { en: 'Start breathing', ru: 'Начать дыхание' },
   breatheStop: { en: 'Stop', ru: 'Стоп' },
   inhale: { en: 'Inhale', ru: 'Вдох' },
