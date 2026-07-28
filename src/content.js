@@ -97,7 +97,7 @@ export const UI = {
   ritualMorning: { en: 'Morning: 2-min intention', ru: 'Утро: 2-минутное намерение' },
   ritualDay: { en: 'Daytime: 1 emotional check-in', ru: 'День: 1 эмоциональный чек-ин' },
   ritualEvening: { en: 'Evening: 5-min reflection journal', ru: 'Вечер: 5-минутная рефлексия' },
-  ritualPlaceholder: { en: 'Write your personal ritual here…', ru: 'Опишите здесь свой личный ритуал…' },
+  ritualPlaceholder: { en: 'My EI ritual: in the morning I will… during the day I will… in the evening I will…', ru: 'Мой ритуал ЭИ: утром я буду… днём я буду… вечером я буду…' },
   congratsJourney: { en: 'You completed the 30-day journey!', ru: 'Вы прошли 30-дневный путь!' },
   yourEntry: { en: 'Your entry', ru: 'Ваша запись' },
   optionalNote: { en: 'Optional note…', ru: 'Заметка (необязательно)…' },
@@ -198,7 +198,7 @@ export const WEEKS = [
           ru: 'Используйте точные слова: вместо «плохо» — «разочарован» или «перегружен». Исследования показывают: само называние эмоции снижает её интенсивность в мозге.',
         },
         fields: [
-          { id: 'words', t: 'text', label: { en: 'Today’s precise emotion words', ru: 'Точные слова эмоций сегодня' }, ph: { en: 'e.g. disappointed, energized, anxious…', ru: 'напр. разочарован, воодушевлён, встревожен…' } },
+          { id: 'words', t: 'text', label: { en: 'Today’s precise emotion words', ru: 'Точные слова эмоций сегодня' }, ph: { en: 'Today I felt precisely…', ru: 'Сегодня я точно чувствовал(а)…' } },
         ],
       },
       {
@@ -206,9 +206,9 @@ export const WEEKS = [
         title: { en: 'Evening Reflection Journal', ru: 'Вечерний дневник рефлексии' },
         desc: { en: 'Close the day by looking inward.', ru: 'Завершите день взглядом внутрь себя.' },
         fields: [
-          { id: 'trigger', t: 'textarea', label: { en: 'What triggered strong emotion today?', ru: 'Что вызвало сильную эмоцию сегодня?' } },
-          { id: 'react', t: 'textarea', label: { en: 'Did I react or respond?', ru: 'Я отреагировал импульсивно или ответил осознанно?' } },
-          { id: 'learn', t: 'textarea', label: { en: 'What can I learn about myself?', ru: 'Что я могу узнать о себе?' } },
+          { id: 'trigger', t: 'textarea', label: { en: 'What triggered strong emotion today?', ru: 'Что вызвало сильную эмоцию сегодня?' }, ph: { en: 'A strong emotion rose in me today when…', ru: 'Сильная эмоция поднялась во мне сегодня, когда…' } },
+          { id: 'react', t: 'textarea', label: { en: 'Did I react or respond?', ru: 'Я отреагировал импульсивно или ответил осознанно?' }, ph: { en: 'In that moment I…', ru: 'В тот момент я…' } },
+          { id: 'learn', t: 'textarea', label: { en: 'What can I learn about myself?', ru: 'Что я могу узнать о себе?' }, ph: { en: 'About myself I learned that…', ru: 'О себе я узнал(а), что…' } },
         ],
       },
     ],
@@ -231,7 +231,7 @@ export const WEEKS = [
         desc: { en: 'Every time you’re triggered: Pause. Take 3 deep breaths. Ask: What’s the best response here?', ru: 'Каждый раз при триггере: Пауза. 3 глубоких вдоха. Вопрос: какой ответ здесь наилучший?' },
         fields: [
           { id: 'used', t: 'check', label: { en: 'I used the Pause today', ru: 'Сегодня я использовал(а) паузу' } },
-          { id: 'when', t: 'textarea', label: { en: 'When, and what changed?', ru: 'Когда, и что изменилось?' } },
+          { id: 'when', t: 'textarea', label: { en: 'When, and what changed?', ru: 'Когда, и что изменилось?' }, ph: { en: 'I used the pause when… and it changed…', ru: 'Я использовал(а) паузу, когда… и это изменило…' } },
         ],
       },
       {
@@ -240,7 +240,7 @@ export const WEEKS = [
         desc: { en: 'Visualize a stressful situation and rehearse staying calm, empathetic, and clear-headed.', ru: 'Представьте стрессовую ситуацию и отрепетируйте спокойствие, эмпатию и ясность мышления.' },
         fields: [
           { id: 'done', t: 'check', label: { en: 'Visualization completed', ru: 'Визуализация выполнена' } },
-          { id: 'scene', t: 'textarea', label: { en: 'What situation did you rehearse?', ru: 'Какую ситуацию вы репетировали?' } },
+          { id: 'scene', t: 'textarea', label: { en: 'What situation did you rehearse?', ru: 'Какую ситуацию вы репетировали?' }, ph: { en: 'I rehearsed staying calm in the situation where…', ru: 'Я репетировал(а) спокойствие в ситуации, где…' } },
         ],
       },
       {
@@ -248,7 +248,7 @@ export const WEEKS = [
         title: { en: 'Gratitude Reframe (evening)', ru: 'Рефрейминг благодарности (вечером)' },
         desc: { en: 'Write 3 things that frustrated you today — and then one silver lining or lesson from each.', ru: 'Запишите 3 вещи, которые вас сегодня расстроили, — и по одному плюсу или уроку из каждой.' },
         fields: [
-          { id: 'items', t: 'textarea', label: { en: '3 frustrations → 3 silver linings', ru: '3 разочарования → 3 урока' }, ph: { en: '1) … → …\n2) … → …\n3) … → …', ru: '1) … → …\n2) … → …\n3) … → …' } },
+          { id: 'items', t: 'textarea', label: { en: '3 frustrations → 3 silver linings', ru: '3 разочарования → 3 урока' }, ph: { en: '1) I was frustrated by… → the lesson is…\n2) I was frustrated by… → the lesson is…\n3) I was frustrated by… → the lesson is…', ru: '1) Меня расстроило… → урок в том, что…\n2) Меня расстроило… → урок в том, что…\n3) Меня расстроило… → урок в том, что…' } },
         ],
       },
       {
@@ -256,7 +256,7 @@ export const WEEKS = [
         title: { en: 'Morning Intention-Setting (2 min)', ru: 'Утреннее намерение (2 мин)' },
         desc: { en: 'Ask: “How do I want to show up today — regardless of what happens?”', ru: 'Спросите: «Каким я хочу быть сегодня — что бы ни случилось?»' },
         fields: [
-          { id: 'intent', t: 'text', label: { en: 'Today I want to show up…', ru: 'Сегодня я хочу быть…' } },
+          { id: 'intent', t: 'text', label: { en: 'Morning intention', ru: 'Утреннее намерение' }, ph: { en: 'Today I want to show up…', ru: 'Сегодня я хочу быть…' } },
         ],
       },
     ],
@@ -278,7 +278,7 @@ export const WEEKS = [
         title: { en: 'Empathy Practice (1 conversation/day)', ru: 'Практика эмпатии (1 разговор в день)' },
         desc: { en: 'Drop your internal monologue. Be fully present in one interaction. Reflect back what the other person is feeling, not just what they said.', ru: 'Отключите внутренний монолог. Будьте полностью присутствующим в одном разговоре. Отразите, что человек чувствует, а не только что он сказал.' },
         fields: [
-          { id: 'note', t: 'textarea', label: { en: 'Who was it, and what were they feeling?', ru: 'С кем это было, и что чувствовал собеседник?' } },
+          { id: 'note', t: 'textarea', label: { en: 'Who was it, and what were they feeling?', ru: 'С кем это было, и что чувствовал собеседник?' }, ph: { en: 'I was fully present with… and I sensed they felt…', ru: 'Я был(а) полностью присутствующим с… и почувствовал(а), что он(а) испытывает…' } },
         ],
       },
       {
@@ -286,7 +286,7 @@ export const WEEKS = [
         title: { en: 'Observe Non-Verbal Cues', ru: 'Наблюдение невербальных сигналов' },
         desc: { en: 'In every conversation: What’s their tone? What’s their body saying? What’s unsaid?', ru: 'В каждом разговоре: Какой у собеседника тон? Что говорит его тело? Что осталось невысказанным?' },
         fields: [
-          { id: 'cues', t: 'textarea', label: { en: 'Tone / body language / the unsaid', ru: 'Тон / язык тела / невысказанное' } },
+          { id: 'cues', t: 'textarea', label: { en: 'Tone / body language / the unsaid', ru: 'Тон / язык тела / невысказанное' }, ph: { en: 'Their tone was… their body said… what stayed unsaid was…', ru: 'Тон был… тело говорило… невысказанным осталось…' } },
         ],
       },
       {
@@ -294,8 +294,8 @@ export const WEEKS = [
         title: { en: '“Other Lens” Journaling', ru: 'Дневник «Чужая оптика»' },
         desc: { en: 'Each evening, pick a moment from the day.', ru: 'Каждый вечер выберите один момент дня.' },
         fields: [
-          { id: 'felt', t: 'textarea', label: { en: 'How did the other person feel in that moment?', ru: 'Что чувствовал другой человек в тот момент?' } },
-          { id: 'needs', t: 'textarea', label: { en: 'What needs might have driven their behavior?', ru: 'Какие потребности могли стоять за его поведением?' } },
+          { id: 'felt', t: 'textarea', label: { en: 'How did the other person feel in that moment?', ru: 'Что чувствовал другой человек в тот момент?' }, ph: { en: 'In that moment the other person felt…', ru: 'В тот момент другой человек чувствовал…' } },
+          { id: 'needs', t: 'textarea', label: { en: 'What needs might have driven their behavior?', ru: 'Какие потребности могли стоять за его поведением?' }, ph: { en: 'Their behavior may have come from a need for…', ru: 'За его поведением могла стоять потребность в…' } },
         ],
       },
       {
@@ -304,7 +304,7 @@ export const WEEKS = [
         desc: { en: 'Don’t interrupt. Don’t fix. Just listen and reflect.', ru: 'Не перебивайте. Не «чините». Просто слушайте и отражайте.' },
         fields: [
           { id: 'done', t: 'check', label: { en: 'I listened without interrupting today', ru: 'Сегодня я слушал(а), не перебивая' } },
-          { id: 'who', t: 'text', label: { en: 'Who did you listen to?', ru: 'Кого вы слушали?' } },
+          { id: 'who', t: 'text', label: { en: 'Who did you listen to?', ru: 'Кого вы слушали?' }, ph: { en: 'Today I listened without interrupting to…', ru: 'Сегодня я, не перебивая, выслушал(а)…' } },
         ],
       },
     ],
@@ -326,8 +326,8 @@ export const WEEKS = [
         title: { en: 'Intentional Connection (1 person/day)', ru: 'Намеренный контакт (1 человек в день)' },
         desc: { en: 'Reach out to someone intentionally. Ask how they’re doing. Don’t just make it about you.', ru: 'Намеренно свяжитесь с кем-то. Спросите, как у него дела. Не делайте разговор только о себе.' },
         fields: [
-          { id: 'who', t: 'text', label: { en: 'Who did you reach out to?', ru: 'С кем вы связались?' } },
-          { id: 'note', t: 'textarea', label: { en: 'How did it go?', ru: 'Как прошло?' } },
+          { id: 'who', t: 'text', label: { en: 'Who did you reach out to?', ru: 'С кем вы связались?' }, ph: { en: 'Today I intentionally reached out to…', ru: 'Сегодня я намеренно связался(ась) с…' } },
+          { id: 'note', t: 'textarea', label: { en: 'How did it go?', ru: 'Как прошло?' }, ph: { en: 'The conversation went…', ru: 'Разговор прошёл…' } },
         ],
       },
       {
@@ -336,7 +336,7 @@ export const WEEKS = [
         desc: { en: 'Practice saying hard things with clarity, kindness, calmness. (Use a mirror or record yourself.)', ru: 'Практикуйте говорить сложные вещи с ясностью, добротой и спокойствием. (Перед зеркалом или на запись.)' },
         fields: [
           { id: 'done', t: 'check', label: { en: 'I rehearsed a difficult conversation', ru: 'Я отрепетировал(а) трудный разговор' } },
-          { id: 'topic', t: 'textarea', label: { en: 'What conversation, and how did it feel?', ru: 'Какой разговор, и каково это было?' } },
+          { id: 'topic', t: 'textarea', label: { en: 'What conversation, and how did it feel?', ru: 'Какой разговор, и каково это было?' }, ph: { en: 'I rehearsed saying… and it felt…', ru: 'Я репетировал(а), как сказать… и это ощущалось…' } },
         ],
       },
       {
@@ -344,8 +344,8 @@ export const WEEKS = [
         title: { en: 'Conflict Alchemy Exercise', ru: 'Алхимия конфликта' },
         desc: { en: 'Choose one recent disagreement.', ru: 'Выберите одно недавнее разногласие.' },
         fields: [
-          { id: 'need', t: 'textarea', label: { en: 'What was the deeper need behind their reaction?', ru: 'Какая глубинная потребность стояла за реакцией другого?' } },
-          { id: 'deescalate', t: 'textarea', label: { en: 'How could I have de-escalated the situation?', ru: 'Как я мог(ла) бы деэскалировать ситуацию?' } },
+          { id: 'need', t: 'textarea', label: { en: 'What was the deeper need behind their reaction?', ru: 'Какая глубинная потребность стояла за реакцией другого?' }, ph: { en: 'Behind their reaction was a deeper need for…', ru: 'За его реакцией стояла глубинная потребность в…' } },
+          { id: 'deescalate', t: 'textarea', label: { en: 'How could I have de-escalated the situation?', ru: 'Как я мог(ла) бы деэскалировать ситуацию?' }, ph: { en: 'I could have de-escalated it by…', ru: 'Я мог(ла) бы деэскалировать её, если бы…' } },
         ],
       },
       {
@@ -353,9 +353,9 @@ export const WEEKS = [
         title: { en: 'Relationship Journal', ru: 'Дневник отношений' },
         desc: { en: 'At the end of the day, write:', ru: 'В конце дня запишите:' },
         fields: [
-          { id: 'uplift', t: 'textarea', label: { en: 'Who did I uplift today?', ru: 'Кого я сегодня поддержал(а)?' } },
-          { id: 'present', t: 'textarea', label: { en: 'Who could I have been more present with?', ru: 'С кем я мог(ла) быть более присутствующим?' } },
-          { id: 'reconnect', t: 'textarea', label: { en: 'Who do I need to reconnect with?', ru: 'С кем мне нужно восстановить связь?' } },
+          { id: 'uplift', t: 'textarea', label: { en: 'Who did I uplift today?', ru: 'Кого я сегодня поддержал(а)?' }, ph: { en: 'Today I uplifted…', ru: 'Сегодня я поддержал(а)…' } },
+          { id: 'present', t: 'textarea', label: { en: 'Who could I have been more present with?', ru: 'С кем я мог(ла) быть более присутствующим?' }, ph: { en: 'I could have been more present with…', ru: 'Я мог(ла) быть более присутствующим с…' } },
+          { id: 'reconnect', t: 'textarea', label: { en: 'Who do I need to reconnect with?', ru: 'С кем мне нужно восстановить связь?' }, ph: { en: 'I need to reconnect with…', ru: 'Мне нужно восстановить связь с…' } },
         ],
       },
     ],
@@ -480,7 +480,7 @@ export const MODULES = {
         title: { en: '4 · Share it', ru: '4 · Поделитесь' },
         fields: [
           { id: 'shared', t: 'check', label: { en: 'I’ve shared this with someone safe', ru: 'Я поделился(ась) этим с безопасным человеком' } },
-          { id: 'sharedNote', t: 'textarea', optional: true },
+          { id: 'sharedNote', t: 'textarea', optional: true, ph: { en: 'When I shared it, I felt…', ru: 'Когда я поделился(ась), я почувствовал(а)…' } },
         ],
       },
     ],
@@ -527,7 +527,7 @@ export const MODULES = {
         title: { en: '2 · Ground yourself physically', ru: '2 · Заземлитесь физически' },
         fields: [
           { id: 'breathing', t: 'breathing' },
-          { id: 'grounding', t: 'inputs5', label: { en: 'Grounding checklist: name 5 things you see', ru: 'Заземление: назовите 5 вещей, которые видите' } },
+          { id: 'grounding', t: 'inputs5', label: { en: 'Grounding checklist: name 5 things you see', ru: 'Заземление: назовите 5 вещей, которые видите' }, ph: { en: 'I see…', ru: 'Я вижу…' } },
         ],
       },
       {

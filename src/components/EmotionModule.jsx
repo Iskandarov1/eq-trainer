@@ -179,7 +179,7 @@ function Field({ f, value, set }) {
                 key={i}
                 type="text"
                 value={v}
-                placeholder={`${i + 1}.`}
+                placeholder={f.ph ? `${i + 1} · ${L(lang, f.ph)}` : `${i + 1}.`}
                 onChange={(e) => set(f.id, items.map((x, j) => (j === i ? e.target.value : x)))}
               />
             ))}
