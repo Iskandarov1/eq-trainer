@@ -73,3 +73,19 @@ Per the owner's direction, quotes and phrases in the app are sourced from these 
 6. **Context-aware strategy picker** — suggest 2–3 strategies filtered by emotion and situation; track which worked (ER = goals + strategies as a function of emotion, person, context).
 7. **Temporal-distancing prompt** — "How will this matter in a week / a year?" optional field (evidence-based reappraisal).
 8. **Uzbek localization** — third language using the existing `{en, ru}` → `{en, ru, uz}` string convention.
+
+## 8. Design system (v1.1 redesign, 2026-07-28)
+
+Grounded in two research passes: live pattern research on Mobbin (How We Feel, Stoic, Finch, Calm, Headspace, Duolingo, 5 Minute Journal) and UX-teardown research on the same category. Implemented:
+
+- **Warm tonal palette** with automatic dark mode (`prefers-color-scheme`): bg `#f7f7f2`/`#121412`, brand `#0ca678`/`#38d9a9`, elevation by surface tone in dark, AA contrast.
+- **Two typographic voices**: serif (Georgia stack) for emotional moments — greetings, quotes, day titles; sans for UI; letterspaced tiny-caps (`.caps`) for metadata ("TODAY · DAY 12 · WEEK 2").
+- **Single-action home**: serif greeting → one dark "Today" hero card (Stoic pattern) → compact stat chips (streak/days/entries) → everything else demoted.
+- **Gradient budget**: one gradient surface per screen; all other surfaces flat/neutral.
+- **Program grammar** on journey day view (caps day-meta over serif week title, Headspace pattern); milestone day-dots (7/14/21/30) ringed in amber.
+- **Two-tier celebrations** (Duolingo mechanics, calm tone): everyday completion = toast; milestones = confetti overlay.
+- **Full-screen breathing player** (Calm pattern): running 4-7-8 guide takes over the screen in the module's hue; Escape/Stop exits.
+- **Accessibility**: ≥44px touch targets, `:focus-visible` rings, `prefers-reduced-motion` (breathing circle stays static), pill buttons.
+- **Privacy as feature**: "Your journal never leaves this device" trust line in the footer.
+
+Deferred design backlog (from the same research): one-question-per-screen practice wizard, prompt-starter chips above textareas, streak freezes/repair, shareable milestone recap cards, week strip on the dashboard, emotion picker as colored word-circles (pairs with the v2 Mood Meter).

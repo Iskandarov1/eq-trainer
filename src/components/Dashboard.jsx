@@ -1,8 +1,8 @@
 import React, { useContext } from 'react'
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from 'recharts'
 import { AppCtx } from '../App.jsx'
-import { L, MODULES, EMOTION_NAMES } from '../content.js'
-import { masteryScore, earnedBadges, weeklyCounts, mostImproved, focusEmotion, journeyStats } from '../store.js'
+import { L, MODULES, EMOTION_NAMES, WEEKS } from '../content.js'
+import { masteryScore, earnedBadges, weeklyCounts, mostImproved, focusEmotion, journeyStats, weekForDay } from '../store.js'
 
 export default function Dashboard() {
   const { data, lang, t, go } = useContext(AppCtx)
@@ -12,7 +12,7 @@ export default function Dashboard() {
   const weekly = weeklyCounts(entries)
   const improved = mostImproved(entries)
   const focus = focusEmotion(entries)
-  const { done, cur } = journeyStats(data.journey)
+  const { done, cur, streak } = journeyStats(data.journey)
   const started = !!data.journey.startDate
 
   const nextBadge = badges.filter((b) => !b.earned).sort((a, b) => a.remaining - b.remaining)[0]
@@ -23,39 +23,45 @@ export default function Dashboard() {
   }))
   const weeklyTop = ['anger', 'shame', 'fear'].reduce((a, b) => (weekly[b] > weekly[a] ? b : a), 'anger')
 
+  const hour = new Date().getHours()
+  const greet = hour < 12 ? 'goodMorning' : hour < 18 ? 'goodAfternoon' : 'goodEvening'
+  const day = Math.min(cur, 30)
+  const week = started ? weekForDay(day) : WEEKS[0]
+
   return (
     <div>
-      <div className="hero">
-        <h1>{t('appName')}</h1>
-        <div className="q">{t('heroQuote')}</div>
+      {/* Greeting: the emotional voice */}
+      <div style={{ margin: '6px 0 20px' }}>
+        <h1 className="greeting">{t(greet)}</h1>
+        <p className="muted" style={{ fontFamily: 'var(--serif)', fontStyle: 'italic', maxWidth: 680 }}>{t('heroQuote')}</p>
       </div>
 
-      <div className="grid grid-2" style={{ marginBottom: 18 }}>
-        {/* Journey card */}
-        <div className="card" style={{ cursor: 'pointer' }} onClick={() => go({ page: 'journey' })}>
-          <h2>🌱 {t('journeyCard')}</h2>
-          {started ? (
-            <>
-              <div style={{ display: 'flex', alignItems: 'baseline', gap: 8, margin: '12px 0 8px' }}>
-                <span style={{ fontSize: 34, fontWeight: 800 }}>{Math.min(cur, 30)}</span>
-                <span className="muted">/ 30 · {t('day')}</span>
-              </div>
-              <div className="meter"><div style={{ width: `${(done / 30) * 100}%` }} /></div>
-              <div className="small muted" style={{ marginTop: 6 }}>{done} {t('daysCompleted')}</div>
-            </>
-          ) : (
-            <p className="muted" style={{ margin: '10px 0' }}>{t('startJourneyHint')}</p>
-          )}
-          <button className="btn brand sm" style={{ marginTop: 12 }}>{t('goToJourney')} →</button>
+      {/* The single primary action */}
+      <div className="today-hero" style={{ marginBottom: 18 }} onClick={() => go({ page: 'journey' })}>
+        <div className="caps">
+          {started
+            ? `${t('todayLabel')} · ${t('day')} ${day} ${t('of30')} · ${t('weekWord')} ${WEEKS.indexOf(week) + 1}`
+            : `${t('todayLabel')} · ${t('day')} 1`}
         </div>
+        <div className="title">{started ? `${week.emoji} ${L(lang, week.title)}` : `🌱 ${t('journeyCard')}`}</div>
+        <div className="caps">{t('estPractice')}</div>
+        <button className="btn brand" style={{ marginTop: 8 }}>{started ? t('viewDay') : t('startJourney')} →</button>
+      </div>
 
-        {/* Next Level card */}
-        <div className="card" style={{ cursor: 'pointer' }} onClick={() => go({ page: 'nextlevel' })}>
+      {/* Compact stats */}
+      <div className="stat-row" style={{ marginBottom: 18 }}>
+        <div className="stat"><div className="n">🔥 {streak}</div><div className="l">{t('streak')}</div></div>
+        <div className="stat"><div className="n">{done}</div><div className="l">{t('daysCompleted')}</div></div>
+        <div className="stat"><div className="n">{total}</div><div className="l">{t('entriesWord')}</div></div>
+      </div>
+
+      {/* Next Level entry point */}
+      <div className="card" style={{ cursor: 'pointer', marginBottom: 18, display: 'flex', alignItems: 'center', gap: 16, flexWrap: 'wrap' }} onClick={() => go({ page: 'nextlevel' })}>
+        <div style={{ flex: 1, minWidth: 220 }}>
           <h2>⚡ {t('nextLevelCard')}</h2>
-          <p className="muted small" style={{ margin: '10px 0' }}>{t('nextLevelIntro')}</p>
-          <div className="small" style={{ fontWeight: 700 }}>{t('totalPractices', total)}</div>
-          <button className="btn sm" style={{ marginTop: 12, background: '#7048e8' }}>{t('goToNextLevel')} →</button>
+          <p className="muted small" style={{ marginTop: 6 }}>{t('nextLevelIntro')}</p>
         </div>
+        <button className="btn sm" style={{ background: '#7048e8', color: '#fff' }}>{t('goToNextLevel')} →</button>
       </div>
 
       {/* Overall progress */}
@@ -135,7 +141,7 @@ function Ring({ value, color, emoji, label, sub, onClick }) {
   return (
     <div className="ring-item" style={{ cursor: 'pointer' }} onClick={onClick}>
       <svg width="130" height="130" viewBox="0 0 130 130">
-        <circle cx="65" cy="65" r={R} fill="none" stroke="#eef0f5" strokeWidth="11" />
+        <circle cx="65" cy="65" r={R} fill="none" stroke="rgba(128, 140, 135, 0.25)" strokeWidth="11" />
         <circle
           cx="65" cy="65" r={R} fill="none" stroke={color} strokeWidth="11" strokeLinecap="round"
           strokeDasharray={C} strokeDashoffset={C * (1 - value / 100)}

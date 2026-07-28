@@ -120,6 +120,17 @@ export const UI = {
   },
   errorTitle: { en: 'Something went wrong', ru: 'Что-то пошло не так' },
   errorReload: { en: 'Reload the app', ru: 'Перезагрузить приложение' },
+  goodMorning: { en: 'Good morning', ru: 'Доброе утро' },
+  goodAfternoon: { en: 'Good afternoon', ru: 'Добрый день' },
+  goodEvening: { en: 'Good evening', ru: 'Добрый вечер' },
+  todayLabel: { en: 'Today', ru: 'Сегодня' },
+  weekWord: { en: 'Week', ru: 'Неделя' },
+  begin: { en: 'Begin', ru: 'Начать' },
+  estPractice: { en: '≈ 5–10 min · guided practice', ru: '≈ 5–10 мин · практика с подсказками' },
+  trustNote: { en: '🔒 Your journal never leaves this device — everything is stored locally.', ru: '🔒 Ваш дневник не покидает это устройство — всё хранится локально.' },
+  milestoneTitle: { en: (d) => `Day ${d} complete!`, ru: (d) => `День ${d} завершён!` },
+  milestoneBody: { en: 'A milestone on your journey. Consistency is the practice.', ru: 'Веха на вашем пути. Постоянство и есть практика.' },
+  continueWord: { en: 'Continue', ru: 'Продолжить' },
 }
 
 // Localized labels for journal entry field keys (raw keys must never reach the UI)

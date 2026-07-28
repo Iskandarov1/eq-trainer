@@ -31,6 +31,7 @@ Journal entries: `{ id, date: ISO, intensity? (only if slider touched), ...field
 - No secure-context-only APIs (`crypto.randomUUID` etc.) without a fallback — the app runs on `file://`.
 - All state changes go through `update(fn)` (structuredClone + save); never mutate `data` directly.
 - CSS: `color-mix()` needs a plain fallback declaration on the previous line; keep the ≤480px and `prefers-reduced-motion` media queries intact.
+- Design system (2026-07 redesign, research-based — see PRD §8): all colors via CSS custom properties in `:root` with a `prefers-color-scheme: dark` override — never hardcode surface/text colors in components; serif (`var(--serif)`) is reserved for emotional voice (greetings, quotes, titles), `.caps` class for metadata; gradient budget is ONE gradient surface per screen (`.hero` / `.module-hero`); min 44px touch targets; celebrations only at milestone days 7/14/21/30.
 
 ## QA checklist (manual — no test framework)
 `npm run build`, then verify: save a practice from `dist/index.html` opened from disk; import a backup with `entries:{}` (must not white-screen); RU mode journal shows localized labels/values; new profile shows no focus suggestion; two same-day entries get unique chart labels.

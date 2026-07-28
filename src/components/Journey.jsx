@@ -46,7 +46,7 @@ export default function Journey() {
       </div>
 
       {journeyDone && (
-        <div className="card" style={{ marginBottom: 18, borderColor: '#f5b301', background: 'linear-gradient(180deg,#fffbeb,#fff)' }}>
+        <div className="card" style={{ marginBottom: 18, borderColor: 'var(--amber)', background: 'var(--surface-2)' }}>
           <h2>🎉 {t('congratsJourney')}</h2>
         </div>
       )}
@@ -102,7 +102,7 @@ function WeekCard({ w, cur, days, onOpenDay }) {
           return (
             <div
               key={d}
-              className={`day-dot ${days[d]?.done ? 'done' : ''} ${d === cur ? 'today' : ''} ${unlocked ? 'clickable' : 'locked'}`}
+              className={`day-dot ${days[d]?.done ? 'done' : ''} ${d === cur ? 'today' : ''} ${[7, 14, 21, 30].includes(d) ? 'milestone' : ''} ${unlocked ? 'clickable' : 'locked'}`}
               title={unlocked ? `${t('browseDay')} ${d}` : t('locked')}
               onClick={() => unlocked && onOpenDay(d)}
             >
@@ -115,8 +115,11 @@ function WeekCard({ w, cur, days, onOpenDay }) {
   )
 }
 
+const MILESTONES = [7, 14, 21, 30]
+
 function DayView({ day, isToday }) {
   const { data, update, lang, t, notify } = useContext(AppCtx)
+  const [celebrate, setCelebrate] = useState(false)
   const w = weekForDay(day)
   if (!w) return null
   const dayData = data.journey.days[day] || { fields: {}, done: false }
@@ -129,9 +132,11 @@ function DayView({ day, isToday }) {
   return (
     <div className="card week-card" style={{ '--wcolor': w.color }}>
       <div style={{ display: 'flex', alignItems: 'baseline', gap: 10, flexWrap: 'wrap' }}>
-        <h2>{t('day')} {day} {t('of30')}</h2>
-        <span className="muted small">{w.emoji} {L(lang, w.title)}</span>
-        {dayData.done && <span className="week-state done">{t('dayDone')}</span>}
+        <div>
+          <div className="caps">{t('day')} {day} {t('of30')}</div>
+          <h2 className="serif" style={{ marginTop: 2 }}>{w.emoji} {L(lang, w.title)}</h2>
+        </div>
+        {dayData.done && <span className="week-state done" style={{ marginLeft: 'auto' }}>{t('dayDone')}</span>}
       </div>
       <div className="quote" style={{ margin: '12px 0', borderColor: w.color }}>{L(lang, w.quote)}</div>
       <h3 style={{ margin: '14px 0 10px' }}>{t('todayPractices')}</h3>
@@ -171,12 +176,44 @@ function DayView({ day, isToday }) {
       <div style={{ marginTop: 16, textAlign: 'right' }}>
         <button
           className="btn"
-          style={{ background: w.color }}
+          style={{ background: w.color, color: '#fff' }}
           disabled={dayData.done}
-          onClick={() => { update((d) => { (d.journey.days[day] ||= { fields: {} }).done = true }); notify(t('saved')) }}
+          onClick={() => {
+            update((d) => { (d.journey.days[day] ||= { fields: {} }).done = true })
+            if (MILESTONES.includes(day)) setCelebrate(true)
+            else notify(t('saved'))
+          }}
         >
           {dayData.done ? t('dayDone') : `✓ ${t('markDayDone')}`}
         </button>
+      </div>
+      {celebrate && <Celebrate day={day} onClose={() => setCelebrate(false)} />}
+    </div>
+  )
+}
+
+/* Milestone-only celebration (days 7/14/21/30) — everyday completion stays subtle */
+const CONFETTI_COLORS = ['#0ca678', '#f59f00', '#e8590c', '#7048e8', '#1971c2']
+function Celebrate({ day, onClose }) {
+  const { t } = useContext(AppCtx)
+  return (
+    <div className="celebrate-bg" onClick={onClose}>
+      <div className="celebrate" onClick={(e) => e.stopPropagation()}>
+        {Array.from({ length: 14 }, (_, i) => (
+          <span
+            key={i}
+            className="confetti"
+            style={{
+              left: `${(i * 7 + 4) % 100}%`,
+              background: CONFETTI_COLORS[i % CONFETTI_COLORS.length],
+              animationDelay: `${(i % 7) * 0.25}s`,
+            }}
+          />
+        ))}
+        <div className="big">🎉</div>
+        <h2>{t('milestoneTitle', day)}</h2>
+        <p className="muted" style={{ marginBottom: 18 }}>{t('milestoneBody')}</p>
+        <button className="btn brand" onClick={onClose}>{t('continueWord')}</button>
       </div>
     </div>
   )

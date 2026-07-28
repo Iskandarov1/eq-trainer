@@ -87,6 +87,7 @@ export default function App() {
         <button className="btn ghost sm" onClick={() => importRef.current?.click()}>⬆️ {t('importData')}</button>
         <input ref={importRef} type="file" accept=".json" style={{ display: 'none' }} onChange={onImport} />
       </div>
+      <div className="trust-note">{t('trustNote')}</div>
 
       {toast && <div className="toast">{toast}</div>}
     </AppCtx.Provider>

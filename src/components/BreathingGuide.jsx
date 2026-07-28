@@ -26,10 +26,18 @@ export default function BreathingGuide() {
     return () => clearTimeout(timer.current)
   }, [running, phase])
 
+  // full-screen player: Escape exits
+  useEffect(() => {
+    if (!running) return
+    const onKey = (e) => { if (e.key === 'Escape') { setRunning(false); setPhase(0) } }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [running])
+
   const label = running ? t(PHASES[phase].key) : '4 · 7 · 8'
 
   return (
-    <div className="breath-wrap">
+    <div className={`breath-wrap ${running ? 'playing' : ''}`}>
       <div className="field-label" style={{ alignSelf: 'flex-start' }}>{t('breathe')}</div>
       <div className={`breath-circle ${running ? PHASES[phase].key : ''}`}>{label}</div>
       <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>

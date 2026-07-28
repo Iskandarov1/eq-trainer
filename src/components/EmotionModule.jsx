@@ -85,7 +85,7 @@ function Practice({ emotion, m, onSaved }) {
         </div>
       ))}
       <div style={{ marginTop: 16, textAlign: 'right' }}>
-        <button className="btn" style={{ background: m.color }} disabled={!hasContent} onClick={save}>
+        <button className="btn" style={{ background: m.color, color: '#fff' }} disabled={!hasContent} onClick={save}>
           💾 {t('save')}
         </button>
       </div>
