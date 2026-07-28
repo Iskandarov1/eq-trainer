@@ -168,7 +168,8 @@ export const FIELD_LABELS = {
   grounding: { en: 'Grounding: 5 things I see', ru: 'Заземление: 5 вещей' },
   reframe: { en: 'Reframe', ru: 'Переосмысление' },
   brave: { en: 'Micro-brave step', ru: 'Микро-смелый шаг' },
-  afraid: { en: 'Afraid to lose', ru: 'Боюсь потерять' },
+  wantQuick: { en: 'What it points at', ru: 'На что указывает' },
+  want: { en: 'What I actually want', ru: 'Чего я на самом деле хочу' },
   took: { en: 'I took this step', ru: 'Я сделал(а) этот шаг' },
   tookDate: { en: 'Step taken on', ru: 'Шаг сделан' },
   intensity: { en: 'Intensity', ru: 'Интенсивность' },
@@ -178,7 +179,7 @@ export const EMOTION_NAMES = {
   anger: { en: 'Anger', ru: 'Гнев' },
   shame: { en: 'Shame', ru: 'Стыд' },
   fear: { en: 'Fear', ru: 'Страх' },
-  jealousy: { en: 'Jealousy', ru: 'Ревность' },
+  envy: { en: 'Envy', ru: 'Зависть' },
 }
 
 // ---------------- 30-DAY JOURNEY (from the Goleman 1-month plan PDF) ----------------
@@ -585,69 +586,69 @@ export const MODULES = {
     ],
     journalFields: ['about', 'reframe', 'brave'],
   },
-  jealousy: {
+  envy: {
     color: '#9a6b93',
     colorSoft: '#f4edf3',
-    subtitle: { en: 'The Green-Eyed Messenger', ru: 'Зеленоглазый вестник' },
+    subtitle: { en: 'The Hidden Compass', ru: 'Скрытый компас' },
     explanation: {
-      en: 'Jealousy signals that a bond you value feels threatened — or that comparison has hooked you. It often masks fear of loss and quiet self-doubt. Heard as information, it points to what you treasure. Jealousy heard clearly = Care.',
-      ru: 'Ревность сигналит: ценная для вас связь кажется под угрозой — или вас зацепило сравнение. Часто она маскирует страх потери и тихую неуверенность в себе. Услышанная как информация, она указывает на то, чем вы дорожите. Ясно услышанная ревность = Забота.',
+      en: 'Envy signals that someone has something you deeply want — status, skill, love, freedom. It often masks quiet self-criticism and constant comparison. Heard as information, it becomes a compass pointing at your own unmet wants. Envy heard clearly = Direction.',
+      ru: 'Зависть сигналит: у другого есть то, чего вы глубоко хотите, — статус, умение, любовь, свобода. Часто она маскирует тихую самокритику и постоянное сравнение. Услышанная как информация, она становится компасом, указывающим на ваши собственные желания. Ясно услышанная зависть = Направление.',
     },
     steps: [
       {
         title: { en: 'Step 1 · Name it precisely', ru: 'Шаг 1 · Назовите точно' },
-        body: { en: 'Is this jealousy — fear of losing what you have — or envy, wanting what another has? Precision defuses.', ru: 'Это ревность — страх потерять то, что есть, — или зависть, желание того, что есть у другого? Точность обезоруживает.' },
+        body: { en: 'Is this envy — wanting what another has — or jealousy, fear of losing what is yours? Precision defuses.', ru: 'Это зависть — желание того, что есть у другого, — или ревность, страх потерять своё? Точность обезоруживает.' },
       },
       {
-        title: { en: 'Step 2 · Catch the story', ru: 'Шаг 2 · Поймайте историю' },
-        body: { en: 'Notice the story your mind is spinning — “I’m being replaced”, “they matter more”. Separate the story from the facts.', ru: 'Заметьте историю, которую крутит ум: «меня заменяют», «они важнее». Отделите историю от фактов.' },
+        title: { en: 'Step 2 · Catch the comparison', ru: 'Шаг 2 · Поймайте сравнение' },
+        body: { en: 'Notice the story — “they have it easy”, “I’m behind”. Comparison sets another person’s highlight reel against your full picture. Separate the story from the facts.', ru: 'Заметьте историю: «им легко досталось», «я отстаю». Сравнение ставит чужую витрину против вашей полной картины. Отделите историю от фактов.' },
       },
       {
         title: { en: 'Step 3 · Ask the signal question', ru: 'Шаг 3 · Вопрос о сигнале' },
-        body: { en: '“What bond or value is this jealousy protecting? What exactly am I afraid to lose?”', ru: '«Какую связь или ценность защищает эта ревность? Что именно я боюсь потерять?»' },
+        body: { en: '“What exactly do I want that they have? What does this envy say I value?”', ru: '«Чего именно я хочу из того, что есть у них? О какой моей ценности говорит эта зависть?»' },
       },
       {
-        title: { en: 'Step 4 · Turn it into care', ru: 'Шаг 4 · Превратите её в заботу' },
-        body: { en: 'Jealousy is care under pressure. Use it to: express appreciation · ask directly for reassurance · invest in the bond and your own growth. Action, not surveillance.', ru: 'Ревность — это забота под давлением. Используйте её: выразить признательность · прямо попросить о поддержке · вложиться в отношения и собственный рост. Действие, а не слежка.' },
+        title: { en: 'Step 4 · Turn it into direction', ru: 'Шаг 4 · Превратите её в направление' },
+        body: { en: 'Envy is a want without a plan. Use it to: learn from the person you envy · take one concrete step toward what you want · name what you already have. Movement, not comparison.', ru: 'Зависть — это желание без плана. Используйте её: поучиться у того, кому завидуете · сделать один конкретный шаг к желаемому · назвать то, что у вас уже есть. Движение, а не сравнение.' },
       },
     ],
     practiceSteps: [
       {
-        title: { en: '1 · Describe a recent jealousy situation', ru: '1 · Опишите недавнюю ситуацию ревности' },
-        fields: [{ id: 'situation', t: 'textarea', ph: { en: 'I felt jealous when…', ru: 'Я почувствовал(а) ревность, когда…' } }],
+        title: { en: '1 · Describe a recent envy situation', ru: '1 · Опишите недавнюю ситуацию зависти' },
+        fields: [{ id: 'situation', t: 'textarea', ph: { en: 'I felt envious when…', ru: 'Я почувствовал(а) зависть, когда…' } }],
       },
       {
         title: { en: '2 · Name it precisely', ru: '2 · Назовите точно' },
         fields: [
           { id: 'emotion', t: 'chips', opts: [
-            { k: 'possessive', en: 'possessive', ru: 'собственничество' }, { k: 'insecure', en: 'insecure', ru: 'неуверенность' }, { k: 'threatened', en: 'threatened', ru: 'под угрозой' },
-            { k: 'excluded', en: 'excluded', ru: 'меня исключили' }, { k: 'envious', en: 'envious', ru: 'зависть' },
+            { k: 'resentful', en: 'resentful', ru: 'обида' }, { k: 'inadequate', en: 'inadequate', ru: 'я недостаточно хорош(а)' }, { k: 'longing', en: 'longing', ru: 'сильное желание' },
+            { k: 'bitter', en: 'bitter', ru: 'горечь' }, { k: 'inspired', en: 'inspired', ru: 'вдохновение' },
           ] },
           { id: 'intensity', t: 'slider' },
           { id: 'breathing', t: 'breathing', pattern: 'three' },
         ],
       },
       {
-        title: { en: '3 · What is it afraid to lose?', ru: '3 · Что она боится потерять?' },
+        title: { en: '3 · What is it pointing at?', ru: '3 · На что она указывает?' },
         fields: [
-          { id: 'protectQuick', t: 'chips-multi', opts: [
-            { k: 'closeness', en: 'Closeness', ru: 'Близость' }, { k: 'trust', en: 'Trust', ru: 'Доверие' }, { k: 'commitment', en: 'Commitment', ru: 'Верность' },
-            { k: 'selfWorth', en: 'Self-worth', ru: 'Самоценность' }, { k: 'belonging', en: 'Belonging', ru: 'Принадлежность' },
+          { id: 'wantQuick', t: 'chips-multi', opts: [
+            { k: 'recognition', en: 'Recognition', ru: 'Признание' }, { k: 'achievement', en: 'Achievement', ru: 'Достижение' }, { k: 'freedom', en: 'Freedom', ru: 'Свобода' },
+            { k: 'mastery', en: 'Mastery', ru: 'Мастерство' }, { k: 'love', en: 'Love', ru: 'Любовь' },
           ] },
-          { id: 'afraid', t: 'textarea', ph: { en: 'I’m afraid to lose…', ru: 'Я боюсь потерять…' } },
+          { id: 'want', t: 'textarea', ph: { en: 'What I actually want is…', ru: 'На самом деле я хочу…' } },
         ],
       },
       {
-        title: { en: '4 · Turn it into care', ru: '4 · Превратите её в заботу' },
+        title: { en: '4 · Turn it into direction', ru: '4 · Превратите её в направление' },
         fields: [
           { id: 'redirect', t: 'checks', opts: [
-            { k: 'expressAppreciation', en: 'Express appreciation', ru: 'Выразить признательность' }, { k: 'askDirectly', en: 'Ask directly for reassurance', ru: 'Прямо попросить о поддержке' }, { k: 'investGrowth', en: 'Invest in the bond and my growth', ru: 'Вложиться в отношения и свой рост' },
+            { k: 'learnFromThem', en: 'Learn from the person I envy', ru: 'Поучиться у того, кому завидую' }, { k: 'oneStep', en: 'Take one step toward what I want', ru: 'Сделать один шаг к желаемому' }, { k: 'gratitude', en: 'Name what I already have', ru: 'Назвать то, что у меня уже есть' },
           ] },
           { id: 'plan', t: 'textarea', ph: { en: 'My action plan is…', ru: 'Мой план действий…' } },
         ],
       },
     ],
-    journalFields: ['situation', 'afraid', 'plan'],
+    journalFields: ['situation', 'want', 'plan'],
   },
 }
 
@@ -667,6 +668,6 @@ export const BADGES = [
   { id: 'angerAlchemist', need: 10, scope: 'anger', name: { en: 'Anger Alchemist', ru: 'Алхимик гнева' }, desc: { en: '10 anger practices', ru: '10 практик с гневом' } },
   { id: 'shameShifter', need: 10, scope: 'shame', name: { en: 'Shame Shifter', ru: 'Преобразователь стыда' }, desc: { en: '10 shame practices', ru: '10 практик со стыдом' } },
   { id: 'fearFacer', need: 10, scope: 'fear', name: { en: 'Fear Facer', ru: 'Лицом к страху' }, desc: { en: '10 fear practices', ru: '10 практик со страхом' } },
-  { id: 'jealousyTamer', need: 10, scope: 'jealousy', name: { en: 'Jealousy Tamer', ru: 'Укротитель ревности' }, desc: { en: '10 jealousy practices', ru: '10 практик с ревностью' } },
+  { id: 'envyNavigator', need: 10, scope: 'envy', name: { en: 'Envy Navigator', ru: 'Навигатор зависти' }, desc: { en: '10 envy practices', ru: '10 практик с завистью' } },
   { id: 'emotionMaster', need: 30, scope: 'total', name: { en: 'Emotion Master', ru: 'Мастер эмоций' }, desc: { en: '30 total practices across all emotions', ru: '30 практик по всем эмоциям' } },
 ]

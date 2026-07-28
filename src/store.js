@@ -5,10 +5,10 @@ const KEY = 'eqTrainerData'
 const DEFAULTS = {
   lang: 'en',
   journey: { startDate: null, days: {}, ritual: { morning: '', day: '', evening: '' } },
-  entries: { anger: [], shame: [], fear: [], jealousy: [] },
+  entries: { anger: [], shame: [], fear: [], envy: [] },
 }
 
-export const EMOTION_KEYS = ['anger', 'shame', 'fear', 'jealousy']
+export const EMOTION_KEYS = ['anger', 'shame', 'fear', 'envy']
 
 // crypto.randomUUID is unavailable on file:// and plain-HTTP origins (dist is opened from disk)
 export const newId = () =>
@@ -33,7 +33,7 @@ export function normalizeData(d) {
       anger: validEntries(d.entries?.anger),
       shame: validEntries(d.entries?.shame),
       fear: validEntries(d.entries?.fear),
-      jealousy: validEntries(d.entries?.jealousy),
+      envy: validEntries(d.entries?.envy ?? d.entries?.jealousy), // 'jealousy' was this module's key for a brief window
     },
   }
 }
