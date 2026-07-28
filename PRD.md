@@ -82,10 +82,11 @@ Grounded in two research passes: live pattern research on Mobbin (How We Feel, S
 - **Two typographic voices**: serif (Georgia stack) for emotional moments — greetings, quotes, day titles; sans for UI; letterspaced tiny-caps (`.caps`) for metadata ("TODAY · DAY 12 · WEEK 2").
 - **Single-action home**: serif greeting → one dark "Today" hero card (Stoic pattern) → compact stat chips (streak/days/entries) → everything else demoted.
 - **Gradient budget**: one gradient surface per screen; all other surfaces flat/neutral.
-- **Program grammar** on journey day view (caps day-meta over serif week title, Headspace pattern); milestone day-dots (7/14/21/30) ringed in amber.
+- **Program grammar** on journey day view (caps day-meta over serif week title, Headspace pattern).
+- **Unlock path** (Duolingo mechanic, calm tone): the 30 days render as a winding vertical path along a dashed spine — done days filled with week color (✓), current day enlarged and pulsing, future days visible but dimmed, milestones (7/14/21/30) amber-ringed (★ when done), week headers as serif "chapter" cards; locked weeks hide their goal until reached.
 - **Two-tier celebrations** (Duolingo mechanics, calm tone): everyday completion = toast; milestones = confetti overlay.
 - **Full-screen breathing player** (Calm pattern): running 4-7-8 guide takes over the screen in the module's hue; Escape/Stop exits.
 - **Accessibility**: ≥44px touch targets, `:focus-visible` rings, `prefers-reduced-motion` (breathing circle stays static), pill buttons.
 - **Privacy as feature**: "Your journal never leaves this device" trust line in the footer.
 
-Deferred design backlog (from the same research): one-question-per-screen practice wizard, prompt-starter chips above textareas, streak freezes/repair, shareable milestone recap cards, week strip on the dashboard, emotion picker as colored word-circles (pairs with the v2 Mood Meter).
+Deferred design backlog (from the same research): one-question-per-screen practice wizard, prompt-starter chips above textareas, streak freezes/repair, shareable milestone recap cards, week strip on the dashboard, emotion picker as colored word-circles (pairs with the v2 Mood Meter). The Duolingo unlock path shipped 2026-07-28 (see above).

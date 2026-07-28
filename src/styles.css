@@ -275,19 +275,28 @@ label.field-label { display: block; font-weight: 600; font-size: 13.5px; margin-
 .week-state.done { background: var(--surface-2); color: var(--brand-ink); }
 .week-state.locked { background: var(--surface-2); color: var(--ink-soft); }
 
-.day-dots { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 12px; }
-.day-dot {
-  width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center; font-size: 12px; font-weight: 700;
-  border: 1.5px solid var(--line); color: var(--ink-soft); background: var(--surface); transition: all 0.15s;
+/* unlock path: dashed spine, winding nodes, chapter headers */
+.path { display: flex; flex-direction: column; gap: 26px; margin-top: 8px; }
+.path-seg { position: relative; display: flex; flex-direction: column; align-items: center; padding-bottom: 16px; }
+.path-seg::before {
+  content: ''; position: absolute; top: 20px; bottom: 0; left: 50%;
+  border-left: 2px dashed var(--line); z-index: 0;
 }
-.day-dot.done { background: var(--wcolor); border-color: var(--wcolor); color: #fff; }
-.day-dot.today { border-color: var(--wcolor); color: var(--wcolor); box-shadow: 0 0 0 3px var(--ring-track); animation: pulse 2s ease infinite; }
-.day-dot.milestone { border-width: 2.5px; border-color: var(--amber); }
-.day-dot.milestone.done { background: var(--amber); color: #1f2a26; }
-.day-dot.clickable { cursor: pointer; }
-.day-dot.clickable:hover { border-color: var(--wcolor); }
-.day-dot.locked { opacity: 0.4; }
-@keyframes pulse { 50% { box-shadow: 0 0 0 6px var(--ring-track); } }
+.path-week-head { width: 100%; position: relative; z-index: 1; padding: 18px 22px; border-left: 5px solid var(--wcolor); }
+.path-node {
+  position: relative; z-index: 1; width: 46px; height: 46px; border-radius: 50%; margin-top: 14px;
+  display: grid; place-items: center; font-size: 13px; font-weight: 800;
+  background: var(--surface); border: 2px solid var(--line); color: var(--ink-soft);
+  box-shadow: var(--shadow); transition: border-color 0.15s, background 0.15s;
+}
+.path-node.done { background: var(--wcolor); border-color: var(--wcolor); color: #fff; }
+.path-node.today { width: 58px; height: 58px; font-size: 15px; border-color: var(--wcolor); color: var(--wcolor); animation: pulse 2s ease infinite; }
+.path-node.milestone { border-width: 3px; border-color: var(--amber); font-size: 15px; }
+.path-node.milestone.done { background: var(--amber); border-color: var(--amber); color: #1f2a26; }
+.path-node.clickable { cursor: pointer; }
+.path-node.clickable:hover { border-color: var(--wcolor); }
+.path-node.locked { opacity: 0.4; box-shadow: none; }
+@keyframes pulse { 50% { box-shadow: 0 0 0 8px var(--ring-track); } }
 
 /* ---------- hero (the screen's one gradient surface) ---------- */
 .hero {
@@ -362,5 +371,5 @@ label.field-label { display: block; font-weight: 600; font-size: 13.5px; margin-
 @media (prefers-reduced-motion: reduce) {
   .breath-circle, .btn, .meter > div, .today-hero { transition: none; }
   .breath-circle.inhale, .breath-circle.hold, .breath-circle.exhale { transform: none; }
-  .fade-in, .toast, .day-dot.today, .confetti { animation: none; }
+  .fade-in, .toast, .path-node.today, .confetti { animation: none; }
 }

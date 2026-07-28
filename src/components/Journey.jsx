@@ -54,13 +54,60 @@ export default function Journey() {
       <DayView day={day} isToday={day === cur} />
 
       <h2 style={{ margin: '26px 0 12px' }}>{t('weeks')}</h2>
-      <div className="grid">
-        {WEEKS.map((w) => (
-          <WeekCard key={w.id} w={w} cur={cur} days={j.days} onOpenDay={(d) => { setOpenDay(d); window.scrollTo({ top: 0, behavior: 'smooth' }) }} />
-        ))}
-      </div>
+      <JourneyPath cur={cur} days={j.days} onOpenDay={(d) => { setOpenDay(d); window.scrollTo({ top: 0, behavior: 'smooth' }) }} />
 
       <Ritual visible={cur > 30 || done >= 30} />
+    </div>
+  )
+}
+
+/* Duolingo-style unlock path, calm tone: dashed spine, winding nodes,
+   week headers as chapters, amber milestones, pulsing today, dimmed locked future */
+const PATH_OFFSETS = [0, -1, 0, 1] // gentle S-curve
+function JourneyPath({ cur, days, onOpenDay }) {
+  const { lang, t } = useContext(AppCtx)
+  return (
+    <div className="path">
+      {WEEKS.map((w, wi) => {
+        const curClamped = Math.min(cur, 30)
+        const state = curClamped > w.days[1] ? 'done' : curClamped >= w.days[0] ? 'current' : 'locked'
+        const range = []
+        for (let d = w.days[0]; d <= w.days[1]; d++) range.push(d)
+        return (
+          <div key={w.id} className="path-seg" style={{ '--wcolor': w.color }}>
+            <div className="path-week-head card">
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
+                <div style={{ flex: 1, minWidth: 200 }}>
+                  <div className="caps">{t('weekWord')} {wi + 1}</div>
+                  <h3 className="serif" style={{ fontSize: 18, marginTop: 2 }}>{w.emoji} {L(lang, w.title)}</h3>
+                </div>
+                <span className={`week-state ${state}`}>
+                  {state === 'current' ? t('currentWeek') : state === 'done' ? t('completedW') : t('upcoming')}
+                </span>
+              </div>
+              {state !== 'locked' && <p className="small muted" style={{ marginTop: 6 }}>🎯 {t('weekGoal')}: {L(lang, w.goal)}</p>}
+            </div>
+            {range.map((d, i) => {
+              const unlocked = d <= cur
+              const isDone = !!days[d]?.done
+              const milestone = [7, 14, 21, 30].includes(d)
+              return (
+                <button
+                  key={d}
+                  type="button"
+                  className={`path-node ${isDone ? 'done' : ''} ${d === cur ? 'today' : ''} ${milestone ? 'milestone' : ''} ${unlocked ? 'clickable' : 'locked'}`}
+                  style={{ transform: `translateX(${PATH_OFFSETS[i % PATH_OFFSETS.length] * 36}px)` }}
+                  title={unlocked ? `${t('browseDay')} ${d}` : t('locked')}
+                  disabled={!unlocked}
+                  onClick={() => unlocked && onOpenDay(d)}
+                >
+                  {isDone ? (milestone ? '★' : '✓') : d}
+                </button>
+              )
+            })}
+          </div>
+        )
+      })}
     </div>
   )
 }
@@ -75,42 +122,6 @@ function WeekPreviews({ lang }) {
           <p className="small muted">🎯 {L(lang, w.goal)}</p>
         </div>
       ))}
-    </div>
-  )
-}
-
-function WeekCard({ w, cur, days, onOpenDay }) {
-  const { lang, t } = useContext(AppCtx)
-  const curClamped = Math.min(cur, 30)
-  const state = curClamped > w.days[1] ? 'done' : curClamped >= w.days[0] ? 'current' : 'locked'
-  const range = []
-  for (let d = w.days[0]; d <= w.days[1]; d++) range.push(d)
-  return (
-    <div className="card week-card" style={{ '--wcolor': w.color }}>
-      <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
-        <h3 style={{ flex: 1 }}>{w.emoji} {L(lang, w.title)}</h3>
-        <span className={`week-state ${state}`}>
-          {state === 'current' ? t('currentWeek') : state === 'done' ? t('completedW') : t('upcoming')}
-        </span>
-      </div>
-      <p className="muted" style={{ margin: '8px 0 4px', fontStyle: 'italic' }}>{L(lang, w.quote)}</p>
-      <p className="small" style={{ margin: '4px 0' }}>{L(lang, w.intro)}</p>
-      <p className="small muted">🎯 {t('weekGoal')}: {L(lang, w.goal)}</p>
-      <div className="day-dots">
-        {range.map((d) => {
-          const unlocked = d <= cur
-          return (
-            <div
-              key={d}
-              className={`day-dot ${days[d]?.done ? 'done' : ''} ${d === cur ? 'today' : ''} ${[7, 14, 21, 30].includes(d) ? 'milestone' : ''} ${unlocked ? 'clickable' : 'locked'}`}
-              title={unlocked ? `${t('browseDay')} ${d}` : t('locked')}
-              onClick={() => unlocked && onOpenDay(d)}
-            >
-              {d}
-            </div>
-          )
-        })}
-      </div>
     </div>
   )
 }
