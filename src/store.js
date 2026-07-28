@@ -6,7 +6,6 @@ const DEFAULTS = {
   lang: 'en',
   journey: { startDate: null, days: {}, ritual: { morning: '', day: '', evening: '' } },
   entries: { anger: [], shame: [], fear: [], envy: [] },
-  learnNotes: {}, // reflections on Learn-step questions, keyed `${emotion}:${stepIndex}`
 }
 
 export const EMOTION_KEYS = ['anger', 'shame', 'fear', 'envy']
@@ -36,7 +35,6 @@ export function normalizeData(d) {
       fear: validEntries(d.entries?.fear),
       envy: validEntries(d.entries?.envy ?? d.entries?.jealousy), // 'jealousy' was this module's key for a brief window
     },
-    learnNotes: d.learnNotes && typeof d.learnNotes === 'object' && !Array.isArray(d.learnNotes) ? d.learnNotes : {},
   }
 }
 

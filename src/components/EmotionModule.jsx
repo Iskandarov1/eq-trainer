@@ -23,7 +23,7 @@ export default function EmotionModule({ emotion }) {
         ))}
       </div>
 
-      {tab === 'learn' && <Learn emotion={emotion} m={m} />}
+      {tab === 'learn' && <Learn m={m} />}
       {tab === 'practice' && <Practice emotion={emotion} m={m} onSaved={() => setTab('journal')} />}
       {tab === 'journal' && <Journal emotion={emotion} m={m} />}
       {tab === 'progress' && <Progress emotion={emotion} m={m} />}
@@ -31,35 +31,22 @@ export default function EmotionModule({ emotion }) {
   )
 }
 
-/* ---------------- LEARN: 4 interactive step cards with answer fields ---------------- */
-function Learn({ emotion, m }) {
-  const { data, update, lang, t } = useContext(AppCtx)
+/* ---------------- LEARN: 4 interactive step cards ---------------- */
+function Learn({ m }) {
+  const { lang, t } = useContext(AppCtx)
   const [open, setOpen] = useState(0)
   return (
     <div className="card">
       <h2>{t('golemanApproach')}</h2>
       <p className="muted small" style={{ margin: '6px 0 14px' }}>{t('tapCard')}</p>
       <div className="learn-grid">
-        {m.steps.map((s, i) => {
-          const noteKey = `${emotion}:${i}`
-          return (
-            <div key={i} className={`learn-card ${open === i ? 'open' : ''}`} onClick={() => setOpen(open === i ? -1 : i)}>
-              <h4>{L(lang, s.title)}</h4>
-              <div className="body">
-                {L(lang, s.body)}
-                {open === i && s.ph && (
-                  <textarea
-                    style={{ marginTop: 10 }}
-                    value={data.learnNotes[noteKey] ?? starterFor(lang, s.ph)}
-                    onClick={(e) => e.stopPropagation()}
-                    onChange={(e) => update((d) => { d.learnNotes[noteKey] = e.target.value })}
-                  />
-                )}
-              </div>
-              <div className="expander">{open === i ? '▲' : '▼'}</div>
-            </div>
-          )
-        })}
+        {m.steps.map((s, i) => (
+          <div key={i} className={`learn-card ${open === i ? 'open' : ''}`} onClick={() => setOpen(open === i ? -1 : i)}>
+            <h4>{L(lang, s.title)}</h4>
+            <div className="body">{L(lang, s.body)}</div>
+            <div className="expander">{open === i ? '▲' : '▼'}</div>
+          </div>
+        ))}
       </div>
     </div>
   )

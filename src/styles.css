@@ -169,7 +169,7 @@ label.field-label { display: block; font-weight: 600; font-size: 13.5px; margin-
 .learn-card:hover { box-shadow: var(--shadow-lg); }
 .learn-card h4 { font-size: 15px; margin-bottom: 4px; }
 .learn-card .body { color: var(--ink-soft); font-size: 14px; max-height: 0; overflow: hidden; transition: max-height 0.3s ease; }
-.learn-card.open .body { max-height: 460px; margin-top: 8px; }
+.learn-card.open .body { max-height: 220px; margin-top: 8px; }
 .learn-card .expander { font-size: 12px; color: var(--ink-soft); font-weight: 700; margin-top: 6px; }
 
 /* ---------- module hero: quest-poster surface ---------- */

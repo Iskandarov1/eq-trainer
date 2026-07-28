@@ -414,22 +414,18 @@ export const MODULES = {
       {
         title: { en: 'Step 1 · Name it precisely', ru: 'Шаг 1 · Назовите точно' },
         body: { en: 'Don’t just say “I’m angry.” Try: “I feel disrespected,” or “I feel unseen,” or “I feel powerless.” Precision defuses.', ru: 'Не говорите просто «я злюсь». Попробуйте: «я чувствую неуважение», «меня не замечают», «я бессилен». Точность обезоруживает.' },
-        ph: { en: 'Precisely, I feel…', ru: 'Точнее всего, я чувствую…' },
       },
       {
         title: { en: 'Step 2 · The 30-Second Rule', ru: 'Шаг 2 · Правило 30 секунд' },
         body: { en: 'Your amygdala fires fast, but emotion chemicals dissipate in 30 seconds. Breathe deeply. Count slowly. Feel the wave rise and fall.', ru: 'Миндалина срабатывает мгновенно, но химия эмоции рассеивается за 30 секунд. Дышите глубоко. Считайте медленно. Почувствуйте, как волна поднимается и спадает.' },
-        ph: { en: 'After 30 seconds, the wave…', ru: 'Через 30 секунд волна…' },
       },
       {
         title: { en: 'Step 3 · Ask the protection question', ru: 'Шаг 3 · Вопрос о защите' },
         body: { en: '“What is this anger trying to protect in me?” Often, it’s your dignity, boundaries, or a core value.', ru: '«Что этот гнев пытается во мне защитить?» Часто это достоинство, границы или важная ценность.' },
-        ph: { en: 'This anger is trying to protect…', ru: 'Этот гнев пытается защитить…' },
       },
       {
         title: { en: 'Step 4 · Redirect constructively', ru: 'Шаг 4 · Направьте конструктивно' },
         body: { en: 'Anger is energy. Use it to: speak assertively, not aggressively · create boundaries, not explosions · take action, not revenge.', ru: 'Гнев — это энергия. Используйте её: говорить уверенно, а не агрессивно · выстраивать границы, а не взрываться · действовать, а не мстить.' },
-        ph: { en: 'I will channel this energy into…', ru: 'Я направлю эту энергию на…' },
       },
     ],
     practiceSteps: [
@@ -482,22 +478,18 @@ export const MODULES = {
       {
         title: { en: 'Step 1 · Identify the inner critic’s voice', ru: 'Шаг 1 · Голос внутреннего критика' },
         body: { en: 'What’s the exact phrase your mind is repeating? (“I’m not good enough,” “They’ll reject me.”)', ru: 'Какую точную фразу повторяет ваш ум? («Я недостаточно хорош», «Меня отвергнут».)' },
-        ph: { en: 'My inner critic repeats…', ru: 'Мой внутренний критик повторяет…' },
       },
       {
         title: { en: 'Step 2 · Activate self-compassion', ru: 'Шаг 2 · Включите сострадание к себе' },
         body: { en: 'Treat yourself like you would a dear friend: “Yes, I made a mistake. But I am still worthy. I can learn. I can grow.”', ru: 'Отнеситесь к себе как к близкому другу: «Да, я ошибся. Но я по-прежнему ценен. Я могу учиться. Я могу расти».' },
-        ph: { en: 'As a friend, I would tell myself…', ru: 'Как друг, я сказал(а) бы себе…' },
       },
       {
         title: { en: 'Step 3 · Replace judgment with curiosity', ru: 'Шаг 3 · Замените осуждение любопытством' },
         body: { en: 'Ask: “What unmet need is this shame revealing?” Often: acceptance, connection, achievement.', ru: 'Спросите: «Какую неудовлетворённую потребность обнажает этот стыд?» Часто: принятие, близость, достижение.' },
-        ph: { en: 'This shame reveals my need for…', ru: 'Этот стыд обнажает мою потребность в…' },
       },
       {
         title: { en: 'Step 4 · Speak it out loud (to someone safe)', ru: 'Шаг 4 · Произнесите вслух (безопасному человеку)' },
         body: { en: 'Shame thrives in secrecy. Share it with someone who listens without fixing or judging. That alone deflates it.', ru: 'Стыд живёт в секретности. Поделитесь с тем, кто слушает без советов и осуждения. Уже одно это его сдувает.' },
-        ph: { en: 'A safe person I could tell is…', ru: 'Безопасный человек, которому я могу рассказать, — …' },
       },
     ],
     practiceSteps: [
@@ -548,22 +540,18 @@ export const MODULES = {
       {
         title: { en: 'Step 1 · Separate real from imagined threat', ru: 'Шаг 1 · Отделите реальную угрозу от воображаемой' },
         body: { en: 'Ask: “Is this danger physical, or emotional?” “Is this fear helping me or paralyzing me?”', ru: 'Спросите: «Эта опасность физическая или эмоциональная?» «Этот страх помогает мне или парализует?»' },
-        ph: { en: 'This danger is really…', ru: 'На самом деле эта опасность…' },
       },
       {
         title: { en: 'Step 2 · Ground yourself physically', ru: 'Шаг 2 · Заземлитесь физически' },
         body: { en: 'Deep belly breathing (4-7-8 technique) · press your feet into the floor · name 5 things you can see or feel. This tells the brain: you are safe now.', ru: 'Глубокое дыхание животом (техника 4-7-8) · прижмите стопы к полу · назовите 5 вещей, которые видите или ощущаете. Это говорит мозгу: сейчас ты в безопасности.' },
-        ph: { en: 'Right now my body feels…', ru: 'Прямо сейчас моё тело ощущает…' },
       },
       {
         title: { en: 'Step 3 · Reframe the narrative', ru: 'Шаг 3 · Переосмыслите историю' },
         body: { en: '“What does this fear say about what matters deeply to me?” Fear often signals where your values, hopes, or purpose live.', ru: '«Что этот страх говорит о том, что мне по-настоящему важно?» Страх часто указывает, где живут ваши ценности, надежды и смысл.' },
-        ph: { en: 'This fear says I deeply care about…', ru: 'Этот страх говорит, что мне глубоко важно…' },
       },
       {
         title: { en: 'Step 4 · Take a micro-brave step', ru: 'Шаг 4 · Сделайте микро-смелый шаг' },
         body: { en: 'Fear shrinks when we act. Not big leaps — small, repeated steps.', ru: 'Страх уменьшается, когда мы действуем. Не гигантские прыжки — маленькие, повторяющиеся шаги.' },
-        ph: { en: 'My smallest brave step is…', ru: 'Мой самый маленький смелый шаг…' },
       },
     ],
     practiceSteps: [
@@ -610,22 +598,18 @@ export const MODULES = {
       {
         title: { en: 'Step 1 · Name it precisely', ru: 'Шаг 1 · Назовите точно' },
         body: { en: 'Is this envy — wanting what another has — or jealousy, fear of losing what is yours? Precision defuses.', ru: 'Это зависть — желание того, что есть у другого, — или ревность, страх потерять своё? Точность обезоруживает.' },
-        ph: { en: 'What I actually feel is…', ru: 'На самом деле я чувствую…' },
       },
       {
         title: { en: 'Step 2 · Catch the comparison', ru: 'Шаг 2 · Поймайте сравнение' },
         body: { en: 'Notice the story — “they have it easy”, “I’m behind”. Comparison sets another person’s highlight reel against your full picture. Separate the story from the facts.', ru: 'Заметьте историю: «им легко досталось», «я отстаю». Сравнение ставит чужую витрину против вашей полной картины. Отделите историю от фактов.' },
-        ph: { en: 'The story I tell myself is…', ru: 'История, которую я себе рассказываю, — …' },
       },
       {
         title: { en: 'Step 3 · Ask the signal question', ru: 'Шаг 3 · Вопрос о сигнале' },
         body: { en: '“What exactly do I want that they have? What does this envy say I value?”', ru: '«Чего именно я хочу из того, что есть у них? О какой моей ценности говорит эта зависть?»' },
-        ph: { en: 'What I want that they have is…', ru: 'Из того, что есть у них, я хочу…' },
       },
       {
         title: { en: 'Step 4 · Turn it into direction', ru: 'Шаг 4 · Превратите её в направление' },
         body: { en: 'Envy is a want without a plan. Use it to: learn from the person you envy · take one concrete step toward what you want · name what you already have. Movement, not comparison.', ru: 'Зависть — это желание без плана. Используйте её: поучиться у того, кому завидуете · сделать один конкретный шаг к желаемому · назвать то, что у вас уже есть. Движение, а не сравнение.' },
-        ph: { en: 'My first step toward it is…', ru: 'Мой первый шаг к этому…' },
       },
     ],
     practiceSteps: [
