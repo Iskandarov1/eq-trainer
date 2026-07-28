@@ -68,8 +68,8 @@ export const UI = {
     ru: 'Этот модуль посвящён освоению трёх сложных эмоций — не через подавление, а через понимание и умелое управление.',
   },
   nlQuote: {
-    en: '“Emotions are not enemies. They’re signals. But when they flood us, they can hijack the brain. Mastery begins with noticing, not reacting.” — Daniel Goleman',
-    ru: '«Эмоции — не враги. Это сигналы. Но когда они захлёстывают, они могут захватить мозг. Мастерство начинается с наблюдения, а не реакции.» — Дэниел Гоулман',
+    en: '“A lot of people think emotion regulation is getting rid of a feeling… It’s just having another relationship to it.” — Marc Brackett',
+    ru: '«Многие думают, что регуляция эмоций — это избавиться от чувства… На самом деле это просто выстроить с ним другие отношения.» — Марк Брэкетт',
   },
   golemanApproach: { en: 'The Goleman Approach — 4 steps', ru: 'Подход Гоулмана — 4 шага' },
   tapCard: { en: 'Tap a card to explore each step', ru: 'Нажмите на карточку, чтобы раскрыть шаг' },
@@ -85,12 +85,12 @@ export const UI = {
   imported: { en: 'Backup restored successfully.', ru: 'Данные успешно восстановлены.' },
   importError: { en: 'Could not read that file — is it an EQ Trainer backup?', ru: 'Не удалось прочитать файл — это резервная копия EQ Тренера?' },
   finalWords: {
-    en: '“This journey isn’t about perfection — it’s about presence. Emotional intelligence is a lifetime practice. But in these 30 days, if you show up consistently, you won’t just act differently — you’ll become different.”',
-    ru: '«Этот путь не о совершенстве — он о присутствии. Эмоциональный интеллект — практика длиною в жизнь. Но если в эти 30 дней вы будете последовательны, вы не просто начнёте действовать иначе — вы станете другим.»',
+    en: '“It starts with permission to feel.” — Marc Brackett',
+    ru: '«Всё начинается с разрешения чувствовать.» — Марк Брэкетт',
   },
   heroQuote: {
-    en: '“Emotional intelligence is not fixed. You can train it like a muscle. The more you observe and practice, the more instinctive and powerful your responses become.” — Daniel Goleman',
-    ru: '«Эмоциональный интеллект не задан раз и навсегда. Его можно тренировать как мышцу. Чем больше вы наблюдаете и практикуете, тем более естественными и сильными становятся ваши реакции.» — Дэниел Гоулман',
+    en: '“Unlike IQ, which barely budges over the course of our life, emotional intelligence can change… it’s learned and learnable at any point in life.” — Daniel Goleman',
+    ru: '«В отличие от IQ, который почти не меняется в течение жизни, эмоциональный интеллект может меняться… этому можно научиться в любой момент жизни.» — Дэниел Гоулман',
   },
   ritualTitle: { en: 'Final Challenge: Day 31 and beyond', ru: 'Финальный вызов: день 31 и далее' },
   ritualIntro: { en: 'Create your Emotional Intelligence Ritual:', ru: 'Создайте свой ритуал эмоционального интеллекта:' },
@@ -115,8 +115,8 @@ export const UI = {
   tipRehearse: { en: 'Rehearse Emotionally Intelligent Responses', ru: 'Репетируйте эмоционально умные ответы' },
   tipRehearseDesc: { en: 'Visualize triggering situations. Practice responding with calm, compassion, and clarity.', ru: 'Визуализируйте триггерные ситуации. Практикуйте ответ со спокойствием, состраданием и ясностью.' },
   wavesQuote: {
-    en: '“You cannot stop the waves. But you can learn to surf them.” The goal is not to suppress emotions. It’s to become so aware, so grounded, so skilled — that emotions no longer control you, but inform you.',
-    ru: '«Нельзя остановить волны. Но можно научиться на них сёрфить.» Цель не в том, чтобы подавлять эмоции. А в том, чтобы стать настолько осознанным, устойчивым и умелым, что эмоции больше не управляют вами, а информируют вас.',
+    en: '“Attention is a mental muscle… like going to the gym.” — Daniel Goleman',
+    ru: '«Внимание — это ментальная мышца… как тренировка в спортзале.» — Дэниел Гоулман',
   },
   errorTitle: { en: 'Something went wrong', ru: 'Что-то пошло не так' },
   errorReload: { en: 'Reload the app', ru: 'Перезагрузить приложение' },
@@ -160,7 +160,10 @@ export const WEEKS = [
     emoji: '🧠',
     color: '#0ca678',
     title: { en: 'Week 1 · Build the Foundation — Self-Awareness', ru: 'Неделя 1 · Фундамент — Самоосознание' },
-    quote: { en: '“You can’t manage what you don’t notice.”', ru: '«Нельзя управлять тем, чего не замечаешь.»' },
+    quote: {
+      en: '“Self-awareness means you know what you’re feeling.” — Daniel Goleman',
+      ru: '«Неспособность замечать свои истинные чувства оставляет нас на их произвол.» — Дэниел Гоулман, «Эмоциональный интеллект»',
+    },
     intro: { en: 'The first step in emotional intelligence is knowing your emotions as they occur.', ru: 'Первый шаг эмоционального интеллекта — распознавать эмоции в момент их появления.' },
     goal: { en: 'By Day 7: recognize your emotional patterns and triggers with 80% accuracy.', ru: 'К 7-му дню: распознавать свои эмоциональные паттерны и триггеры с точностью 80%.' },
     practices: [
@@ -206,7 +209,10 @@ export const WEEKS = [
     emoji: '🔥',
     color: '#e8590c',
     title: { en: 'Week 2 · Master the Inner World — Self-Management', ru: 'Неделя 2 · Внутренний мир — Саморегуляция' },
-    quote: { en: '“Self-awareness opens the door to self-regulation.”', ru: '«Самоосознание открывает дверь к саморегуляции.»' },
+    quote: {
+      en: '“Maturity is sometimes defined as widening the gap between impulse and action.” — Daniel Goleman',
+      ru: '«Контроль над своими эмоциями, отсрочивание удовлетворения и подавление импульсивности лежит в основе всяческих достижений.» — Дэниел Гоулман, «Эмоциональный интеллект»',
+    },
     intro: { en: 'Turn awareness into calm, intentional responses.', ru: 'Превратите осознанность в спокойные, намеренные ответы.' },
     goal: { en: 'By Day 14: reduce emotional hijacks. Stay calm in moments of stress with conscious intention.', ru: 'К 14-му дню: меньше эмоциональных «захватов». Сохранять спокойствие в стрессе с осознанным намерением.' },
     practices: [
@@ -252,7 +258,10 @@ export const WEEKS = [
     emoji: '🌍',
     color: '#1971c2',
     title: { en: 'Week 3 · Understand Others — Social Awareness', ru: 'Неделя 3 · Понимание других — Социальная осознанность' },
-    quote: { en: '“Empathy begins with presence.”', ru: '«Эмпатия начинается с присутствия.»' },
+    quote: {
+      en: '“Emotional empathy is an immediate felt sense of what’s going on in the other person.” — Daniel Goleman',
+      ru: '«Эмпатия… является основным человеческим даром.» — Дэниел Гоулман, «Эмоциональный интеллект»',
+    },
     intro: { en: 'Learn to sense what others feel — before they say a word.', ru: 'Научитесь чувствовать, что переживают другие, — ещё до слов.' },
     goal: { en: 'By Day 21: sense emotions in others before they say a word. Make people feel seen.', ru: 'К 21-му дню: чувствовать эмоции других до слов. Давать людям ощущение, что их видят.' },
     practices: [
@@ -298,7 +307,10 @@ export const WEEKS = [
     emoji: '❤️',
     color: '#c2255c',
     title: { en: 'Week 4 · Lead with Connection — Relationship Management', ru: 'Неделя 4 · Сила связи — Управление отношениями' },
-    quote: { en: '“Emotionally intelligent relationships are built on trust, empathy, and authenticity.”', ru: '«Эмоционально умные отношения строятся на доверии, эмпатии и подлинности.»' },
+    quote: {
+      en: '“Emotions drive the quality of our relationships.” — Marc Brackett',
+      ru: '«Эмоции определяют качество наших отношений.» — Марк Брэкетт',
+    },
     intro: { en: 'Bring it all together in how you connect with people.', ru: 'Соедините всё в том, как вы строите отношения с людьми.' },
     goal: { en: 'By Day 30: manage relationships with empathy and authenticity. Be the kind of person others feel safe around.', ru: 'К 30-му дню: управлять отношениями с эмпатией и подлинностью. Быть человеком, рядом с которым другим безопасно.' },
     practices: [
