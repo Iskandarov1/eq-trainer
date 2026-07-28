@@ -1,0 +1,32 @@
+{
+  "lang": "ru",
+  "journey": {
+    "startDate": "2026-07-28",
+    "days": {
+      "1": {
+        "fields": {
+          "checkins.morning": "I feel focused and optimistic because we are testing a new app. It makes me more energetic."
+        },
+        "done": true
+      }
+    },
+    "ritual": ""
+  },
+  "entries": {
+    "anger": [
+      { "id": "demo-a1", "date": "2026-07-14T09:30:00.000Z", "situation": "A colleague took credit for my work", "emotion": "unseen", "intensity": 9, "protectQuick": ["Dignity"], "protecting": "my dignity and recognition", "redirect": ["Speak assertively"], "plan": "Talk to my manager calmly" },
+      { "id": "demo-a2", "date": "2026-07-18T09:30:00.000Z", "situation": "Deadline moved without asking me", "emotion": "powerless", "intensity": 8, "protectQuick": ["Boundaries"], "protecting": "my boundaries", "redirect": ["Create boundaries"], "plan": "Clarify my capacity in writing" },
+      { "id": "demo-a3", "date": "2026-07-22T09:30:00.000Z", "situation": "Interrupted repeatedly in a call", "emotion": "disrespected", "intensity": 6, "protectQuick": ["Dignity"], "protecting": "my dignity", "redirect": ["Speak assertively"], "plan": "Ask to finish my point next time" },
+      { "id": "demo-a4", "date": "2026-07-26T09:30:00.000Z", "situation": "Late feedback on the proposal", "emotion": "frustrated", "intensity": 4, "protectQuick": ["Core values"], "protecting": "my value of respect for time", "redirect": ["Take constructive action"], "plan": "Set feedback deadlines upfront" },
+      { "id": "demo-a5", "date": "2026-07-28T09:30:00.000Z", "situation": "I felt angry when my proposal was dismissed in the meeting without any discussion.", "emotion": "disrespected", "intensity": 5, "protectQuick": ["Dignity"], "redirect": ["Speak assertively"] }
+    ],
+    "shame": [
+      { "id": "demo-s1", "date": "2026-07-20T09:30:00.000Z", "critic": "You are not good enough to lead this", "intensity": 7, "compassion": "The truth is, I am still worthy because I am learning and growing", "needQuick": ["Acceptance"], "need": "acceptance from my team", "shared": true, "sharedNote": "Told my friend" },
+      { "id": "demo-s2", "date": "2026-07-25T09:30:00.000Z", "critic": "They will find out you are a fraud", "intensity": 5, "compassion": "I have real results behind me", "needQuick": ["Recognition"], "need": "recognition of my effort", "shared": false }
+    ],
+    "fear": [
+      { "id": "demo-f1", "date": "2026-07-21T09:30:00.000Z", "threat": "Ego threat", "about": "failing the pitch in front of the client", "intensity": 8, "reframe": "I deeply care about doing great work", "brave": "Rehearse the pitch once today", "took": true, "tookDate": "2026-07-21T09:30:00.000Z" },
+      { "id": "demo-f2", "date": "2026-07-27T09:30:00.000Z", "threat": "Emotional discomfort", "about": "asking for a raise", "intensity": 6, "reframe": "I care about being valued fairly", "brave": "Book the meeting with my manager", "took": false }
+    ]
+  }
+}
