@@ -1,6 +1,13 @@
 // All user-facing content in EN + RU. Every string is {en, ru}; L() picks the active language.
 export const L = (lang, s) => (typeof s === 'string' ? s : s?.[lang] ?? s?.en ?? '')
 
+// Sentence starter pre-filled INTO the field: the user finishes the sentence by typing.
+// A trailing "…" is an open tail — strip it and leave a space; internal "…" stay as slots.
+export const starterFor = (lang, ph) => {
+  const s = L(lang, ph)
+  return (s.endsWith('…') ? s.slice(0, -1).trimEnd() : s) + ' '
+}
+
 export const UI = {
   appName: { en: 'EQ Trainer', ru: 'EQ Тренер' },
   tagline: { en: 'Grow your emotional intelligence — the Goleman way', ru: 'Развивайте эмоциональный интеллект по методу Гоулмана' },

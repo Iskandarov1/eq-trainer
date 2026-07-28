@@ -1,6 +1,6 @@
 import React, { useContext, useState } from 'react'
 import { AppCtx } from '../App.jsx'
-import { L, WEEKS } from '../content.js'
+import { L, WEEKS, starterFor } from '../content.js'
 import { weekForDay, journeyStats } from '../store.js'
 
 export default function Journey() {
@@ -165,17 +165,18 @@ function DayView({ day, isToday }) {
                       <span>{L(lang, f.label)}</span>
                     </label>
                   )
+                const prefill = f.ph ? starterFor(lang, f.ph) : ''
                 if (f.t === 'text')
                   return (
                     <div key={f.id}>
                       <label className="field-label">{L(lang, f.label)}</label>
-                      <input type="text" value={val || ''} placeholder={f.ph ? L(lang, f.ph) : ''} onChange={(e) => setField(p.id, f.id, e.target.value)} />
+                      <input type="text" value={val ?? prefill} onChange={(e) => setField(p.id, f.id, e.target.value)} />
                     </div>
                   )
                 return (
                   <div key={f.id}>
                     <label className="field-label">{L(lang, f.label)}</label>
-                    <textarea value={val || ''} placeholder={f.ph ? L(lang, f.ph) : ''} onChange={(e) => setField(p.id, f.id, e.target.value)} />
+                    <textarea value={val ?? prefill} onChange={(e) => setField(p.id, f.id, e.target.value)} />
                   </div>
                 )
               })}
@@ -241,8 +242,7 @@ function Ritual({ visible }) {
         <li>{t('ritualEvening')}</li>
       </ul>
       <textarea
-        value={data.journey.ritual}
-        placeholder={t('ritualPlaceholder')}
+        value={data.journey.ritual || t('ritualPlaceholder')}
         onChange={(e) => update((d) => { d.journey.ritual = e.target.value })}
       />
       <div className="quote" style={{ marginTop: 14 }}>{t('finalWords')}</div>

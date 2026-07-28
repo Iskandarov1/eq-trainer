@@ -1,7 +1,7 @@
 import React, { useContext, useMemo, useState } from 'react'
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts'
 import { AppCtx } from '../App.jsx'
-import { L, MODULES, EMOTION_NAMES, FIELD_LABELS, optionLabel } from '../content.js'
+import { L, MODULES, EMOTION_NAMES, FIELD_LABELS, optionLabel, starterFor } from '../content.js'
 import { masteryScore, intensitySeries, intensityChange, newId, entryText, fmtDate } from '../store.js'
 import BreathingGuide from './BreathingGuide.jsx'
 
@@ -58,8 +58,23 @@ function Practice({ emotion, m, onSaved }) {
   const [form, setForm] = useState({})
   const set = (id, v) => setForm((f) => ({ ...f, [id]: v }))
 
+  // starter text per field id (trimmed): an untouched pre-filled sentence counts as empty
+  const starters = useMemo(() => {
+    const map = {}
+    for (const s of m.practiceSteps) for (const f of s.fields || []) if (f.ph) map[f.id] = starterFor(lang, f.ph).trim()
+    return map
+  }, [m, lang])
+  const isReal = (k, x) => typeof x === 'string' ? Boolean(x.trim()) && x.trim() !== starters[k] : Boolean(x)
+
   const save = () => {
-    const entry = { id: newId(), date: new Date().toISOString(), ...form }
+    const entry = { id: newId(), date: new Date().toISOString() }
+    for (const [k, v] of Object.entries(form)) {
+      if (typeof v === 'string') { if (isReal(k, v)) entry[k] = v }
+      else if (Array.isArray(v) && typeof v[0] === 'string' && starters[k]) {
+        const arr = v.filter((x) => isReal(k, x))
+        if (arr.length) entry[k] = arr
+      } else entry[k] = v
+    }
     if (emotion === 'fear' && form.took && !form.tookDate) entry.tookDate = new Date().toISOString()
     update((d) => { d.entries[emotion].push(entry) })
     setForm({})
@@ -67,9 +82,9 @@ function Practice({ emotion, m, onSaved }) {
     onSaved?.()
   }
 
-  // A lone slider move is not a reflection — require real content to save
+  // A lone slider move or an unfinished starter sentence is not a reflection
   const hasContent = Object.entries(form).some(([k, v]) =>
-    k !== 'intensity' && (typeof v === 'string' ? v.trim() : Array.isArray(v) ? v.some((x) => (typeof x === 'string' ? x.trim() : x)) : v)
+    k !== 'intensity' && (Array.isArray(v) ? v.some((x) => isReal(k, x)) : isReal(k, v))
   )
 
   return (
@@ -95,13 +110,15 @@ function Practice({ emotion, m, onSaved }) {
 function Field({ f, value, set }) {
   const { lang, t } = useContext(AppCtx)
   switch (f.t) {
-    case 'textarea':
+    case 'textarea': {
+      const prefill = f.ph ? starterFor(lang, f.ph) : ''
       return (
         <div>
           {f.label && <label className="field-label">{L(lang, f.label)}</label>}
-          <textarea value={value || ''} placeholder={f.ph ? L(lang, f.ph) : t('optionalNote')} onChange={(e) => set(f.id, e.target.value)} />
+          <textarea value={value ?? prefill} placeholder={t('optionalNote')} onChange={(e) => set(f.id, e.target.value)} />
         </div>
       )
+    }
     case 'chips':
     case 'chips-multi': {
       const multi = f.t === 'chips-multi'
@@ -169,7 +186,8 @@ function Field({ f, value, set }) {
         </label>
       )
     case 'inputs5': {
-      const items = value || ['', '', '', '', '']
+      const prefill = f.ph ? starterFor(lang, f.ph) : ''
+      const items = value || [prefill, prefill, prefill, prefill, prefill]
       return (
         <div>
           <label className="field-label">{L(lang, f.label)}</label>
@@ -179,7 +197,7 @@ function Field({ f, value, set }) {
                 key={i}
                 type="text"
                 value={v}
-                placeholder={f.ph ? `${i + 1} · ${L(lang, f.ph)}` : `${i + 1}.`}
+                placeholder={`${i + 1}.`}
                 onChange={(e) => set(f.id, items.map((x, j) => (j === i ? e.target.value : x)))}
               />
             ))}
