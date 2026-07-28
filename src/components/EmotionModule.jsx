@@ -207,7 +207,9 @@ function Journal({ emotion, m }) {
 
   const filtered = useMemo(() => {
     return entries.filter((e) => {
-      const d = e.date.slice(0, 10)
+      // compare in LOCAL days — e.date is UTC ISO, the date pickers and displayed dates are local
+      const dt = new Date(e.date)
+      const d = new Date(dt.getTime() - dt.getTimezoneOffset() * 60000).toISOString().slice(0, 10)
       if (from && d < from) return false
       if (to && d > to) return false
       if (q && !entryText(e).toLowerCase().includes(q.toLowerCase())) return false
@@ -294,7 +296,9 @@ function EntryFull({ e }) {
             ? (v ? '✓' : '—')
             : k === 'tookDate'
               ? fmtDate(lang, v)
-              : optionLabel(lang, String(v))
+              : k === 'emotion' || k === 'threat' // only selection fields — free text must never be remapped
+                ? optionLabel(lang, String(v))
+                : String(v)
         if (!val) return null
         return (
           <div key={k}>

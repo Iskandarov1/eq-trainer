@@ -36,7 +36,7 @@ export const UI = {
   masteryHint: { en: 'Based on practice frequency and depth of reflection', ru: 'На основе частоты практик и глубины рефлексии' },
   intensityOverTime: { en: 'Emotion intensity over time', ru: 'Интенсивность эмоции со временем' },
   insightDown: { en: (p, e) => `Your ${e} intensity has decreased by ${p}% — the practice is working.`, ru: (p, e) => `Интенсивность эмоции «${e}» снизилась на ${p}% — практика работает.` },
-  insightUp: { en: (p, e) => `Your recent ${e} intensity is ${p}% higher — a sign to practice more often.`, ru: (p, e) => `Интенсивность эмоции «${e}» выросла на ${p}% — знак практиковаться чаще.` },
+  insightUp: { en: (p, e) => `Your recent ${e} intensity is ${p}% higher — be curious: what changed lately?`, ru: (p, e) => `Интенсивность эмоции «${e}» выросла на ${p}% — проявите любопытство: что изменилось в последнее время?` },
   insightFlat: { en: 'Keep practicing to reveal your intensity trend.', ru: 'Продолжайте практиковать, чтобы увидеть динамику.' },
   needMore: { en: 'Complete at least 2 practices to see your chart and insights.', ru: 'Выполните минимум 2 практики, чтобы увидеть график и инсайты.' },
   noEntries: { en: 'No journal entries yet. Complete a practice — it will appear here.', ru: 'Записей пока нет. Выполните практику — она появится здесь.' },

@@ -14,17 +14,23 @@ export const newId = () =>
     ? crypto.randomUUID()
     : Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 10)
 
-// Per-key merge so a partial object (e.g. an edited backup) can never leave entries.anger undefined
+// Deep validation so a damaged/edited backup can never crash a later render
 export function normalizeData(d) {
   const base = structuredClone(DEFAULTS)
+  const validEntries = (arr) =>
+    Array.isArray(arr) ? arr.filter((e) => e && typeof e === 'object' && typeof e.date === 'string') : []
   return {
     ...base,
     ...d,
-    journey: { ...base.journey, ...(d.journey || {}) },
+    journey: {
+      startDate: typeof d.journey?.startDate === 'string' ? d.journey.startDate : null,
+      days: d.journey?.days && typeof d.journey.days === 'object' && !Array.isArray(d.journey.days) ? d.journey.days : {},
+      ritual: typeof d.journey?.ritual === 'string' ? d.journey.ritual : '',
+    },
     entries: {
-      anger: Array.isArray(d.entries?.anger) ? d.entries.anger : [],
-      shame: Array.isArray(d.entries?.shame) ? d.entries.shame : [],
-      fear: Array.isArray(d.entries?.fear) ? d.entries.fear : [],
+      anger: validEntries(d.entries?.anger),
+      shame: validEntries(d.entries?.shame),
+      fear: validEntries(d.entries?.fear),
     },
   }
 }

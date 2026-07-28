@@ -1,6 +1,6 @@
 # EQ Trainer — Product Requirements Document
 
-**Owner:** Sanjar Iskandarov · **Status:** v1.0 shipped · **Sources of truth:** `Daniel Goleman 1 month plan.pdf`, `Add a _Next Level_ section .docx` (both in `Desktop\Другие`)
+**Owner:** Sanjar Iskandarov · **Status:** v1.0 shipped · **Sources of truth:** `Daniel Goleman 1 month plan.pdf`, `Add a _Next Level_ section .docx` (both in `Desktop\Другие`) · **Research base:** five video sources (§6)
 
 ## 1. Vision
 
@@ -50,3 +50,26 @@ A personal emotional-intelligence trainer that turns Daniel Goleman's EI framewo
 - All checklist items from the docx spec verified working (audited + browser-tested).
 - A user can complete a full practice on day 1 without instructions.
 - Data survives reload, export/import round-trip, and language switching.
+
+## 6. Research base (video sources)
+
+Per the owner's direction, quotes and phrases in the app are sourced from these videos (Marc Brackett — Yale Center for Emotional Intelligence, RULER method, "Permission to Feel"; Daniel Goleman):
+
+1. https://youtu.be/SWvHZkkrAjc — Brackett: mastering emotions (emotion scientist vs. emotion judge, granular labeling, permission to feel)
+2. https://youtu.be/FBgM7jndkLQ — Brackett on Huberman Lab: regulation (Meta-Moment: trigger → pause → best self → respond; PRIME goals; strategy depends on emotion + person + context; anxiety/stress/pressure/fear distinctions)
+3. https://www.youtube.com/watch?v=erfgEHHfFkU — Goleman: the 4 EI domains (self-awareness is foundational; EI is learnable at any age)
+4. https://www.youtube.com/watch?v=bUhMnQE22lM — Goleman, "Emotional Intelligence" part 1 (two minds; the amygdala hijack; emotions as action programs)
+5. https://youtu.be/HTfYv3IEOqM — Goleman on Focus (inner/other/outer attention; attention as a trainable mental muscle)
+
+**Principles the app embodies (v1):** anti-suppression framing; notice-don't-react (amygdala-hijack pause training); daily check-ins as the Recognize/Understand steps; precise emotion naming (granularity); 4-7-8 breathing as pause creation; response rehearsal; curiosity-framed (non-judging) feedback copy; practice streaks as deliberate training.
+
+## 7. v2 roadmap (research-grounded)
+
+1. **Mood Meter check-in** — 2-axis (pleasantness × energy) quadrant picker before labeling (Brackett, Mood Meter).
+2. **Emotion vocabulary expansion** — 8–12 granular labels per quadrant/module, stored as stable keys per the existing `OPTION_LABELS` convention (granularity is itself regulating).
+3. **Meta-Moment guided flow** — trigger → pause → "what would my best self do?" → respond; launchable anywhere, logged to journal (Brackett/Huberman).
+4. **Best-self profile** — user defines their best self per role; surfaced in Meta-Moments and the Day-31 ritual.
+5. **Pleasant-emotion savoring track** — log + savor positive moments (PRIME: regulation includes maintaining/enhancing pleasant states).
+6. **Context-aware strategy picker** — suggest 2–3 strategies filtered by emotion and situation; track which worked (ER = goals + strategies as a function of emotion, person, context).
+7. **Temporal-distancing prompt** — "How will this matter in a week / a year?" optional field (evidence-based reappraisal).
+8. **Uzbek localization** — third language using the existing `{en, ru}` → `{en, ru, uz}` string convention.
