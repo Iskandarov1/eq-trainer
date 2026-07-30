@@ -72,6 +72,7 @@ export default function App() {
         <div className="lang">
           <button className={lang === 'en' ? 'active' : ''} onClick={() => update((d) => { d.lang = 'en' })}>EN</button>
           <button className={lang === 'ru' ? 'active' : ''} onClick={() => update((d) => { d.lang = 'ru' })}>RU</button>
+          <button className={lang === 'uz' ? 'active' : ''} onClick={() => update((d) => { d.lang = 'uz' })}>UZ</button>
         </div>
       </header>
 

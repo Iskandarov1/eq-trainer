@@ -89,8 +89,23 @@ export const entryText = (e) =>
     .map(([, v]) => v)
     .join(' ')
 
-export const fmtDate = (lang, iso) =>
-  new Date(iso).toLocaleDateString(lang === 'ru' ? 'ru-RU' : 'en-GB')
+export const LOCALES = { en: 'en-GB', ru: 'ru-RU' }
+// Chrome's uz CLDR data lacks month names (any named-month format renders a raw "M07"
+// token), so Uzbek dates are always formatted manually: dd.mm.yyyy / "23-iyul 2026, 10:01".
+const UZ_MONTHS = ['yanvar', 'fevral', 'mart', 'aprel', 'may', 'iyun', 'iyul', 'avgust', 'sentabr', 'oktabr', 'noyabr', 'dekabr']
+const two = (n) => String(n).padStart(2, '0')
+
+export const fmtDate = (lang, iso) => {
+  const d = new Date(iso)
+  if (lang === 'uz') return `${two(d.getDate())}.${two(d.getMonth() + 1)}.${d.getFullYear()}`
+  return d.toLocaleDateString(LOCALES[lang] ?? 'en-GB')
+}
+
+export const fmtDateTime = (lang, iso) => {
+  const d = new Date(iso)
+  if (lang === 'uz') return `${d.getDate()}-${UZ_MONTHS[d.getMonth()]} ${d.getFullYear()}, ${two(d.getHours())}:${two(d.getMinutes())}`
+  return d.toLocaleString(LOCALES[lang] ?? 'en-GB', { dateStyle: 'medium', timeStyle: 'short' })
+}
 
 export function masteryScore(entries) {
   if (!entries.length) return 0

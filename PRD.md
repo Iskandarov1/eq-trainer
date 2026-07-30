@@ -38,13 +38,13 @@ A personal emotional-intelligence trainer that turns Daniel Goleman's EI framewo
 - Achievement badges: Anger Alchemist (10), Shame Shifter (10), Fear Facer (10), Emotion Master (30 total).
 
 ### 3.4 Cross-cutting
-- **Localization:** every user-facing string in EN and RU; selections stored as stable keys and rendered in the active language (legacy English-string entries still localize).
+- **Localization:** every user-facing string in EN, RU and UZ (Uzbek Latin, shipped 2026-07-30); selections stored as stable keys and rendered in the active language (legacy English-string entries still localize).
 - **Persistence:** localStorage under `eqTrainerData`; JSON export/import with damaged-backup protection; render-error boundary.
 - **Portability:** works from `file://` (relative asset paths, no secure-context-only APIs).
 - **Accessibility/UX:** responsive to 360px, `prefers-reduced-motion` respected, theme-color/meta description set.
 
 ## 4. Non-goals (v1)
-- No accounts, sync, or backend; no push notifications; no Uzbek localization (candidate for v2); no automated test suite (manual QA checklist in README).
+- No accounts, sync, or backend; no push notifications; no automated test suite (manual QA checklist in README). (Uzbek localization was a v1 non-goal; shipped 2026-07-30.)
 
 ## 5. Success criteria
 - All checklist items from the docx spec verified working (audited + browser-tested).
@@ -72,7 +72,7 @@ Per the owner's direction, quotes and phrases in the app are sourced from these 
 5. **Pleasant-emotion savoring track** — log + savor positive moments (PRIME: regulation includes maintaining/enhancing pleasant states).
 6. **Context-aware strategy picker** — suggest 2–3 strategies filtered by emotion and situation; track which worked (ER = goals + strategies as a function of emotion, person, context).
 7. **Temporal-distancing prompt** — "How will this matter in a week / a year?" optional field (evidence-based reappraisal).
-8. **Uzbek localization** — third language using the existing `{en, ru}` → `{en, ru, uz}` string convention.
+8. ~~**Uzbek localization** — third language using the existing `{en, ru}` → `{en, ru, uz}` string convention.~~ **Shipped 2026-07-30** (Uzbek Latin; verb-final-aware sentence starters; `uz-UZ` date locale).
 
 ## 8a. Design system v2 (owner-directed re-theme, 2026-07-28 — CURRENT)
 

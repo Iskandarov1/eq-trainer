@@ -2,7 +2,7 @@ import React, { useContext, useMemo, useState } from 'react'
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts'
 import { AppCtx } from '../App.jsx'
 import { L, MODULES, EMOTION_NAMES, FIELD_LABELS, optionLabel, starterFor } from '../content.js'
-import { masteryScore, intensitySeries, intensityChange, newId, entryText, fmtDate } from '../store.js'
+import { masteryScore, intensitySeries, intensityChange, newId, entryText, fmtDate, fmtDateTime } from '../store.js'
 import BreathingGuide from './BreathingGuide.jsx'
 
 export default function EmotionModule({ emotion }) {
@@ -261,7 +261,7 @@ function Journal({ emotion, m }) {
         {[...filtered].reverse().map((e) => (
           <div key={e.id} className="entry" onClick={() => setOpenId(openId === e.id ? null : e.id)}>
             <div className="date">
-              {new Date(e.date).toLocaleString(lang === 'ru' ? 'ru-RU' : 'en-GB', { dateStyle: 'medium', timeStyle: 'short' })}
+              {fmtDateTime(lang, e.date)}
               {e.intensity ? ` · ${t('intensity')}: ${e.intensity}/10` : ''}
             </div>
             <div className="preview">{preview(e, m)}</div>
