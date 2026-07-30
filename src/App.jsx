@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { L, UI, EMOTION_NAMES, MODULES } from './content.js'
+import { L, UI, EMOTION_NAMES, MODULES, BOOK_TITLE, BOOK_AUTHOR, nextBookQuote } from './content.js'
 import { loadData, saveData, exportJSON, normalizeData } from './store.js'
 import Dashboard from './components/Dashboard.jsx'
 import Journey from './components/Journey.jsx'
@@ -86,6 +86,8 @@ export default function App() {
         {route.page === 'breathe' && <Breathe />}
       </main>
 
+      <BookQuote />
+
       <div className="footer-actions">
         <button className="btn ghost sm" onClick={() => exportJSON(data)}>{t('exportData')}</button>
         <button className="btn ghost sm" onClick={() => importRef.current?.click()}>{t('importData')}</button>
@@ -95,6 +97,23 @@ export default function App() {
 
       {toast && <div className="toast">{toast}</div>}
     </AppCtx.Provider>
+  )
+}
+
+// Goleman book quote — a new one on every page open (PRD §6, source #6)
+function BookQuote() {
+  const { route, lang, t } = React.useContext(AppCtx)
+  const routeKey = JSON.stringify(route)
+  const q = React.useMemo(() => nextBookQuote(), [routeKey])
+  const text = L(lang, q.text)
+  const by = L(lang, q.by ?? BOOK_AUTHOR)
+  return (
+    <figure className="book-quote">
+      <blockquote>{lang === 'en' ? `“${text}”` : `«${text}»`}</blockquote>
+      <figcaption className="caps">
+        {by} · {L(lang, BOOK_TITLE)} · {t('bookPage', q.page)}
+      </figcaption>
+    </figure>
   )
 }
 

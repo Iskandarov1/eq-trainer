@@ -31,6 +31,7 @@ Journal entries: `{ id, date: ISO, intensity? (only if slider touched), ...field
 ## Conventions & invariants
 - **Option selections are stored as stable keys** (e.g. `dignity`, `physical`), rendered via `optionLabel(lang, v)`. `OPTION_LABELS` also maps legacy English display strings — old saved data must always keep rendering (backward compatibility is required; never migrate/rewrite stored entries).
 - Journal field keys get display names from `FIELD_LABELS` in content.js — add an entry there for any new practice field.
+- Book quotes: `BOOK_QUOTES` in content.js — EN text is verbatim from Goleman's *Emotional Intelligence* PDF (research source #6, PRD §6) and must never be reworded; RU/UZ are translations. Rotation via `nextBookQuote()` (shuffled deck, no repeat until all 20 shown); rendered by `BookQuote` in App.jsx on every page open. New quotes must be verbatim-verified against the book text first.
 - No secure-context-only APIs (`crypto.randomUUID` etc.) without a fallback — the app runs on `file://`.
 - All state changes go through `update(fn)` (structuredClone + save); never mutate `data` directly.
 - CSS: `color-mix()` needs a plain fallback declaration on the previous line; keep the ≤480px and `prefers-reduced-motion` media queries intact.

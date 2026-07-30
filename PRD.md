@@ -60,6 +60,7 @@ Per the owner's direction, quotes and phrases in the app are sourced from these 
 3. https://www.youtube.com/watch?v=erfgEHHfFkU — Goleman: the 4 EI domains (self-awareness is foundational; EI is learnable at any age)
 4. https://www.youtube.com/watch?v=bUhMnQE22lM — Goleman, "Emotional Intelligence" part 1 (two minds; the amygdala hijack; emotions as action programs)
 5. https://youtu.be/HTfYv3IEOqM — Goleman on Focus (inner/other/outer attention; attention as a trainable mental muscle)
+6. **The book** (added 2026-07-30): Daniel Goleman, *Emotional Intelligence* (Bloomsbury) — full text in `Desktop\emotional-intelligence-daniel-goleman.pdf` (249 pp). 20 verbatim-verified quotes shipped as `BOOK_QUOTES` in content.js (EN verbatim + RU/UZ translations, attributed with PDF page refs); shown via a rotating quote block on every page open (shuffled deck — all 20 cycle before repeats). Quote verification: pdf-parse extraction with page markers + whitespace/punctuation-insensitive match.
 
 **Principles the app embodies (v1):** anti-suppression framing; notice-don't-react (amygdala-hijack pause training); daily check-ins as the Recognize/Understand steps; precise emotion naming (granularity); 4-7-8 breathing as pause creation; response rehearsal; curiosity-framed (non-judging) feedback copy; practice streaks as deliberate training.
 
@@ -73,6 +74,8 @@ Per the owner's direction, quotes and phrases in the app are sourced from these 
 6. **Context-aware strategy picker** — suggest 2–3 strategies filtered by emotion and situation; track which worked (ER = goals + strategies as a function of emotion, person, context).
 7. **Temporal-distancing prompt** — "How will this matter in a week / a year?" optional field (evidence-based reappraisal).
 8. ~~**Uzbek localization** — third language using the existing `{en, ru}` → `{en, ru, uz}` string convention.~~ **Shipped 2026-07-30** (Uzbek Latin; verb-final-aware sentence starters; `uz-UZ` date locale).
+
+**Book-derived feature backlog (2026-07-30, owner selection pending):** 10 candidates designed from source #6 — Stoplight Meta-Moment, Anger Cool-Down Gate, Worry Interrupt (Borkovec), Granular Check-In (emotion families), XYZ Complaint Composer, Flooding Meter, Fear Ladder, Toxic-Thought Catcher, Marshmallow Drill, "Now or Then?" Trigger Atlas. Owner chose to ship only the 20 phrases for now; full specs in plan `~\.claude\plans\wondrous-crafting-kazoo.md`.
 
 ## 8a. Design system v2 (owner-directed re-theme, 2026-07-28 — CURRENT)
 

@@ -153,6 +153,197 @@ export const UI = {
   milestoneTitle: { en: (d) => `Day ${d} complete!`, ru: (d) => `День ${d} завершён!`, uz: (d) => `${d}-kun yakunlandi!` },
   milestoneBody: { en: 'A milestone on your journey. Consistency is the practice.', ru: 'Веха на вашем пути. Постоянство и есть практика.', uz: 'Yoʻlingizdagi muhim marra. Doimiylikning oʻzi — amaliyot.' },
   continueWord: { en: 'Continue', ru: 'Продолжить', uz: 'Davom etish' },
+  bookPage: { en: (n) => `p. ${n}`, ru: (n) => `с. ${n}`, uz: (n) => `${n}-bet` },
+}
+
+// ---- Quotes from Daniel Goleman, "Emotional Intelligence" (Bloomsbury) — research source #6, PRD §6.
+// EN text is verbatim from the book (page = PDF page of the owner's 249-p file); RU/UZ are our translations.
+// A quote rotates on every page open via nextBookQuote() — shuffled deck, all 20 cycle before any repeat.
+export const BOOK_TITLE = { en: 'Emotional Intelligence', ru: 'Эмоциональный интеллект', uz: 'Hissiy intellekt' }
+export const BOOK_AUTHOR = { en: 'Daniel Goleman', ru: 'Дэниел Гоулман', uz: 'Daniel Goleman' }
+
+export const BOOK_QUOTES = [
+  {
+    page: 6,
+    by: { en: 'Aristotle', ru: 'Аристотель', uz: 'Arastu' },
+    text: {
+      en: 'Anyone can become angry — that is easy. But to be angry with the right person, to the right degree, at the right time, for the right purpose, and in the right way — this is not easy.',
+      ru: 'Рассердиться может каждый — это легко. Но сердиться на того, кто этого заслуживает, в должной мере, в нужное время, ради правильной цели и правильным образом — это нелегко.',
+      uz: 'Gʻazablanish har kimning qoʻlidan keladi — bu oson. Ammo kerakli odamga, kerakli darajada, kerakli paytda, toʻgʻri maqsad yoʻlida va toʻgʻri tarzda gʻazablanish — bu oson emas.',
+    },
+  },
+  {
+    page: 14,
+    text: {
+      en: 'In a very real sense we have two minds, one that thinks and one that feels.',
+      ru: 'В самом прямом смысле у нас два ума: один думает, другой чувствует.',
+      uz: 'Toʻgʻridan-toʻgʻri maʼnoda bizda ikkita aql bor: biri oʻylaydi, ikkinchisi his qiladi.',
+    },
+  },
+  {
+    page: 37,
+    text: {
+      en: 'Self-awareness — recognizing a feeling as it happens — is the keystone of emotional intelligence. People with greater certainty about their feelings are better pilots of their lives.',
+      ru: 'Самоосознание — умение распознать чувство в момент его возникновения — краеугольный камень эмоционального интеллекта. Люди, которые лучше понимают свои чувства, увереннее ведут корабль своей жизни.',
+      uz: 'Oʻz-oʻzini anglash — his-tuygʻuni paydo boʻlgan zahoti taniy olish — hissiy intellektning tamal toshi. Oʻz his-tuygʻularini aniqroq biladigan odamlar hayotlarini yaxshiroq boshqaradilar.',
+    },
+  },
+  {
+    page: 40,
+    text: {
+      en: 'The realization “This is anger I’m feeling” offers a greater degree of freedom — not just the option not to act on it, but the added option to try to let go of it.',
+      ru: 'Осознание «это гнев, который я сейчас чувствую» даёт большую степень свободы: не только выбор не действовать под его влиянием, но и возможность попробовать его отпустить.',
+      uz: '«Men hozir gʻazabni his qilyapman» degan anglash koʻproq erkinlik beradi: unga berilib harakat qilmaslik bilan birga, uni qoʻyib yuborishga urinish imkonini ham.',
+    },
+  },
+  {
+    page: 47,
+    text: {
+      en: 'We very often have little or no control over when we are swept by emotion, nor over what emotion it will be. But we can have some say in how long an emotion will last.',
+      ru: 'Мы почти не властны над тем, когда нас захлестнёт эмоция и какой она будет. Но от нас во многом зависит, как долго она продлится.',
+      uz: 'His-tuygʻu bizni qachon qamrab olishi va u qanday boʻlishi koʻpincha bizga bogʻliq emas. Ammo u qancha davom etishiga taʼsir oʻtkaza olamiz.',
+    },
+  },
+  {
+    page: 48,
+    text: {
+      en: 'Brooding fuels anger’s flames. But seeing things differently douses those flames.',
+      ru: 'Мысленное пережёвывание обид раздувает пламя гнева. А взгляд на происходящее под другим углом гасит это пламя.',
+      uz: 'Xayolda qayta-qayta oʻylayverish gʻazab alangasini avj oldiradi. Vaziyatga boshqacha qarash esa bu alangani oʻchiradi.',
+    },
+  },
+  {
+    page: 52,
+    by: { en: 'Chögyam Trungpa', ru: 'Чогьям Трунгпа', uz: 'Chogyam Trungpa' },
+    text: {
+      en: 'Don’t suppress it. But don’t act on it.',
+      ru: 'Не подавляйте его. Но и не действуйте под его влиянием.',
+      uz: 'Uni bostirmang. Ammo unga berilib ish ham tutmang.',
+    },
+  },
+  {
+    page: 63,
+    text: {
+      en: 'There is perhaps no psychological skill more fundamental than resisting impulse. It is the root of all emotional self-control, since all emotions, by their very nature, lead to one or another impulse to act.',
+      ru: 'Пожалуй, нет более фундаментального психологического навыка, чем умение противостоять импульсу. Это корень всякого эмоционального самоконтроля, ведь любая эмоция по самой своей природе толкает к тому или иному действию.',
+      uz: 'Impulsga qarshi tura olishdan koʻra asosiyroq ruhiy koʻnikma yoʻq boʻlsa kerak. Bu barcha hissiy oʻzini tutishning ildizi, chunki har qanday his-tuygʻu oʻz tabiatiga koʻra u yoki bu harakatga undaydi.',
+    },
+  },
+  {
+    page: 65,
+    text: {
+      en: 'Our worries become self-fulfilling prophecies, propelling us toward the very disaster they predict.',
+      ru: 'Наши тревоги становятся самосбывающимися пророчествами, подталкивая нас к той самой катастрофе, которую они предрекают.',
+      uz: 'Xavotirlarimiz oʻz-oʻzini roʻyobga chiqaruvchi bashoratga aylanadi — ular bizni oʻzlari bashorat qilgan falokat sari yetaklaydi.',
+    },
+  },
+  {
+    page: 86,
+    text: {
+      en: 'Attunement to others demands a modicum of calm in oneself.',
+      ru: 'Настроиться на другого человека можно, лишь сохраняя хотя бы каплю спокойствия в себе.',
+      uz: 'Boshqalarga hamohang boʻlish uchun insonning oʻzida ozgina boʻlsa-da xotirjamlik boʻlishi kerak.',
+    },
+  },
+  {
+    page: 108,
+    text: {
+      en: 'The most powerful form of nondefensive listening, of course, is empathy: actually hearing the feelings behind what is being said.',
+      ru: 'Самая действенная форма незащитного слушания — это, конечно, эмпатия: способность действительно услышать чувства за произносимыми словами.',
+      uz: 'Himoyasiz tinglashning eng kuchli shakli, albatta, empatiya: aytilayotgan soʻzlar ortidagi his-tuygʻularni chinakam eshita olish.',
+    },
+  },
+  {
+    page: 113,
+    text: {
+      en: 'An artful critique focuses on what a person has done and can do rather than reading a mark of character into a job poorly done.',
+      ru: 'Умелая критика говорит о том, что человек сделал и что может сделать, а не превращает неудачную работу в приговор его характеру.',
+      uz: 'Mohirona tanqid odamning nima qilgani va nima qila olishiga qaratiladi — yomon bajarilgan ishni uning xarakteriga tamgʻa qilib bosmaydi.',
+    },
+  },
+  {
+    page: 154,
+    text: {
+      en: 'While we cannot decide when we have our emotional outbursts, we have more control over how long they last. A quicker recovery time from such outbursts may well be one mark of emotional maturity.',
+      ru: 'Мы не выбираем, когда случится эмоциональная вспышка, но нам куда больше подвластно, как долго она продлится. Умение быстрее приходить в себя после таких вспышек — пожалуй, один из признаков эмоциональной зрелости.',
+      uz: 'Hissiy portlash qachon yuz berishini tanlay olmaymiz, ammo u qancha davom etishi koʻproq oʻzimizga bogʻliq. Bunday portlashlardan tezroq oʻziga kelish hissiy yetuklikning belgilaridan biri boʻlsa ajab emas.',
+    },
+  },
+  {
+    page: 155,
+    text: {
+      en: 'Emotional lessons — even the most deeply implanted habits of the heart learned in childhood — can be reshaped. Emotional learning is lifelong.',
+      ru: 'Эмоциональные уроки — даже самые глубоко укоренившиеся привычки сердца, усвоенные в детстве, — можно изменить. Эмоциональное обучение длится всю жизнь.',
+      uz: 'Hissiy saboqlarni — hatto bolalikda singib ketgan eng chuqur qalb odatlarini ham — qayta shakllantirish mumkin. Hissiy oʻrganish umr boʻyi davom etadi.',
+    },
+  },
+  {
+    page: 176,
+    text: {
+      en: 'Moods like anxiety, sadness, and anger don’t just descend on you without your having any control over them… you can change the way you feel by what you think.',
+      ru: 'Тревога, грусть, гнев не просто обрушиваются на вас помимо вашей воли… вы можете изменить то, что чувствуете, через то, что думаете.',
+      uz: 'Xavotir, gʻamginlik, gʻazab kabi kayfiyatlar sizga shunchaki oʻz-oʻzidan yopirilib kelmaydi… nimani oʻylashingiz orqali qanday his qilishingizni oʻzgartira olasiz.',
+    },
+  },
+  {
+    page: 190,
+    text: {
+      en: 'Mastery in the emotional domain is especially difficult because skills need to be acquired when people are usually least able to take in new information and learn new habits of response — when they are upset.',
+      ru: 'Мастерство в эмоциональной сфере даётся особенно трудно: навыки приходится осваивать именно тогда, когда человек меньше всего способен воспринимать новое и учиться новым реакциям, — когда он расстроен.',
+      uz: 'Hissiy sohada mahoratga erishish ayniqsa qiyin: koʻnikmalarni aynan odam yangi maʼlumotni qabul qilishga va yangicha javob berishga eng kam qodir boʻlgan paytda — xafa boʻlib turganda egallashga toʻgʻri keladi.',
+    },
+  },
+  {
+    page: 199,
+    text: {
+      en: 'All feelings are okay to have… but some reactions are okay and others not.',
+      ru: 'Любые чувства иметь нормально… но одни реакции допустимы, а другие — нет.',
+      uz: 'Har qanday his-tuygʻuni his qilish joiz… ammo baʼzi javob harakatlari toʻgʻri, baʼzilari esa yoʻq.',
+    },
+  },
+  {
+    page: 207,
+    text: {
+      en: 'There are hundreds of emotions, along with their blends, variations, mutations, and nuances. Indeed, there are many more subtleties of emotion than we have words for.',
+      ru: 'Существуют сотни эмоций со всеми их сочетаниями, вариациями, мутациями и оттенками. Тонкостей чувств куда больше, чем слов, которыми мы их называем.',
+      uz: 'Yuzlab his-tuygʻular bor — ularning qorishmalari, turlari, oʻzgarishlari va nozik ohanglari bilan. His-tuygʻu nozikliklari biz ularni atashga soʻz topganimizdan koʻra koʻproqdir.',
+    },
+  },
+  {
+    page: 211,
+    text: {
+      en: 'While we cannot easily change what specific emotions a certain kind of thought will trigger, we very often can, and do, choose what to think about.',
+      ru: 'Мы не можем просто взять и изменить, какие эмоции вызовет та или иная мысль, но мы очень часто можем выбирать — и выбираем, — о чём думать.',
+      uz: 'Muayyan fikr qanday his-tuygʻu uygʻotishini osongina oʻzgartira olmaymiz, ammo nima haqida oʻylashni juda koʻp hollarda oʻzimiz tanlay olamiz — va tanlaymiz ham.',
+    },
+  },
+  {
+    page: 212,
+    text: {
+      en: 'The emotional mind reacts to the present as though it were the past. The trouble is that, especially when the appraisal is fast and automatic, we may not realize that what was once the case is no longer so.',
+      ru: 'Эмоциональный ум реагирует на настоящее так, будто это прошлое. Беда в том, что при быстрой, автоматической оценке мы можем не заметить: то, что было верно когда-то, уже не так.',
+      uz: 'Hissiy aql hozirgi zamonga xuddi oʻtmishdek munosabatda boʻladi. Muammo shundaki, baho tez va avtomatik berilganda, bir paytlar toʻgʻri boʻlgan narsa endi unday emasligini payqamasligimiz mumkin.',
+    },
+  },
+]
+
+// Shuffled deck: every page open shows the next quote; all 20 appear before any repeats.
+let quoteDeck = []
+let lastQuoteIdx = -1
+export function nextBookQuote() {
+  if (quoteDeck.length === 0) {
+    quoteDeck = BOOK_QUOTES.map((_, i) => i)
+    for (let i = quoteDeck.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1))
+      ;[quoteDeck[i], quoteDeck[j]] = [quoteDeck[j], quoteDeck[i]]
+    }
+    // avoid the same quote twice in a row across a reshuffle
+    if (quoteDeck[quoteDeck.length - 1] === lastQuoteIdx && quoteDeck.length > 1) {
+      ;[quoteDeck[0], quoteDeck[quoteDeck.length - 1]] = [quoteDeck[quoteDeck.length - 1], quoteDeck[0]]
+    }
+  }
+  lastQuoteIdx = quoteDeck.pop()
+  return BOOK_QUOTES[lastQuoteIdx]
 }
 
 // Localized labels for journal entry field keys (raw keys must never reach the UI)
