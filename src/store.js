@@ -1,6 +1,8 @@
 import { WEEKS, BADGES } from './content.js'
 
-const KEY = 'eqTrainerData'
+// Legacy single-user key (v1). Multi-user caches are per-uid: eqTrainerData:<uid>
+export const LEGACY_KEY = 'eqTrainerData'
+export const cacheKey = (uid) => `eqTrainerData:${uid}`
 
 const DEFAULTS = {
   lang: 'en',
@@ -10,11 +12,21 @@ const DEFAULTS = {
 
 export const EMOTION_KEYS = ['anger', 'shame', 'fear', 'envy']
 
-// crypto.randomUUID is unavailable on file:// and plain-HTTP origins (dist is opened from disk)
-export const newId = () =>
-  globalThis.crypto?.randomUUID
-    ? crypto.randomUUID()
-    : Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 10)
+// crypto.randomUUID is unavailable on file:// and plain-HTTP origins (dist is
+// opened from disk). The fallback must still be a REAL RFC-4122 v4 uuid — the
+// server's entries.id column is uuid-typed and ids are the idempotency key.
+export const newId = () => {
+  if (globalThis.crypto?.randomUUID) return crypto.randomUUID()
+  const b = new Uint8Array(16)
+  crypto.getRandomValues(b)
+  b[6] = (b[6] & 0x0f) | 0x40
+  b[8] = (b[8] & 0x3f) | 0x80
+  const h = [...b].map((x) => x.toString(16).padStart(2, '0')).join('')
+  return `${h.slice(0, 8)}-${h.slice(8, 12)}-${h.slice(12, 16)}-${h.slice(16, 20)}-${h.slice(20)}`
+}
+
+export const isUuid = (s) =>
+  typeof s === 'string' && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(s)
 
 // Deep validation so a damaged/edited backup can never crash a later render
 export function normalizeData(d) {
@@ -45,17 +57,17 @@ function normalizeRitual(r) {
   return { morning: part(r?.morning), day: part(r?.day), evening: part(r?.evening) }
 }
 
-export function loadData() {
+export function loadData(key) {
   try {
-    const raw = localStorage.getItem(KEY)
+    const raw = localStorage.getItem(key)
     return raw ? normalizeData(JSON.parse(raw)) : structuredClone(DEFAULTS)
   } catch {
     return structuredClone(DEFAULTS)
   }
 }
 
-export function saveData(d) {
-  try { localStorage.setItem(KEY, JSON.stringify(d)) } catch { /* storage full/blocked */ }
+export function saveData(key, d) {
+  try { localStorage.setItem(key, JSON.stringify(d)) } catch { /* storage full/blocked */ }
 }
 
 // ---------- journey helpers ----------
@@ -99,6 +111,12 @@ export const fmtDate = (lang, iso) => {
   const d = new Date(iso)
   if (lang === 'uz') return `${two(d.getDate())}.${two(d.getMonth() + 1)}.${d.getFullYear()}`
   return d.toLocaleDateString(LOCALES[lang] ?? 'en-GB')
+}
+
+export const fmtMonthYear = (lang, iso) => {
+  const d = new Date(iso)
+  if (lang === 'uz') return `${UZ_MONTHS[d.getMonth()][0].toUpperCase()}${UZ_MONTHS[d.getMonth()].slice(1)} ${d.getFullYear()}`
+  return d.toLocaleDateString(LOCALES[lang] ?? 'en-GB', { month: 'long', year: 'numeric' })
 }
 
 export const fmtDateTime = (lang, iso) => {

@@ -5,7 +5,7 @@ import { weekForDay, journeyStats } from '../store.js'
 import BreathingGuide from './BreathingGuide.jsx'
 
 export default function Journey() {
-  const { data, update, lang, t } = useContext(AppCtx)
+  const { data, update, lang, t, sync } = useContext(AppCtx)
   const j = data.journey
   const { done, cur, streak } = journeyStats(j)
   const [openDay, setOpenDay] = useState(null)
@@ -21,7 +21,7 @@ export default function Journey() {
         <div className="card" style={{ textAlign: 'center', padding: 40 }}>
           <h2 style={{ margin: '10px 0 6px' }}>{t('journey')}</h2>
           <p className="muted" style={{ maxWidth: 460, margin: '0 auto 18px' }}>{t('startJourneyHint')}</p>
-          <button className="btn brand" onClick={() => update((d) => { d.journey.startDate = new Date().toISOString().slice(0, 10) })}>
+          <button className="btn brand" onClick={() => { update((d) => { d.journey.startDate = new Date().toISOString().slice(0, 10) }); sync.profile() }}>
             {t('startJourney')}
           </button>
         </div>
@@ -173,16 +173,18 @@ function WeekPreviews({ lang }) {
 const MILESTONES = [7, 14, 21, 30]
 
 function DayView({ day, isToday }) {
-  const { data, update, lang, t, notify } = useContext(AppCtx)
+  const { data, update, lang, t, notify, sync } = useContext(AppCtx)
   const [celebrate, setCelebrate] = useState(false)
   const w = weekForDay(day)
   if (!w) return null
   const dayData = data.journey.days[day] || { fields: {}, done: false }
-  const setField = (pid, fid, val) =>
+  const setField = (pid, fid, val) => {
     update((d) => {
       const dd = (d.journey.days[day] ||= { fields: {}, done: false })
       dd.fields[`${pid}.${fid}`] = val
     })
+    sync.dayFields(day)
+  }
 
   return (
     <div className="card week-card" style={{ '--wcolor': w.color }}>
@@ -236,7 +238,12 @@ function DayView({ day, isToday }) {
           className="btn"
           disabled={dayData.done}
           onClick={() => {
-            update((d) => { (d.journey.days[day] ||= { fields: {} }).done = true })
+            update((d) => {
+              const dd = (d.journey.days[day] ||= { fields: {} })
+              dd.done = true
+              dd.doneAt = new Date().toISOString()
+            })
+            sync.dayDone(day)
             if (MILESTONES.includes(day)) setCelebrate(true)
             else notify(t('saved'))
           }}
@@ -277,7 +284,7 @@ function Celebrate({ day, onClose }) {
 }
 
 function Ritual({ visible }) {
-  const { data, update, lang, t } = useContext(AppCtx)
+  const { data, update, lang, t, sync } = useContext(AppCtx)
   if (!visible) return null
   const r = data.journey.ritual
   const parts = [
@@ -295,7 +302,7 @@ function Ritual({ visible }) {
             <label className="field-label">{t(labelKey)}</label>
             <textarea
               value={r[key] || starterFor(lang, ph)}
-              onChange={(e) => update((d) => { d.journey.ritual[key] = e.target.value })}
+              onChange={(e) => { update((d) => { d.journey.ritual[key] = e.target.value }); sync.profile() }}
             />
           </div>
         ))}

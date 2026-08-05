@@ -54,7 +54,7 @@ function Learn({ m }) {
 
 /* ---------------- PRACTICE: guided form → saves a journal entry ---------------- */
 function Practice({ emotion, m, onSaved }) {
-  const { lang, t, update, notify } = useContext(AppCtx)
+  const { lang, t, update, notify, sync } = useContext(AppCtx)
   const [form, setForm] = useState({})
   const set = (id, v) => setForm((f) => ({ ...f, [id]: v }))
 
@@ -77,6 +77,7 @@ function Practice({ emotion, m, onSaved }) {
     }
     if (emotion === 'fear' && form.took && !form.tookDate) entry.tookDate = new Date().toISOString()
     update((d) => { d.entries[emotion].push(entry) })
+    sync.entrySaved(emotion, entry.id)
     setForm({})
     notify(t('saved'))
     onSaved?.()

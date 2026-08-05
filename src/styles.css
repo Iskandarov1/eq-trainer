@@ -359,6 +359,29 @@ label.field-label { display: block; font-weight: 600; font-size: 13.5px; margin-
 
 .footer-actions { display: flex; gap: 10px; justify-content: center; margin-top: 34px; flex-wrap: wrap; }
 .trust-note { text-align: center; font-size: 12.5px; color: var(--ink-soft); margin-top: 12px; }
+
+/* ---------- accounts & sync ---------- */
+.account-row { display: flex; gap: 8px; justify-content: center; align-items: center; margin-top: 14px; flex-wrap: wrap; }
+.account-row .sep { color: var(--ink-soft); }
+.linklike { background: none; border: none; padding: 0; font: inherit; color: inherit; text-decoration: underline; cursor: pointer; letter-spacing: inherit; text-transform: inherit; }
+.sync-badge { color: var(--ink-soft); }
+.sync-badge.error { color: #b3402a; }
+.sync-badge.pending { color: #8a6d1f; }
+
+.auth-screen { min-height: 100vh; display: grid; place-items: center; padding: 24px 16px; }
+.auth-card { background: var(--surface); border-radius: var(--radius); box-shadow: var(--shadow-lg); padding: 34px 30px; width: 100%; max-width: 400px; }
+.auth-error { font-size: 13.5px; color: #b3402a; background: #b3402a14; background: color-mix(in srgb, #b3402a 8%, transparent); border-radius: 10px; padding: 10px 12px; }
+
+.migrate-list { margin: 8px 0 0 18px; font-size: 14.5px; display: grid; gap: 4px; }
+
+/* ---------- reports ---------- */
+.report-row { display: flex; align-items: center; gap: 14px; }
+.report-title { font-weight: 700; font-size: 15px; }
+.report-view { max-width: 720px; margin: 0 auto; }
+.report-body { display: grid; gap: 2px; }
+.report-field { margin-bottom: 10px; }
+.report-field .k { margin-bottom: 2px; }
+.report-field .v { font-size: 14.5px; white-space: pre-wrap; }
 .fade-in { animation: fade 0.3s ease; }
 @keyframes fade { from { opacity: 0; transform: translateY(6px); } }
 

@@ -3,32 +3,40 @@
 Personal emotional-intelligence trainer based on Daniel Goleman's framework. Source-of-truth docs: `..\Daniel Goleman 1 month plan.pdf` and `..\Add a _Next Level_ section .docx`. Product spec: `PRD.md`.
 
 ## Stack
-- React 18 + Vite 6 (`base: './'` — the build must keep working when `dist/index.html` is opened from disk via `file://`).
-- recharts for charts. Plain CSS in `src/styles.css`. No TypeScript, no router, no other dependencies — keep it that way.
+- React 18 + Vite 6 (`base: './'` — the build must keep working when `dist/index.html` is opened from disk via `file://`). Single JS bundle only — `file://` cannot load split chunks, so never introduce dynamic `import()` or manualChunks.
+- recharts for charts; `@supabase/supabase-js` (backend, via `src/api.js` only); `pdf-lib` + `@pdf-lib/fontkit` (client-side PDF reports). Plain CSS in `src/styles.css`. No TypeScript, no router — add no further dependencies.
 
 ## Commands
 - `npm run dev` — dev server
 - `npm run build` — production build to `dist/`
 - `npm run preview` — serve the build
+- `node scripts/build-fonts.mjs` — regenerate the subsetted Noto Sans base64 modules in `src/fonts/` (needs the TTFs in `scripts/`)
+- `node scripts/test-pdf.mjs` — smoke-test PDF generation in EN/RU/UZ (throws on any missing glyph)
 
 ## Architecture
-- `src/App.jsx` — root: route state object (`{page, emotion?}`), header/nav, breadcrumbs, toast, export/import.
+- `src/App.jsx` — auth shell (`App`) + the trainer (`TrainerApp`, rendered with `key={uid}` so a user switch fully remounts state); route state object (`{page, emotion?}`), header/nav, breadcrumbs, toast, export/import, legacy-import modal, sign-out flow, sync badge.
+- `src/api.js` — the ONLY module that touches Supabase (auth, Postgres, Storage). Local-first: per-user offline op queue (`eqTrainerQueue:<uid>`), debounced dirty markers, flush engine with error classes, pull+queue-aware merge. With `src/config.js` empty the app runs in v1 local mode under the legacy storage key.
+- `src/pdf.js` — client-side PDF reports (pdf-lib + fontkit + `src/fonts/` base64 subsetted Noto Sans; fonts are inlined because `fetch()` of local assets fails on `file://`).
+- `src/components/AuthScreen.jsx` — trilingual sign-in/sign-up (own local lang state, `eqAuthLang`).
+- `src/components/Reports.jsx` — daily records list (entries + completed journey days), in-app report view, PDF download.
 - `src/content.js` — ALL user-facing text and program content. Every string is `{en, ru, uz}`; render via `L(lang, s)` or the `t()` helper (UI table). Never hardcode display text in components. Uzbek uses Latin script with ʻ (U+02BB) for oʻ/gʻ and ʼ (U+02BC) for tutuq belgisi; because Uzbek is verb-final, sentence starters (`ph`) are nominal constructions ending in a dash/`qachonki`/`chunki` so the typed continuation stays grammatical.
-- `src/store.js` — localStorage persistence (key `eqTrainerData`), analytics (mastery, intensity series, badges), `newId()`, `normalizeData()`, `fmtDate()`.
+- `src/store.js` — localStorage persistence (per-user `eqTrainerData:<uid>`, legacy `eqTrainerData` in local mode), analytics (mastery, intensity series, badges), `newId()` (always a real RFC-4122 v4 — server `entries.id` is uuid-typed), `normalizeData()`, `fmtDate()`.
 - `src/components/` — Dashboard, Journey (30-day plan), NextLevel (module cards + Final Tips), EmotionModule (Learn/Practice/Journal/Progress tabs), BreathingGuide, ErrorBoundary.
 
 ## Data shape
 ```js
 { lang: 'en'|'ru'|'uz',
-  journey: { startDate: 'YYYY-MM-DD'|null, days: { [n]: { fields: {}, done: bool } }, ritual: { morning, day, evening } },
+  journey: { startDate: 'YYYY-MM-DD'|null, days: { [n]: { fields: {}, done: bool, doneAt?: ISO } }, ritual: { morning, day, evening } },
   entries: { anger: [], shame: [], fear: [] } }
 ```
 Text-field convention: every question is pre-filled with a sentence start (field `ph`, rendered via `starterFor()`) that the user finishes by typing; one sentence per field — never combine two thoughts in one starter (no "and…" inside a template). Untouched starters count as empty and are stripped on save.
 ```js
 ```
-Journal entries: `{ id, date: ISO, intensity? (only if slider touched), ...fieldValues }`. Fear entries add `tookDate` when "I took this step" is checked.
+Journal entries: `{ id, date: ISO, intensity? (only if slider touched), ...fieldValues }`. Fear entries add `tookDate` when "I took this step" is checked. Entries re-keyed at import carry the original id as `legacyId` (skipped in reports).
 
 ## Conventions & invariants
+- **Sync invariants (see PRD §3.5):** `api.js` is the only Supabase surface. Entries are append-only inserts with the client uuid as PK — duplicate error 23505 counts as success; never upsert entries. Journey-day ops send only their own columns (`fields` vs `done`/`done_at`) so a stale fields push can never revert `done`. PDF bytes never enter localStorage — the queue stores references, bytes are regenerated at flush; storage upload 409 counts as success. Storage object keys are ASCII only (`<uid>/<YYYY-MM-DD>_<emotion|dayNN>_<hhmmss>.pdf`). A failed queue write must surface visibly (silent drop = permanent data loss).
+- **Never gate the app on a live session** — gate on cached uid + cached data; a failed offline token refresh degrades to offline mode, not a login screen.
 - **Option selections are stored as stable keys** (e.g. `dignity`, `physical`), rendered via `optionLabel(lang, v)`. `OPTION_LABELS` also maps legacy English display strings — old saved data must always keep rendering (backward compatibility is required; never migrate/rewrite stored entries).
 - Journal field keys get display names from `FIELD_LABELS` in content.js — add an entry there for any new practice field.
 - Book quotes: `BOOK_QUOTES` in content.js — EN text is verbatim from Goleman's *Emotional Intelligence* PDF (research source #6, PRD §6) and must never be reworded; RU/UZ are translations. Rotation via `nextBookQuote()` (shuffled deck, no repeat until all 20 shown); rendered by `BookQuote` in App.jsx on every page open. New quotes must be verbatim-verified against the book text first.
@@ -40,3 +48,5 @@ Journal entries: `{ id, date: ISO, intensity? (only if slider touched), ...field
 
 ## QA checklist (manual — no test framework)
 `npm run build`, then verify: save a practice from `dist/index.html` opened from disk; import a backup with `entries:{}` (must not white-screen); RU and UZ mode journal shows localized labels/values; new profile shows no focus suggestion; two same-day entries get unique chart labels.
+
+With Supabase configured additionally: sign-up → practice → row appears under the right uid + PDF in Storage; second account sees nothing of the first; offline save → queue grows → reconnect → no duplicates; day marked done, then fields edited elsewhere → `done` never reverts; legacy import previews counts and renames (not deletes) the old key; sign-out with unsynced changes warns; `node scripts/test-pdf.mjs` passes (Cyrillic + ʻ/ʼ glyphs).

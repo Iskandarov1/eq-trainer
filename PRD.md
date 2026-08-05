@@ -39,12 +39,24 @@ A personal emotional-intelligence trainer that turns Daniel Goleman's EI framewo
 
 ### 3.4 Cross-cutting
 - **Localization:** every user-facing string in EN, RU and UZ (Uzbek Latin, shipped 2026-07-30); selections stored as stable keys and rendered in the active language (legacy English-string entries still localize).
-- **Persistence:** localStorage under `eqTrainerData`; JSON export/import with damaged-backup protection; render-error boundary.
-- **Portability:** works from `file://` (relative asset paths, no secure-context-only APIs).
+- **Persistence:** local-first cache in localStorage (`eqTrainerData:<uid>`; legacy single-user key `eqTrainerData` in local mode); JSON export/import with damaged-backup protection; render-error boundary.
+- **Portability:** works from `file://` (relative asset paths, single JS bundle — no split chunks, no secure-context-only APIs).
 - **Accessibility/UX:** responsive to 360px, `prefers-reduced-motion` respected, theme-color/meta description set.
 
+### 3.5 Multi-user accounts + common database (added 2026-08-05)
+- **Backend:** Supabase free tier (Frankfurt) — email+password auth (open signup, confirm-email off), Postgres with row-level security, private Storage bucket for PDF archives. One-time setup: `SETUP.md` + `supabase-setup.sql`. All backend access goes through `src/api.js` (swap-friendly). While `src/config.js` is empty the app runs in v1 local mode.
+- **Privacy: author-only.** RLS + storage policies restrict every row/file to its author. Disclosed caveat: the Supabase project owner can technically query raw data; team policy is not to.
+- **Local-first sync:** the app renders from the per-user localStorage cache; a per-user offline op queue pushes in the background (entries = idempotent client-uuid inserts, 23505 = success; journey days = split-column upserts so a stale fields push can never revert `done`; profile = debounced upsert; PDFs regenerated at flush, upload 409 = success). Pull-and-merge on start; queue-aware merge; error classes: retry/backoff vs 401 refresh vs 429 backoff vs quarantine.
+- **Legacy migration:** first sign-in on a device with v1 data offers a previewed, confirmed import (re-keys non-uuid ids; renames — never deletes — the old key).
+- **Sign-out:** wipes the local cache when fully synced; warns when unsynced changes exist.
+
+### 3.6 Reports section (added 2026-08-05)
+- Every saved answer is a daily written record: one record per emotion-practice entry and per completed journey day.
+- **Reports** nav page: month-grouped list (newest first), filter by practice, each record opens as a formatted in-app page and downloads as a styled PDF (`2026-08-05 — Anger Practice.pdf`), generated client-side (pdf-lib + embedded subsetted Noto Sans — full Cyrillic + Uzbek ʻ/ʼ).
+- On every save the PDF is also archived to the user's private storage folder as `<uid>/<YYYY-MM-DD>_<practice>_<hhmmss>.pdf` (append-only, ASCII keys).
+
 ## 4. Non-goals (v1)
-- No accounts, sync, or backend; no push notifications; no automated test suite (manual QA checklist in README). (Uzbek localization was a v1 non-goal; shipped 2026-07-30.)
+- No push notifications; no automated test suite (manual QA checklist in README). (Uzbek localization was a v1 non-goal, shipped 2026-07-30; accounts/sync/backend were v1 non-goals, shipped 2026-08-05 — see §3.5–3.6.)
 
 ## 5. Success criteria
 - All checklist items from the docx spec verified working (audited + browser-tested).
@@ -75,7 +87,7 @@ Per the owner's direction, quotes and phrases in the app are sourced from these 
 7. **Temporal-distancing prompt** — "How will this matter in a week / a year?" optional field (evidence-based reappraisal).
 8. ~~**Uzbek localization** — third language using the existing `{en, ru}` → `{en, ru, uz}` string convention.~~ **Shipped 2026-07-30** (Uzbek Latin; verb-final-aware sentence starters; `uz-UZ` date locale).
 
-**Book-derived feature backlog (2026-07-30, owner selection pending):** 10 candidates designed from source #6 — Stoplight Meta-Moment, Anger Cool-Down Gate, Worry Interrupt (Borkovec), Granular Check-In (emotion families), XYZ Complaint Composer, Flooding Meter, Fear Ladder, Toxic-Thought Catcher, Marshmallow Drill, "Now or Then?" Trigger Atlas. Owner chose to ship only the 20 phrases for now; full specs in plan `~\.claude\plans\wondrous-crafting-kazoo.md`.
+**Book-derived feature backlog (2026-07-30, owner selection pending):** 10 candidates designed from source #6 — Stoplight Meta-Moment, Anger Cool-Down Gate, Worry Interrupt (Borkovec), Granular Check-In (emotion families), XYZ Complaint Composer, Flooding Meter, Fear Ladder, Toxic-Thought Catcher, Marshmallow Drill, "Now or Then?" Trigger Atlas. Owner chose to ship only the 20 phrases for now; full specs in `docs/book-feature-backlog.md`.
 
 ## 8a. Design system v2 (owner-directed re-theme, 2026-07-28 — CURRENT)
 

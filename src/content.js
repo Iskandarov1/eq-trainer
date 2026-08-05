@@ -154,6 +154,111 @@ export const UI = {
   milestoneBody: { en: 'A milestone on your journey. Consistency is the practice.', ru: 'Веха на вашем пути. Постоянство и есть практика.', uz: 'Yoʻlingizdagi muhim marra. Doimiylikning oʻzi — amaliyot.' },
   continueWord: { en: 'Continue', ru: 'Продолжить', uz: 'Davom etish' },
   bookPage: { en: (n) => `p. ${n}`, ru: (n) => `с. ${n}`, uz: (n) => `${n}-bet` },
+
+  // ---- accounts / sync ----
+  signOut: { en: 'Sign out', ru: 'Выйти', uz: 'Chiqish' },
+  cancel: { en: 'Cancel', ru: 'Отмена', uz: 'Bekor qilish' },
+  signOutWarnTitle: {
+    en: (n) => `Unsynced changes: ${n}`,
+    ru: (n) => `Несинхронизировано изменений: ${n}`,
+    uz: (n) => `Sinxronlanmagan oʻzgarishlar: ${n}`,
+  },
+  signOutWarnBody: {
+    en: 'Some answers have not reached the cloud yet. Sync first (needs internet), or sign out keeping the local copy on this computer.',
+    ru: 'Часть ответов ещё не попала в облако. Сначала синхронизируйте (нужен интернет) или выйдите, сохранив локальную копию на этом компьютере.',
+    uz: 'Baʼzi javoblar hali bulutga yetib bormagan. Avval sinxronlang (internet kerak) yoki mahalliy nusxani shu kompyuterda saqlagan holda chiqing.',
+  },
+  signOutKeep: { en: 'Sign out anyway', ru: 'Всё равно выйти', uz: 'Baribir chiqish' },
+  syncFirst: { en: 'Sync now', ru: 'Синхронизировать', uz: 'Sinxronlash' },
+  syncStarted: { en: 'Syncing…', ru: 'Синхронизация…', uz: 'Sinxronlanmoqda…' },
+  syncSynced: { en: 'Synced', ru: 'Синхронизировано', uz: 'Sinxronlangan' },
+  syncSyncing: { en: 'Syncing…', ru: 'Синхронизация…', uz: 'Sinxronlanmoqda…' },
+  syncOffline: { en: 'Offline', ru: 'Офлайн', uz: 'Oflayn' },
+  syncPending: {
+    en: (n) => `Waiting to sync: ${n}`,
+    ru: (n) => `Ожидает синхронизации: ${n}`,
+    uz: (n) => `Sinxronlash kutilmoqda: ${n}`,
+  },
+  syncError: {
+    en: 'Sync problem — some changes are not saved to the cloud',
+    ru: 'Проблема синхронизации — часть изменений не сохранена в облаке',
+    uz: 'Sinxronlash muammosi — baʼzi oʻzgarishlar bulutga saqlanmagan',
+  },
+  trustNoteCloud: {
+    en: 'Your answers are synced to your private account — only you can read them.',
+    ru: 'Ваши ответы синхронизируются с вашим личным аккаунтом — читать их можете только вы.',
+    uz: 'Javoblaringiz shaxsiy hisobingiz bilan sinxronlanadi — ularni faqat oʻzingiz oʻqiy olasiz.',
+  },
+
+  // ---- auth screen ----
+  authSignInHint: { en: 'Sign in to your private journal.', ru: 'Войдите в свой личный дневник.', uz: 'Shaxsiy kundalikka kiring.' },
+  authSignUpHint: {
+    en: 'Create your private account — your answers are visible only to you.',
+    ru: 'Создайте личный аккаунт — ваши ответы видите только вы.',
+    uz: 'Shaxsiy hisob yarating — javoblaringizni faqat oʻzingiz koʻrasiz.',
+  },
+  authEmail: { en: 'Email', ru: 'Эл. почта', uz: 'Elektron pochta' },
+  authPassword: { en: 'Password (min 8 characters)', ru: 'Пароль (мин. 8 символов)', uz: 'Parol (kamida 8 belgi)' },
+  authSignIn: { en: 'Sign in', ru: 'Войти', uz: 'Kirish' },
+  authSignUp: { en: 'Create account', ru: 'Создать аккаунт', uz: 'Hisob yaratish' },
+  authToSignUp: { en: 'No account? Create one', ru: 'Нет аккаунта? Создайте', uz: 'Hisob yoʻqmi? Yarating' },
+  authToSignIn: { en: 'Already have an account? Sign in', ru: 'Уже есть аккаунт? Войдите', uz: 'Hisobingiz bormi? Kiring' },
+  authErrInvalid: { en: 'Wrong email or password', ru: 'Неверная почта или пароль', uz: 'Pochta yoki parol notoʻgʻri' },
+  authErrExists: { en: 'This email is already registered', ru: 'Эта почта уже зарегистрирована', uz: 'Bu pochta allaqachon roʻyxatdan oʻtgan' },
+  authErrWeak: { en: 'Password must be at least 8 characters', ru: 'Пароль должен быть не короче 8 символов', uz: 'Parol kamida 8 belgidan iborat boʻlishi kerak' },
+  authErrNetwork: { en: 'No connection — try again', ru: 'Нет соединения — попробуйте ещё раз', uz: 'Aloqa yoʻq — qayta urinib koʻring' },
+  authForgot: {
+    en: 'Forgot your password? Contact the administrator.',
+    ru: 'Забыли пароль? Обратитесь к администратору.',
+    uz: 'Parolni unutdingizmi? Administratorga murojaat qiling.',
+  },
+
+  // ---- legacy data migration ----
+  migrateTitle: {
+    en: 'Move your existing data into your account?',
+    ru: 'Перенести существующие данные в ваш аккаунт?',
+    uz: 'Mavjud maʼlumotlar hisobingizga koʻchirilsinmi?',
+  },
+  migrateBody: {
+    en: 'This device has journal data saved before accounts existed. If it is yours, it can be moved into your account:',
+    ru: 'На этом устройстве есть записи, сохранённые до появления аккаунтов. Если это ваши данные, их можно перенести в ваш аккаунт:',
+    uz: 'Bu qurilmada hisoblar paydo boʻlishidan oldin saqlangan yozuvlar bor. Agar ular sizniki boʻlsa, ularni hisobingizga koʻchirish mumkin:',
+  },
+  migrateJourney: {
+    en: (d) => `Journey started ${d}`,
+    ru: (d) => `Путь начат ${d}`,
+    uz: (d) => `Safar boshlangan sana: ${d}`,
+  },
+  migrateConfirmHint: {
+    en: 'Import only if these records are yours.',
+    ru: 'Импортируйте, только если это ваши записи.',
+    uz: 'Faqat bu yozuvlar sizniki boʻlsa import qiling.',
+  },
+  migrateNo: { en: 'Not mine', ru: 'Это не моё', uz: 'Meniki emas' },
+  migrateYes: { en: 'Yes, this is my data', ru: 'Да, это мои данные', uz: 'Ha, bu mening maʼlumotlarim' },
+
+  // ---- reports ----
+  reportsNav: { en: 'Reports', ru: 'Отчёты', uz: 'Hisobotlar' },
+  reportsHint: {
+    en: 'Every saved practice as a daily record — read it here or download as PDF.',
+    ru: 'Каждая сохранённая практика — дневная запись: читайте здесь или скачивайте в PDF.',
+    uz: 'Har bir saqlangan amaliyot — kunlik yozuv: shu yerda oʻqish yoki PDF yuklab olish mumkin.',
+  },
+  reportsEmpty: {
+    en: 'No records yet — complete a practice or a journey day, and it will appear here.',
+    ru: 'Записей пока нет — выполните практику или день пути, и они появятся здесь.',
+    uz: 'Hozircha yozuvlar yoʻq — amaliyot yoki safar kunini yakunlang, ular shu yerda paydo boʻladi.',
+  },
+  reportsAll: { en: 'All', ru: 'Все', uz: 'Barchasi' },
+  reportDownload: { en: 'Download PDF', ru: 'Скачать PDF', uz: 'PDF yuklab olish' },
+  reportPdfError: { en: 'Could not create the PDF', ru: 'Не удалось создать PDF', uz: 'PDF yaratib boʻlmadi' },
+  reportEntryTitle: {
+    en: (name) => `${name} — Practice`,
+    ru: (name) => `${name} — практика`,
+    uz: (name) => `${name} — amaliyot`,
+  },
+  reportDayTitle: { en: (d) => `Day ${d}`, ru: (d) => `День ${d}`, uz: (d) => `${d}-kun` },
+  yesWord: { en: 'Yes', ru: 'Да', uz: 'Ha' },
 }
 
 // ---- Quotes from Daniel Goleman, "Emotional Intelligence" (Bloomsbury) — research source #6, PRD §6.
