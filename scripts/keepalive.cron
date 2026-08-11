@@ -1,0 +1,10 @@
+# EQ Trainer — keep the free Supabase project from pausing after ~7 idle days.
+# A paused project makes the app report "offline" for every user at once.
+#
+# Install with:
+#   sudo cp scripts/keepalive.cron /etc/cron.d/eq-trainer-keepalive
+# Replace <PROJECT-REF> and <ANON-KEY> with the values from src/config.js first.
+SHELL=/bin/sh
+PATH=/usr/local/bin:/usr/bin:/bin
+
+17 6 * * * root curl -fsS -o /dev/null -H "apikey: <ANON-KEY>" https://<PROJECT-REF>.supabase.co/rest/v1/ || true
