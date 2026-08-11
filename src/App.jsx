@@ -24,11 +24,12 @@ export default function App() {
   const [user, setUser] = useState(undefined) // undefined=resolving, null=needs sign-in
   useEffect(() => { api.resolveUser().then(setUser) }, [])
 
-  // Dev-only: the auth screen is unreachable until Supabase is configured, so
-  // `?auth` renders it for visual review. import.meta.env.DEV is false in the
-  // production build, so this branch is dropped at build time.
+  // Dev-only: the auth screens are unreachable until Supabase is configured, so
+  // `?auth`, `?auth=signup` and `?auth=pending` render them for visual review.
+  // import.meta.env.DEV is false in the production build, so this branch is
+  // dropped at build time.
   if (import.meta.env.DEV && new URLSearchParams(window.location.search).has('auth')) {
-    return <AuthScreen onAuthed={() => {}} />
+    return <AuthScreen onAuthed={() => {}} initial={new URLSearchParams(window.location.search).get('auth')} />
   }
 
   if (user === undefined) return null

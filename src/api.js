@@ -39,8 +39,17 @@ function rememberUser(u) {
 export async function signUp(email, password) {
   const { data, error } = await supabase.auth.signUp({ email, password })
   if (error) throw error
+  // With "Confirm email" ON, Supabase returns a user but NO session. Caching the
+  // uid here would put the app in a phantom "signed in offline" state, queueing
+  // writes for an account that cannot yet accept them.
+  if (!data.session) return { pending: true, email }
   rememberUser({ uid: data.user.id, email: data.user.email })
   return { uid: data.user.id, email: data.user.email }
+}
+
+export async function resendConfirmation(email) {
+  const { error } = await supabase.auth.resend({ type: 'signup', email })
+  if (error) throw error
 }
 
 export async function signIn(email, password) {

@@ -1,20 +1,24 @@
 import React, { useState } from 'react'
 import { L, UI } from '../content.js'
-import { signIn, signUp } from '../api.js'
+import { signIn, signUp, resendConfirmation } from '../api.js'
 
 /* First-run gate when Supabase is configured and nobody has signed in on this
    device yet. Runs OUTSIDE the app context (there is no user yet), so language
    is local state remembered per device. */
-export default function AuthScreen({ onAuthed }) {
+export default function AuthScreen({ onAuthed, initial }) {
   const [lang, setLang] = useState(() => {
     const l = localStorage.getItem('eqAuthLang')
     return l === 'ru' || l === 'uz' || l === 'en' ? l : 'en'
   })
-  const [mode, setMode] = useState('signin') // 'signin' | 'signup'
+  // `initial` seeds the starting screen; used by the dev-only ?auth= preview so
+  // every state can be reviewed before the backend exists.
+  const [mode, setMode] = useState(initial === 'signup' ? 'signup' : 'signin') // 'signin' | 'signup'
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState(null)
+  const [pending, setPending] = useState(initial === 'pending' ? 'you@example.com' : null) // email awaiting confirmation
+  const [resent, setResent] = useState(false)
   const t = (k, ...args) => {
     const v = L(lang, UI[k])
     return typeof v === 'function' ? v(...args) : v
@@ -32,7 +36,8 @@ export default function AuthScreen({ onAuthed }) {
     setBusy(true)
     try {
       const u = mode === 'signin' ? await signIn(email.trim(), password) : await signUp(email.trim(), password)
-      onAuthed({ ...u, offline: false })
+      if (u.pending) setPending(u.email)
+      else onAuthed({ ...u, offline: false })
     } catch (err) {
       const msg = String(err?.message || err)
       if (/invalid login credentials/i.test(msg)) setError(t('authErrInvalid'))
@@ -43,6 +48,29 @@ export default function AuthScreen({ onAuthed }) {
     } finally {
       setBusy(false)
     }
+  }
+
+  if (pending) {
+    return (
+      <div className="auth-screen">
+        <div className="auth-card" style={{ textAlign: 'center' }}>
+          <div className="logo-mark" style={{ margin: '0 auto 10px' }}>EQ</div>
+          <h1 className="serif">{t('authCheckTitle')}</h1>
+          <p className="muted" style={{ margin: '10px 0' }}>{t('authCheckBody', pending)}</p>
+          <p className="small muted">{t('authCheckSpam')}</p>
+          <button className="btn ghost sm" style={{ marginTop: 14 }} disabled={resent}
+            onClick={async () => {
+              try { await resendConfirmation(pending); setResent(true) } catch { /* rate-limited: the first mail is still on its way */ }
+            }}>
+            {resent ? t('authResent') : t('authResend')}
+          </button>
+          <button className="linklike" style={{ margin: '14px auto 0', display: 'block' }}
+            onClick={() => { setPending(null); setMode('signin'); setResent(false) }}>
+            {t('authBackToSignIn')}
+          </button>
+        </div>
+      </div>
+    )
   }
 
   return (
