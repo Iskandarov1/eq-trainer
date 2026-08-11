@@ -5,7 +5,7 @@ import { PDFDocument, rgb } from 'pdf-lib'
 import fontkit from '@pdf-lib/fontkit'
 import notoRegularB64 from './fonts/notoSansRegular.js'
 import notoBoldB64 from './fonts/notoSansBold.js'
-import { L, UI, EMOTION_NAMES, FIELD_LABELS, optionLabel, isBareStarter } from './content.js'
+import { L, UI, EMOTION_NAMES, FIELD_LABELS, FIELD_PHS, optionLabel, isBareStarter, localizeStarter } from './content.js'
 import { fmtDate, fmtDateTime, weekForDay, CHECKIN_SLOTS } from './store.js'
 
 const A4 = [595.28, 841.89]
@@ -159,7 +159,7 @@ export async function buildEntryReport({ entry, emotion, lang, uid }) {
           ? fmtDate(lang, v)
           : k === 'emotion' || k === 'threat'
             ? optionLabel(lang, String(v))
-            : String(v)
+            : localizeStarter(String(v), FIELD_PHS[k], lang)
     if (!val) continue
     w.text(label.toUpperCase(), { size: 8.5, bold: true, color: SOFT, gap: 1 })
     w.text(val, { size: 11, gap: 10 })
@@ -191,7 +191,7 @@ export async function buildDayReport({ day, dayData, lang, uid }) {
     for (const f of answered) {
       const v = dayData.fields[`${p.id}.${f.id}`]
       if (f.label) w.text(L(lang, f.label).toUpperCase(), { size: 8.5, bold: true, color: SOFT, gap: 1 })
-      w.text(typeof v === 'boolean' ? boolWord(lang, v) : String(v), { size: 11, gap: 8 })
+      w.text(typeof v === 'boolean' ? boolWord(lang, v) : localizeStarter(String(v), f.ph, lang), { size: 11, gap: 8 })
     }
     w.space(6)
   }
@@ -203,6 +203,7 @@ export async function buildDayReport({ day, dayData, lang, uid }) {
 /* ---------------- daily check-in report ---------------- */
 
 const CHECKIN_LABELS = { morning: 'ritualMorning', day: 'ritualDay', evening: 'ritualEvening' }
+const CHECKIN_PHS = { morning: UI.ritualMorningPh, day: UI.ritualDayPh, evening: UI.ritualEveningPh }
 
 export async function buildCheckinReport({ date, checkin, lang, uid }) {
   const { doc, fontR, fontB } = await newDoc()
@@ -219,7 +220,7 @@ export async function buildCheckinReport({ date, checkin, lang, uid }) {
     const at = new Date(s.savedAt)
     const hhmm = `${String(at.getHours()).padStart(2, '0')}:${String(at.getMinutes()).padStart(2, '0')}`
     w.text(`${L(lang, UI[CHECKIN_LABELS[slot]])} · ${hhmm}`.toUpperCase(), { size: 8.5, bold: true, color: SOFT, gap: 1 })
-    w.text(s.text, { size: 11, gap: 10 })
+    w.text(localizeStarter(s.text, CHECKIN_PHS[slot], lang), { size: 11, gap: 10 })
   }
 
   w.footerAll('EQ Trainer')

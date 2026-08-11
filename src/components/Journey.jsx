@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react'
 import { AppCtx } from '../App.jsx'
-import { L, WEEKS, UI, starterFor, isBareStarter } from '../content.js'
+import { L, WEEKS, UI, starterFor, isBareStarter, localizeStarter } from '../content.js'
 import { weekForDay, journeyStats, todayKey, fmtDate, CHECKIN_SLOTS } from '../store.js'
 import BreathingGuide from './BreathingGuide.jsx'
 
@@ -216,7 +216,7 @@ function DayView({ day, isToday }) {
                     </label>
                   )
                 const prefill = f.ph ? starterFor(lang, f.ph) : ''
-                const shown = val == null || isBareStarter(val, f.ph) ? prefill : val
+                const shown = val == null || isBareStarter(val, f.ph) ? prefill : localizeStarter(val, f.ph, lang)
                 if (f.t === 'text')
                   return (
                     <div key={f.id}>
@@ -347,7 +347,7 @@ function DailyCheckin() {
               <label className="field-label">{t(labelKey)}</label>
               {saved ? (
                 <>
-                  <div className="checkin-saved">{slot.text}</div>
+                  <div className="checkin-saved">{localizeStarter(slot.text, ph, lang)}</div>
                   <div className="checkin-foot">
                     <span className="caps">{t('checkinSavedAt', hhmm(slot.savedAt))}</span>
                     <button
@@ -361,7 +361,7 @@ function DailyCheckin() {
               ) : (
                 <>
                   <textarea
-                    value={text || starter}
+                    value={text ? localizeStarter(text, ph, lang) : starter}
                     onChange={(e) => update((d) => {
                       const c = (d.checkins[today] ||= {})
                       c[key] = { text: e.target.value }

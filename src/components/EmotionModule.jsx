@@ -1,7 +1,7 @@
 import React, { useContext, useMemo, useState } from 'react'
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts'
 import { AppCtx } from '../App.jsx'
-import { L, MODULES, EMOTION_NAMES, FIELD_LABELS, optionLabel, starterFor, isBareStarter } from '../content.js'
+import { L, MODULES, EMOTION_NAMES, FIELD_LABELS, optionLabel, starterFor, isBareStarter, localizeStarter } from '../content.js'
 import { masteryScore, intensitySeries, intensityChange, newId, entryText, fmtDate, fmtDateTime } from '../store.js'
 import BreathingGuide from './BreathingGuide.jsx'
 
@@ -118,7 +118,7 @@ function Field({ f, value, set }) {
         <div>
           {f.label && <label className="field-label">{L(lang, f.label)}</label>}
           <textarea
-            value={value == null || isBareStarter(value, f.ph) ? prefill : value}
+            value={value == null || isBareStarter(value, f.ph) ? prefill : localizeStarter(value, f.ph, lang)}
             placeholder={t('optionalNote')}
             onChange={(e) => set(f.id, e.target.value)}
           />
@@ -194,7 +194,7 @@ function Field({ f, value, set }) {
     case 'inputs5': {
       const prefill = f.ph ? starterFor(lang, f.ph) : ''
       const items = (value || [prefill, prefill, prefill, prefill, prefill])
-        .map((x) => (x == null || isBareStarter(x, f.ph) ? prefill : x))
+        .map((x) => (x == null || isBareStarter(x, f.ph) ? prefill : localizeStarter(x, f.ph, lang)))
       return (
         <div>
           <label className="field-label">{L(lang, f.label)}</label>

@@ -1,6 +1,6 @@
 import React, { useContext, useMemo, useState } from 'react'
 import { AppCtx } from '../App.jsx'
-import { L, EMOTION_NAMES, FIELD_LABELS, optionLabel, UI, isBareStarter } from '../content.js'
+import { L, EMOTION_NAMES, FIELD_LABELS, FIELD_PHS, optionLabel, UI, isBareStarter, localizeStarter } from '../content.js'
 import { EMOTION_KEYS, CHECKIN_SLOTS, fmtDate, fmtDateTime, fmtMonthYear, weekForDay, entryText } from '../store.js'
 import { buildEntryReport, buildDayReport, buildCheckinReport, downloadPdf } from '../pdf.js'
 
@@ -179,7 +179,7 @@ function EntryBody({ e }) {
               ? fmtDate(lang, v)
               : k === 'emotion' || k === 'threat'
                 ? optionLabel(lang, String(v))
-                : String(v)
+                : localizeStarter(String(v), FIELD_PHS[k], lang)
         if (!val) return null
         return (
           <div key={k} className="report-field">
@@ -193,16 +193,17 @@ function EntryBody({ e }) {
 }
 
 const CHECKIN_LABELS = { morning: 'ritualMorning', day: 'ritualDay', evening: 'ritualEvening' }
+const CHECKIN_PHS = { morning: UI.ritualMorningPh, day: UI.ritualDayPh, evening: UI.ritualEveningPh }
 
 function CheckinBody({ ci }) {
-  const { t } = useContext(AppCtx)
+  const { lang, t } = useContext(AppCtx)
   return (
     <div className="report-body">
       {CHECKIN_SLOTS.map((s) =>
         ci[s]?.savedAt ? (
           <div key={s} className="report-field">
             <div className="k caps">{t(CHECKIN_LABELS[s])}</div>
-            <div className="v">{ci[s].text}</div>
+            <div className="v">{localizeStarter(ci[s].text, CHECKIN_PHS[s], lang)}</div>
           </div>
         ) : null,
       )}
@@ -230,7 +231,7 @@ function DayBody({ day, dayData }) {
               return (
                 <div key={f.id} className="report-field">
                   {f.label && <div className="k caps">{L(lang, f.label)}</div>}
-                  <div className="v">{typeof v === 'boolean' ? (v ? L(lang, UI.yesWord) : '—') : String(v)}</div>
+                  <div className="v">{typeof v === 'boolean' ? (v ? L(lang, UI.yesWord) : '—') : localizeStarter(String(v), f.ph, lang)}</div>
                 </div>
               )
             })}

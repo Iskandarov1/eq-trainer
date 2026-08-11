@@ -16,6 +16,22 @@ export const isBareStarter = (txt, ph) =>
   typeof txt === 'string' && Boolean(ph) &&
   ['en', 'ru', 'uz'].some((l) => txt.trim() === starterFor(l, ph).trim())
 
+// The starter is the FIXED template part of an answer ("I feel …"), owner
+// decision 2026-08-12: when an answer still begins with the field's starter in
+// any language, that prefix renders in the CURRENT language — only the user's
+// own continuation stays as typed. Display-time only; stored text never mutates.
+// The full starter (with its trailing space) must match, so real words that
+// merely share letters with a starter ("I feelings…") are never touched.
+export const localizeStarter = (txt, ph, lang) => {
+  if (typeof txt !== 'string' || !ph) return txt
+  for (const l of ['en', 'ru', 'uz']) {
+    const s = starterFor(l, ph) // ends with ' '
+    if (txt.startsWith(s)) return starterFor(lang, ph) + txt.slice(s.length)
+    if (txt.trim() === s.trim()) return starterFor(lang, ph)
+  }
+  return txt
+}
+
 export const UI = {
   appName: { en: 'EQ Trainer', ru: 'EQ Тренер', uz: 'EQ Trener' },
   tagline: { en: 'Grow your emotional intelligence — the Goleman way', ru: 'Развивайте эмоциональный интеллект по методу Гоулмана', uz: 'Goleman usulida hissiy intellektni rivojlantiring' },
@@ -1008,3 +1024,10 @@ export const BADGES = [
   { id: 'envyNavigator', need: 10, scope: 'envy', name: { en: 'Envy Navigator', ru: 'Навигатор зависти', uz: 'Hasad navigatori' }, desc: { en: '10 envy practices', ru: '10 практик с завистью', uz: '10 ta hasad amaliyoti' } },
   { id: 'emotionMaster', need: 30, scope: 'total', name: { en: 'Emotion Master', ru: 'Мастер эмоций', uz: 'His-tuygʻular ustasi' }, desc: { en: '30 total practices across all emotions', ru: '30 практик по всем эмоциям', uz: 'Barcha his-tuygʻular boʻyicha jami 30 ta amaliyot' } },
 ]
+
+// field id -> its starter template, for renderers that only have the stored
+// key (entry reports/PDF); form components use f.ph directly
+export const FIELD_PHS = {}
+for (const m of Object.values(MODULES))
+  for (const s of m.practiceSteps)
+    for (const f of s.fields || []) if (f.ph) FIELD_PHS[f.id] = f.ph
