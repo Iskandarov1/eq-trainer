@@ -1,8 +1,8 @@
 import React, { useContext, useMemo, useState } from 'react'
 import { AppCtx } from '../App.jsx'
 import { L, EMOTION_NAMES, FIELD_LABELS, optionLabel, UI } from '../content.js'
-import { EMOTION_KEYS, fmtDate, fmtDateTime, fmtMonthYear, weekForDay, entryText } from '../store.js'
-import { buildEntryReport, buildDayReport, downloadPdf } from '../pdf.js'
+import { EMOTION_KEYS, CHECKIN_SLOTS, fmtDate, fmtDateTime, fmtMonthYear, weekForDay, entryText } from '../store.js'
+import { buildEntryReport, buildDayReport, buildCheckinReport, downloadPdf } from '../pdf.js'
 
 /* Reports — every saved answer as a daily written record: read in-app as a
    formatted page, download as PDF. The list is derived from local data, so it
@@ -30,24 +30,36 @@ export default function Reports() {
           : new Date().toISOString())
       list.push({ id: `d:${day}`, kind: 'day', at, day, dayData: dd, exact })
     }
+    for (const [date, ci] of Object.entries(data.checkins)) {
+      const times = CHECKIN_SLOTS.map((s) => ci[s]?.savedAt).filter(Boolean).sort()
+      if (!times.length) continue // drafts only — not a record yet
+      list.push({ id: `c:${date}`, kind: 'checkin', at: times[times.length - 1], date, ci, exact: true })
+    }
     return list.sort((a, b) => new Date(b.at) - new Date(a.at))
   }, [data])
 
   const filtered = records.filter((r) =>
-    filter === 'all' ? true : filter === 'journey' ? r.kind === 'day' : r.emotion === filter)
+    filter === 'all' ? true
+    : filter === 'journey' ? r.kind === 'day'
+    : filter === 'checkin' ? r.kind === 'checkin'
+    : r.emotion === filter)
 
   const open = openId && filtered.find((r) => r.id === openId)
 
   const title = (r) =>
     r.kind === 'entry'
       ? t('reportEntryTitle', L(lang, EMOTION_NAMES[r.emotion]))
-      : `${t('reportDayTitle', r.day)} — ${L(lang, weekForDay(Number(r.day))?.title ?? { en: '' })}`
+      : r.kind === 'checkin'
+        ? t('checkinTitle')
+        : `${t('reportDayTitle', r.day)} — ${L(lang, weekForDay(Number(r.day))?.title ?? { en: '' })}`
 
   const download = async (r) => {
     try {
       const built = r.kind === 'entry'
         ? await buildEntryReport({ entry: r.entry, emotion: r.emotion, lang, uid: user.uid })
-        : await buildDayReport({ day: r.day, dayData: r.dayData, lang, uid: user.uid })
+        : r.kind === 'checkin'
+          ? await buildCheckinReport({ date: r.date, checkin: r.ci, lang, uid: user.uid })
+          : await buildDayReport({ day: r.day, dayData: r.dayData, lang, uid: user.uid })
       const d = new Date(r.at)
       const stamp = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
       downloadPdf(built.bytes, `${stamp} — ${title(r)}.pdf`)
@@ -77,6 +89,7 @@ export default function Reports() {
 
   const chips = [
     ['all', t('reportsAll')],
+    ['checkin', t('checkinTitle')],
     ...EMOTION_KEYS.map((k) => [k, L(lang, EMOTION_NAMES[k])]),
     ['journey', t('journey')],
   ]
@@ -108,6 +121,11 @@ export default function Reports() {
                     {r.kind === 'entry' && r.entry.intensity ? ` · ${t('intensity')}: ${r.entry.intensity}/10` : ''}
                   </div>
                   {r.kind === 'entry' && <div className="preview">{entryText(r.entry).slice(0, 110)}</div>}
+                  {r.kind === 'checkin' && (
+                    <div className="preview">
+                      {CHECKIN_SLOTS.filter((s) => r.ci[s]?.savedAt).map((s) => r.ci[s].text).join(' · ').slice(0, 110)}
+                    </div>
+                  )}
                 </div>
                 <button className="btn ghost sm" onClick={(e) => { e.stopPropagation(); download(r) }}>
                   {t('reportDownload')}
@@ -136,7 +154,9 @@ function ReportView({ r, title, onBack, onDownload }) {
           {r.exact ? fmtDateTime(lang, r.at) : fmtDate(lang, r.at)}
           {r.kind === 'entry' && r.entry.intensity ? ` · ${t('intensity')}: ${r.entry.intensity}/10` : ''}
         </div>
-        {r.kind === 'entry' ? <EntryBody e={r.entry} /> : <DayBody day={r.day} dayData={r.dayData} />}
+        {r.kind === 'entry' ? <EntryBody e={r.entry} />
+          : r.kind === 'checkin' ? <CheckinBody ci={r.ci} />
+          : <DayBody day={r.day} dayData={r.dayData} />}
         <div style={{ textAlign: 'right', marginTop: 20 }}>
           <button className="btn sm" onClick={onDownload}>{t('reportDownload')}</button>
         </div>
@@ -168,6 +188,24 @@ function EntryBody({ e }) {
           </div>
         )
       })}
+    </div>
+  )
+}
+
+const CHECKIN_LABELS = { morning: 'ritualMorning', day: 'ritualDay', evening: 'ritualEvening' }
+
+function CheckinBody({ ci }) {
+  const { t } = useContext(AppCtx)
+  return (
+    <div className="report-body">
+      {CHECKIN_SLOTS.map((s) =>
+        ci[s]?.savedAt ? (
+          <div key={s} className="report-field">
+            <div className="k caps">{t(CHECKIN_LABELS[s])}</div>
+            <div className="v">{ci[s].text}</div>
+          </div>
+        ) : null,
+      )}
     </div>
   )
 }

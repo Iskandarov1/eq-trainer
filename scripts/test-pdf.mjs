@@ -4,7 +4,7 @@
 import fs from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
-import { buildEntryReport, buildDayReport } from '../src/pdf.js'
+import { buildEntryReport, buildDayReport, buildCheckinReport } from '../src/pdf.js'
 
 const here = path.dirname(fileURLToPath(import.meta.url))
 const out = path.join(here, 'pdf-test-out')
@@ -30,11 +30,19 @@ const dayData = {
   },
 }
 
+const checkin = {
+  morning: { text: 'Утром я буду держать паузу перед ответом — «сначала вдох, потом слова».', savedAt: '2026-08-11T09:12:00' },
+  day: { text: 'Kunduzi oʻzimni kuzatdim: xotirjamlik, biroz charchoq. Tutuq belgisi: aʼlo.', savedAt: '2026-08-11T13:40:00' },
+  evening: { text: 'In the evening I noticed the pause made the whole conversation softer.\nSecond line.', savedAt: '2026-08-11T21:03:00' },
+}
+
 for (const lang of ['en', 'ru', 'uz']) {
   const e = await buildEntryReport({ entry, emotion: 'anger', lang, uid: 'test-uid' })
   fs.writeFileSync(path.join(out, `entry-${lang}.pdf`), e.bytes)
   const d = await buildDayReport({ day: '3', dayData, lang, uid: 'test-uid' })
   fs.writeFileSync(path.join(out, `day-${lang}.pdf`), d.bytes)
-  console.log(`${lang}: entry ${e.bytes.length} B (${e.path}), day ${d.bytes.length} B (${d.path})`)
+  const c = await buildCheckinReport({ date: '2026-08-11', checkin, lang, uid: 'test-uid' })
+  fs.writeFileSync(path.join(out, `checkin-${lang}.pdf`), c.bytes)
+  console.log(`${lang}: entry ${e.bytes.length} B (${e.path}), day ${d.bytes.length} B (${d.path}), checkin ${c.bytes.length} B (${c.path})`)
 }
 console.log('OK')

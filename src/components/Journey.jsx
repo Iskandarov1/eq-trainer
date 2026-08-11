@@ -1,7 +1,7 @@
-import React, { useContext, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { AppCtx } from '../App.jsx'
 import { L, WEEKS, UI, starterFor } from '../content.js'
-import { weekForDay, journeyStats } from '../store.js'
+import { weekForDay, journeyStats, todayKey, fmtDate, CHECKIN_SLOTS } from '../store.js'
 import BreathingGuide from './BreathingGuide.jsx'
 
 export default function Journey() {
@@ -25,6 +25,7 @@ export default function Journey() {
             {t('startJourney')}
           </button>
         </div>
+        <DailyCheckin />
         <WeekPreviews lang={lang} />
       </div>
     )
@@ -101,7 +102,7 @@ export default function Journey() {
         </>
       )}
 
-      <Ritual visible={cur > 30 || done >= 30} />
+      <DailyCheckin />
     </div>
   )
 }
@@ -283,30 +284,123 @@ function Celebrate({ day, onClose }) {
   )
 }
 
-function Ritual({ visible }) {
-  const { data, update, lang, t, sync } = useContext(AppCtx)
-  if (!visible) return null
-  const r = data.journey.ritual
-  const parts = [
-    ['morning', 'ritualMorning', UI.ritualMorningPh],
-    ['day', 'ritualDay', UI.ritualDayPh],
-    ['evening', 'ritualEvening', UI.ritualEveningPh],
-  ]
+/* Daily check-in — one fresh record per calendar day. Each of the three parts
+   has its own Save/Edit: saved answers lock (and sync + archive as a PDF
+   snapshot); unsaved drafts still persist locally on every keystroke, so a
+   half-typed morning answer survives closing the page. Past days are permanent
+   records readable in Reports. */
+const CHECKIN_PARTS = [
+  ['morning', 'ritualMorning', UI.ritualMorningPh],
+  ['day', 'ritualDay', UI.ritualDayPh],
+  ['evening', 'ritualEvening', UI.ritualEveningPh],
+]
+const hhmm = (iso) => {
+  const d = new Date(iso)
+  return `${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`
+}
+
+function DailyCheckin() {
+  const { data, update, lang, t, go, sync, notify } = useContext(AppCtx)
+  const today = todayKey()
+  const ci = data.checkins[today] || {}
+
+  // One-time seed: text typed into the old persistent Ritual becomes today's
+  // drafts, so nothing anyone already wrote is lost by this feature.
+  useEffect(() => {
+    const r = data.journey.ritual
+    if (Object.keys(data.checkins).length || !(r.morning || r.day || r.evening)) return
+    update((d) => {
+      const c = (d.checkins[today] ||= {})
+      for (const s of CHECKIN_SLOTS) {
+        if (d.journey.ritual[s]?.trim() && !c[s]) c[s] = { text: d.journey.ritual[s] }
+      }
+    })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  const history = Object.keys(data.checkins)
+    .filter((d) => d !== today && CHECKIN_SLOTS.some((s) => data.checkins[d][s]?.savedAt))
+    .sort()
+    .reverse()
+    .slice(0, 7)
+
   return (
     <div className="card" style={{ marginTop: 22 }}>
-      <h2>{t('ritualTitle')}</h2>
-      <p className="muted" style={{ margin: '8px 0 14px' }}>{t('ritualIntro')}</p>
-      <div className="grid" style={{ gap: 12 }}>
-        {parts.map(([key, labelKey, ph]) => (
-          <div key={key}>
-            <label className="field-label">{t(labelKey)}</label>
-            <textarea
-              value={r[key] || starterFor(lang, ph)}
-              onChange={(e) => { update((d) => { d.journey.ritual[key] = e.target.value }); sync.profile() }}
-            />
-          </div>
-        ))}
+      <div style={{ display: 'flex', alignItems: 'baseline', gap: 10, flexWrap: 'wrap' }}>
+        <h2>{t('checkinTitle')}</h2>
+        <span className="caps" style={{ marginLeft: 'auto' }}>{fmtDate(lang, `${today}T12:00:00`)}</span>
       </div>
+      <p className="muted" style={{ margin: '8px 0 14px' }}>{t('checkinIntro')}</p>
+      <div className="grid" style={{ gap: 12 }}>
+        {CHECKIN_PARTS.map(([key, labelKey, ph]) => {
+          const slot = ci[key]
+          const saved = Boolean(slot?.savedAt)
+          const starter = starterFor(lang, ph)
+          const text = slot?.text ?? ''
+          const empty = !text.trim() || text.trim() === starter.trim()
+          return (
+            <div key={key}>
+              <label className="field-label">{t(labelKey)}</label>
+              {saved ? (
+                <>
+                  <div className="checkin-saved">{slot.text}</div>
+                  <div className="checkin-foot">
+                    <span className="caps">{t('checkinSavedAt', hhmm(slot.savedAt))}</span>
+                    <button
+                      className="btn ghost sm"
+                      onClick={() => update((d) => { delete d.checkins[today][key].savedAt })}
+                    >
+                      {t('checkinEdit')}
+                    </button>
+                  </div>
+                </>
+              ) : (
+                <>
+                  <textarea
+                    value={text || starter}
+                    onChange={(e) => update((d) => {
+                      const c = (d.checkins[today] ||= {})
+                      c[key] = { text: e.target.value }
+                    })}
+                  />
+                  <div className="checkin-foot">
+                    <button
+                      className="btn sm"
+                      disabled={empty}
+                      onClick={() => {
+                        update((d) => {
+                          const c = (d.checkins[today] ||= {})
+                          c[key] = { text: text.trim(), savedAt: new Date().toISOString() }
+                        })
+                        sync.checkinSaved(today, key)
+                        notify(t('saved'))
+                      }}
+                    >
+                      {t('checkinSave')}
+                    </button>
+                  </div>
+                </>
+              )}
+            </div>
+          )
+        })}
+      </div>
+      {history.length > 0 && (
+        <div style={{ marginTop: 18 }}>
+          <div className="caps" style={{ marginBottom: 8 }}>{t('checkinHistory')}</div>
+          <div className="checkin-history">
+            {history.map((d) => (
+              <button key={d} type="button" className="checkin-day-row" onClick={() => go({ page: 'reports' })}>
+                <span>{fmtDate(lang, `${d}T12:00:00`)}</span>
+                <span className="muted">
+                  {CHECKIN_SLOTS.filter((s) => data.checkins[d][s]?.savedAt).length}/3
+                </span>
+              </button>
+            ))}
+          </div>
+          <p className="small muted" style={{ margin: '8px 0 0' }}>{t('checkinHistoryHint')}</p>
+        </div>
+      )}
       <div className="quote" style={{ marginTop: 14 }}>{t('finalWords')}</div>
     </div>
   )

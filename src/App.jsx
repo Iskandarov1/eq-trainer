@@ -1,10 +1,10 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { L, UI, EMOTION_NAMES, BOOK_TITLE, BOOK_AUTHOR, nextBookQuote } from './content.js'
 import {
-  loadData, saveData, exportJSON, normalizeData, cacheKey, LEGACY_KEY, newId, isUuid, EMOTION_KEYS,
+  loadData, saveData, exportJSON, normalizeData, cacheKey, LEGACY_KEY, newId, isUuid, EMOTION_KEYS, CHECKIN_SLOTS,
 } from './store.js'
 import * as api from './api.js'
-import { buildEntryReport, buildDayReport } from './pdf.js'
+import { buildEntryReport, buildDayReport, buildCheckinReport } from './pdf.js'
 import Dashboard from './components/Dashboard.jsx'
 import Journey from './components/Journey.jsx'
 import NextLevel from './components/NextLevel.jsx'
@@ -83,6 +83,12 @@ function TrainerApp({ user }) {
           }
           return null
         }
+        if (op.kind === 'checkin') {
+          const ci = d.checkins[op.refId]
+          return ci && CHECKIN_SLOTS.some((s) => ci[s]?.savedAt)
+            ? buildCheckinReport({ date: op.refId, checkin: ci, lang: d.lang, uid: user.uid })
+            : null
+        }
         const dd = d.journey.days[op.refId]
         return dd?.done ? buildDayReport({ day: op.refId, dayData: dd, lang: d.lang, uid: user.uid }) : null
       },
@@ -153,6 +159,8 @@ function TrainerApp({ user }) {
     dayFields: (day) => cloud && api.enqueueDebounced({ t: 'day', day: String(day), cols: 'fields' }),
     dayDone: (day) =>
       cloud && api.enqueue([{ t: 'day', day: String(day), cols: 'done' }, { t: 'pdf', kind: 'day', refId: String(day) }]),
+    checkinSaved: (date, slot) =>
+      cloud && api.enqueue([{ t: 'checkin', date, slot }, { t: 'pdf', kind: 'checkin', refId: date }]),
     profile: () => cloud && api.enqueueDebounced({ t: 'profile' }),
   }
 

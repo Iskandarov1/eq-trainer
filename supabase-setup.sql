@@ -22,6 +22,19 @@ create table public.journey_days (
   primary key (user_id, day)
 );
 
+-- Daily check-ins: one row per user per calendar day; each slot column holds
+-- {"text": "...", "savedAt": "ISO"} and is upserted independently (the client
+-- sends only the slot it saved, so slots can never overwrite each other).
+create table public.checkins (
+  user_id uuid not null references auth.users(id) on delete cascade,
+  date date not null,
+  morning jsonb,
+  day jsonb,
+  evening jsonb,
+  updated_at timestamptz not null default now(),
+  primary key (user_id, date)
+);
+
 create table public.entries (
   id uuid primary key,                      -- client-generated, NO default (retry idempotency)
   user_id uuid not null references auth.users(id) on delete cascade,
@@ -41,6 +54,8 @@ create trigger profiles_updated before update on public.profiles
   for each row execute function extensions.moddatetime(updated_at);
 create trigger journey_days_updated before update on public.journey_days
   for each row execute function extensions.moddatetime(updated_at);
+create trigger checkins_updated before update on public.checkins
+  for each row execute function extensions.moddatetime(updated_at);
 
 -- ============ Auto-create profile row on signup ============
 
@@ -59,6 +74,7 @@ create trigger on_auth_user_created after insert on auth.users
 alter table public.profiles     enable row level security;
 alter table public.journey_days enable row level security;
 alter table public.entries      enable row level security;
+alter table public.checkins     enable row level security;
 
 create policy profiles_own on public.profiles for all to authenticated
   using (id = (select auth.uid())) with check (id = (select auth.uid()));
@@ -67,6 +83,9 @@ create policy journey_days_own on public.journey_days for all to authenticated
   using (user_id = (select auth.uid())) with check (user_id = (select auth.uid()));
 
 create policy entries_own on public.entries for all to authenticated
+  using (user_id = (select auth.uid())) with check (user_id = (select auth.uid()));
+
+create policy checkins_own on public.checkins for all to authenticated
   using (user_id = (select auth.uid())) with check (user_id = (select auth.uid()));
 
 -- ============ Private storage bucket for PDF reports ============
