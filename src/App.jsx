@@ -10,6 +10,7 @@ import NextLevel from './components/NextLevel.jsx'
 import EmotionModule from './components/EmotionModule.jsx'
 import Breathe from './components/Breathe.jsx'
 import Reports from './components/Reports.jsx'
+import Privacy from './components/Privacy.jsx'
 import AuthScreen from './components/AuthScreen.jsx'
 
 export const AppCtx = React.createContext(null)
@@ -33,7 +34,7 @@ function TrainerApp({ user }) {
   // journals opened via the desktop launcher stay visible.
   const storageK = user.uid === 'local' ? LEGACY_KEY : cacheKey(user.uid)
   const [data, setData] = useState(() => loadData(storageK))
-  // route: {page:'home'|'journey'|'nextlevel'|'module'|'breathe'|'reports', emotion?}
+  // route: {page:'home'|'journey'|'nextlevel'|'module'|'breathe'|'reports'|'privacy', emotion?}
   const [route, setRoute] = useState({ page: 'home' })
   const [toast, setToast] = useState(null)
   const [importOffer, setImportOffer] = useState(null)
@@ -232,6 +233,7 @@ function TrainerApp({ user }) {
         {route.page === 'module' && <EmotionModule emotion={route.emotion} />}
         {route.page === 'breathe' && <Breathe />}
         {route.page === 'reports' && <Reports />}
+        {route.page === 'privacy' && <Privacy />}
       </main>
 
       <BookQuote />
@@ -239,6 +241,7 @@ function TrainerApp({ user }) {
       <div className="footer-actions">
         <button className="btn ghost sm" onClick={() => exportJSON(data)}>{t('exportData')}</button>
         <button className="btn ghost sm" onClick={() => importRef.current?.click()}>{t('importData')}</button>
+        <button className="btn ghost sm" onClick={() => go({ page: 'privacy' })}>{t('privacyNav')}</button>
         <input ref={importRef} type="file" accept=".json" style={{ display: 'none' }} onChange={onImport} />
       </div>
       {cloud && (
@@ -328,6 +331,7 @@ function Breadcrumbs() {
   if (route.page === 'nextlevel') parts.push({ label: t('nextLevel') })
   if (route.page === 'breathe') parts.push({ label: t('breatheNav') })
   if (route.page === 'reports') parts.push({ label: t('reportsNav') })
+  if (route.page === 'privacy') parts.push({ label: t('privacyNav') })
   if (route.page === 'module') {
     parts.push({ label: t('nextLevel'), r: { page: 'nextlevel' } })
     parts.push({ label: L(lang, EMOTION_NAMES[route.emotion]) })

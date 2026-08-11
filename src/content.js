@@ -190,6 +190,44 @@ export const UI = {
     uz: 'Javoblaringiz shaxsiy hisobingiz bilan sinxronlanadi — ularni faqat oʻzingiz oʻqiy olasiz.',
   },
 
+  // ---- privacy ----
+  privacyNav: { en: 'Privacy', ru: 'Конфиденциальность', uz: 'Maxfiylik' },
+  privacyTitle: { en: 'Your privacy', ru: 'Ваша конфиденциальность', uz: 'Sizning maxfiyligingiz' },
+  privacyIntro: {
+    en: 'This app asks you to write about anger, shame and fear. That is personal. Here is exactly what happens to what you write.',
+    ru: 'Это приложение просит вас писать о гневе, стыде и страхе. Это личное. Вот что именно происходит с тем, что вы пишете.',
+    uz: 'Bu ilova sizdan gʻazab, uyat va qoʻrquv haqida yozishni soʻraydi. Bu shaxsiy narsa. Yozganlaringiz bilan nima sodir boʻlishi mana shu.',
+  },
+  privacyWhat: { en: 'What is stored', ru: 'Что хранится', uz: 'Nima saqlanadi' },
+  privacyWhatBody: {
+    en: 'Your journal answers, the days you complete, your chosen language, and a PDF copy of each daily record. Your email address is stored so you can sign in. Nothing else is collected — there is no tracking and no analytics.',
+    ru: 'Ваши ответы в дневнике, завершённые дни, выбранный язык и PDF-копия каждой ежедневной записи. Ваш адрес почты хранится, чтобы вы могли входить. Больше ничего не собирается — никакого отслеживания и никакой аналитики.',
+    uz: 'Kundalikdagi javoblaringiz, tugatgan kunlaringiz, tanlagan tilingiz va har bir kunlik yozuvning PDF nusxasi. Pochta manzilingiz kirish uchun saqlanadi. Boshqa hech narsa yigʻilmaydi — kuzatuv ham, tahlil ham yoʻq.',
+  },
+  privacyWho: { en: 'Who can read it', ru: 'Кто может это читать', uz: 'Kim oʻqiy oladi' },
+  privacyWhoBody: {
+    en: 'You. Other users cannot reach your records — the database refuses their requests, so this does not depend on the app behaving correctly. One honest exception: the person who runs this service holds the database keys and could technically open the raw data. The policy is that they do not. If that is not good enough for something you want to write, do not write it here.',
+    ru: 'Вы. Другие пользователи не могут добраться до ваших записей — база данных отклоняет их запросы, поэтому это не зависит от правильной работы приложения. Одно честное исключение: у человека, который поддерживает этот сервис, есть ключи от базы, и технически он может открыть данные. Правило — этого не делать. Если такой гарантии вам недостаточно для чего-то, что вы хотите написать, не пишите это здесь.',
+    uz: 'Siz. Boshqa foydalanuvchilar yozuvlaringizga yeta olmaydi — maʼlumotlar bazasi ularning soʻrovlarini rad etadi, shuning uchun bu ilovaning toʻgʻri ishlashiga bogʻliq emas. Bitta halol istisno: bu xizmatni yuritadigan odamda baza kalitlari bor va u texnik jihatdan maʼlumotlarni ocha oladi. Qoida — buni qilmaslik. Agar yozmoqchi boʻlgan narsangiz uchun bu kafolat yetarli boʻlmasa, uni bu yerga yozmang.',
+  },
+  privacyWhere: { en: 'Where it is kept', ru: 'Где это хранится', uz: 'Qayerda saqlanadi' },
+  privacyWhereBody: {
+    en: 'On servers in Frankfurt, Germany, encrypted in transit and at rest. A copy also stays in your own browser so the app keeps working offline.',
+    ru: 'На серверах во Франкфурте, Германия, в зашифрованном виде при передаче и хранении. Копия также остаётся в вашем браузере, чтобы приложение работало офлайн.',
+    uz: 'Frankfurtdagi (Germaniya) serverlarda, uzatishda ham, saqlashda ham shifrlangan holda. Nusxasi brauzeringizda ham qoladi — shunda ilova oflayn ishlaydi.',
+  },
+  privacyDelete: { en: 'Deleting everything', ru: 'Удаление всего', uz: 'Hammasini oʻchirish' },
+  privacyDeleteBody: {
+    en: 'You can delete your account at any time from the bottom of any page. That removes your entries, your stored PDFs and your login itself. It cannot be undone, and no backup copy of your journal is kept for you afterwards.',
+    ru: 'Вы можете удалить аккаунт в любой момент — внизу любой страницы. Это удаляет ваши записи, сохранённые PDF и сам вход. Отменить это нельзя, и резервная копия дневника для вас после этого не сохраняется.',
+    uz: 'Hisobingizni istalgan vaqtda oʻchira olasiz — istalgan sahifaning pastidan. Bu yozuvlaringizni, saqlangan PDF fayllaringizni va kirish hisobingizni oʻchiradi. Buni qaytarib boʻlmaydi va keyin siz uchun zaxira nusxa saqlanmaydi.',
+  },
+  privacyContact: {
+    en: 'Questions about your data: sanjar.i@maydongroup.com',
+    ru: 'Вопросы о ваших данных: sanjar.i@maydongroup.com',
+    uz: 'Maʼlumotlaringiz haqida savollar: sanjar.i@maydongroup.com',
+  },
+
   // ---- auth screen ----
   authSignInHint: { en: 'Sign in to your private journal.', ru: 'Войдите в свой личный дневник.', uz: 'Shaxsiy kundalikka kiring.' },
   authSignUpHint: {
