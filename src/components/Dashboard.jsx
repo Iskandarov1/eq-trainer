@@ -1,8 +1,9 @@
 import React, { useContext } from 'react'
-import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from 'recharts'
 import { AppCtx } from '../App.jsx'
 import { L, MODULES, EMOTION_NAMES, WEEKS } from '../content.js'
 import { masteryScore, earnedBadges, weeklyCounts, mostImproved, focusEmotion, journeyStats, weekForDay, EMOTION_KEYS } from '../store.js'
+
+const WeeklyBars = React.lazy(() => import('./charts/WeeklyBars.jsx'))
 
 export default function Dashboard() {
   const { data, lang, t, go } = useContext(AppCtx)
@@ -105,16 +106,9 @@ export default function Dashboard() {
       <div className="card" style={{ marginBottom: 18 }}>
         <h2 style={{ marginBottom: 4 }}>{t('weeklySummary')}</h2>
         <p className="muted small" style={{ marginBottom: 12 }}>{t('practicesPerEmotion')}</p>
-        <ResponsiveContainer width="100%" height={220}>
-          <BarChart data={weeklyData} margin={{ top: 8, right: 16, bottom: 0, left: -24 }}>
-            <XAxis dataKey="name" tick={{ fontSize: 13 }} />
-            <YAxis allowDecimals={false} tick={{ fontSize: 12 }} />
-            <Tooltip cursor={{ fill: 'rgba(0,0,0,0.04)' }} />
-            <Bar dataKey="count" radius={[8, 8, 0, 0]}>
-              {weeklyData.map((d, i) => <Cell key={i} fill="#dca6d6" />)}
-            </Bar>
-          </BarChart>
-        </ResponsiveContainer>
+        <React.Suspense fallback={<div style={{ height: 220 }} />}>
+          <WeeklyBars data={weeklyData} />
+        </React.Suspense>
         <div className="grid grid-2" style={{ marginTop: 10 }}>
           <div className="quote">
             {weekly[weeklyTop] > 0 ? t('trendText', L(lang, EMOTION_NAMES[weeklyTop]).toLowerCase()) : t('trendNone')}

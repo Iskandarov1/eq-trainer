@@ -1,9 +1,10 @@
 import React, { useContext, useMemo, useState } from 'react'
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts'
 import { AppCtx } from '../App.jsx'
 import { L, MODULES, EMOTION_NAMES, FIELD_LABELS, optionLabel, starterFor } from '../content.js'
 import { masteryScore, intensitySeries, intensityChange, newId, entryText, fmtDate, fmtDateTime } from '../store.js'
 import BreathingGuide from './BreathingGuide.jsx'
+
+const IntensityLine = React.lazy(() => import('./charts/IntensityLine.jsx'))
 
 export default function EmotionModule({ emotion }) {
   const { lang, t } = useContext(AppCtx)
@@ -355,15 +356,9 @@ function Progress({ emotion, m }) {
           <p className="muted">{t('needMore')}</p>
         ) : (
           <>
-            <ResponsiveContainer width="100%" height={260}>
-              <LineChart data={series} margin={{ top: 8, right: 16, bottom: 0, left: -18 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#efebe3" />
-                <XAxis dataKey="date" tick={{ fontSize: 12 }} />
-                <YAxis domain={[0, 10]} tick={{ fontSize: 12 }} />
-                <Tooltip />
-                <Line type="monotone" dataKey="intensity" stroke="#dca6d6" strokeWidth={3} dot={{ r: 5, fill: '#dca6d6' }} />
-              </LineChart>
-            </ResponsiveContainer>
+            <React.Suspense fallback={<div style={{ height: 260 }} />}>
+              <IntensityLine data={series} />
+            </React.Suspense>
             <div className="insight-tint" style={{ marginTop: 12 }}>
               {change === null ? t('insightFlat') : change < 0 ? t('insightDown', Math.abs(change), name) : change > 0 ? t('insightUp', change, name) : t('insightFlat')}
             </div>
