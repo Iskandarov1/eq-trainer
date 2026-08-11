@@ -299,6 +299,13 @@ const hhmm = (iso) => {
   return `${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`
 }
 
+// A draft that is just the untouched sentence starter (in ANY language — it got
+// stored in whatever language was active when the user clicked in and typed
+// nothing lasting) counts as empty, so the shown starter follows the language
+// switch instead of sticking to the old one.
+const bareStarter = (txt, ph) =>
+  ['en', 'ru', 'uz'].some((l) => txt.trim() === starterFor(l, ph).trim())
+
 function DailyCheckin() {
   const { data, update, lang, t, go, sync, notify } = useContext(AppCtx)
   const today = todayKey()
@@ -311,8 +318,9 @@ function DailyCheckin() {
     if (Object.keys(data.checkins).length || !(r.morning || r.day || r.evening)) return
     update((d) => {
       const c = (d.checkins[today] ||= {})
-      for (const s of CHECKIN_SLOTS) {
-        if (d.journey.ritual[s]?.trim() && !c[s]) c[s] = { text: d.journey.ritual[s] }
+      for (const [s, , ph] of CHECKIN_PARTS) {
+        const v = d.journey.ritual[s]
+        if (v?.trim() && !bareStarter(v, ph) && !c[s]) c[s] = { text: v }
       }
     })
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -336,8 +344,9 @@ function DailyCheckin() {
           const slot = ci[key]
           const saved = Boolean(slot?.savedAt)
           const starter = starterFor(lang, ph)
-          const text = slot?.text ?? ''
-          const empty = !text.trim() || text.trim() === starter.trim()
+          const raw = slot?.text ?? ''
+          const empty = !raw.trim() || bareStarter(raw, ph)
+          const text = empty ? '' : raw
           return (
             <div key={key}>
               <label className="field-label">{t(labelKey)}</label>
