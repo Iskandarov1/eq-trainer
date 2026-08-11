@@ -2,7 +2,6 @@ import React, { useContext, useMemo, useState } from 'react'
 import { AppCtx } from '../App.jsx'
 import { L, EMOTION_NAMES, FIELD_LABELS, optionLabel, UI } from '../content.js'
 import { EMOTION_KEYS, fmtDate, fmtDateTime, fmtMonthYear, weekForDay, entryText } from '../store.js'
-import { buildEntryReport, buildDayReport, downloadPdf } from '../pdf.js'
 
 /* Reports — every saved answer as a daily written record: read in-app as a
    formatted page, download as PDF. The list is derived from local data, so it
@@ -45,6 +44,7 @@ export default function Reports() {
 
   const download = async (r) => {
     try {
+      const { buildEntryReport, buildDayReport, downloadPdf } = await import('../pdf.js')
       const built = r.kind === 'entry'
         ? await buildEntryReport({ entry: r.entry, emotion: r.emotion, lang, uid: user.uid })
         : await buildDayReport({ day: r.day, dayData: r.dayData, lang, uid: user.uid })

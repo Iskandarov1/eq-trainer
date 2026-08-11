@@ -4,7 +4,6 @@ import {
   loadData, saveData, exportJSON, normalizeData, cacheKey, LEGACY_KEY, newId, isUuid, EMOTION_KEYS,
 } from './store.js'
 import * as api from './api.js'
-import { buildEntryReport, buildDayReport } from './pdf.js'
 import Dashboard from './components/Dashboard.jsx'
 import Journey from './components/Journey.jsx'
 import NextLevel from './components/NextLevel.jsx'
@@ -76,6 +75,7 @@ function TrainerApp({ user }) {
       data: () => dataRef.current,
       pdf: async (op) => {
         const d = dataRef.current
+        const { buildEntryReport, buildDayReport } = await import('./pdf.js')
         if (op.kind === 'entry') {
           for (const k of EMOTION_KEYS) {
             const e = d.entries[k].find((x) => x.id === op.refId)
