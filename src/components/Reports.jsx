@@ -1,6 +1,6 @@
 import React, { useContext, useMemo, useState } from 'react'
 import { AppCtx } from '../App.jsx'
-import { L, EMOTION_NAMES, FIELD_LABELS, optionLabel, UI } from '../content.js'
+import { L, EMOTION_NAMES, FIELD_LABELS, optionLabel, UI, isBareStarter } from '../content.js'
 import { EMOTION_KEYS, CHECKIN_SLOTS, fmtDate, fmtDateTime, fmtMonthYear, weekForDay, entryText } from '../store.js'
 import { buildEntryReport, buildDayReport, buildCheckinReport, downloadPdf } from '../pdf.js'
 
@@ -219,7 +219,7 @@ function DayBody({ day, dayData }) {
       {week.practices.map((p) => {
         const answered = (p.fields || []).filter((f) => {
           const v = dayData.fields?.[`${p.id}.${f.id}`]
-          return v !== undefined && v !== null && v !== '' && f.t !== 'breathing'
+          return v !== undefined && v !== null && v !== '' && f.t !== 'breathing' && !isBareStarter(v, f.ph)
         })
         if (!answered.length) return null
         return (

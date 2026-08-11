@@ -5,7 +5,7 @@ import { PDFDocument, rgb } from 'pdf-lib'
 import fontkit from '@pdf-lib/fontkit'
 import notoRegularB64 from './fonts/notoSansRegular.js'
 import notoBoldB64 from './fonts/notoSansBold.js'
-import { L, UI, EMOTION_NAMES, FIELD_LABELS, optionLabel } from './content.js'
+import { L, UI, EMOTION_NAMES, FIELD_LABELS, optionLabel, isBareStarter } from './content.js'
 import { fmtDate, fmtDateTime, weekForDay, CHECKIN_SLOTS } from './store.js'
 
 const A4 = [595.28, 841.89]
@@ -184,7 +184,7 @@ export async function buildDayReport({ day, dayData, lang, uid }) {
   for (const p of week?.practices || []) {
     const answered = (p.fields || []).filter((f) => {
       const v = dayData.fields?.[`${p.id}.${f.id}`]
-      return v !== undefined && v !== null && v !== '' && f.t !== 'breathing'
+      return v !== undefined && v !== null && v !== '' && f.t !== 'breathing' && !isBareStarter(v, f.ph)
     })
     if (!answered.length) continue
     w.text(L(lang, p.title), { size: 13, bold: true, gap: 6 })

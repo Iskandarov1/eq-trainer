@@ -1,7 +1,7 @@
 import React, { useContext, useMemo, useState } from 'react'
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts'
 import { AppCtx } from '../App.jsx'
-import { L, MODULES, EMOTION_NAMES, FIELD_LABELS, optionLabel, starterFor } from '../content.js'
+import { L, MODULES, EMOTION_NAMES, FIELD_LABELS, optionLabel, starterFor, isBareStarter } from '../content.js'
 import { masteryScore, intensitySeries, intensityChange, newId, entryText, fmtDate, fmtDateTime } from '../store.js'
 import BreathingGuide from './BreathingGuide.jsx'
 
@@ -58,13 +58,14 @@ function Practice({ emotion, m, onSaved }) {
   const [form, setForm] = useState({})
   const set = (id, v) => setForm((f) => ({ ...f, [id]: v }))
 
-  // starter text per field id (trimmed): an untouched pre-filled sentence counts as empty
+  // starter template per field id: an untouched pre-filled sentence counts as
+  // empty — in ANY language, since it may have been captured before a switch
   const starters = useMemo(() => {
     const map = {}
-    for (const s of m.practiceSteps) for (const f of s.fields || []) if (f.ph) map[f.id] = starterFor(lang, f.ph).trim()
+    for (const s of m.practiceSteps) for (const f of s.fields || []) if (f.ph) map[f.id] = f.ph
     return map
-  }, [m, lang])
-  const isReal = (k, x) => typeof x === 'string' ? Boolean(x.trim()) && x.trim() !== starters[k] : Boolean(x)
+  }, [m])
+  const isReal = (k, x) => typeof x === 'string' ? Boolean(x.trim()) && !isBareStarter(x, starters[k]) : Boolean(x)
 
   const save = () => {
     const entry = { id: newId(), date: new Date().toISOString() }
@@ -116,7 +117,11 @@ function Field({ f, value, set }) {
       return (
         <div>
           {f.label && <label className="field-label">{L(lang, f.label)}</label>}
-          <textarea value={value ?? prefill} placeholder={t('optionalNote')} onChange={(e) => set(f.id, e.target.value)} />
+          <textarea
+            value={value == null || isBareStarter(value, f.ph) ? prefill : value}
+            placeholder={t('optionalNote')}
+            onChange={(e) => set(f.id, e.target.value)}
+          />
         </div>
       )
     }
@@ -188,7 +193,8 @@ function Field({ f, value, set }) {
       )
     case 'inputs5': {
       const prefill = f.ph ? starterFor(lang, f.ph) : ''
-      const items = value || [prefill, prefill, prefill, prefill, prefill]
+      const items = (value || [prefill, prefill, prefill, prefill, prefill])
+        .map((x) => (x == null || isBareStarter(x, f.ph) ? prefill : x))
       return (
         <div>
           <label className="field-label">{L(lang, f.label)}</label>

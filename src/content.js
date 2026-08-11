@@ -8,6 +8,14 @@ export const starterFor = (lang, ph) => {
   return (s.endsWith('…') ? s.slice(0, -1).trimEnd() : s) + ' '
 }
 
+// A stored value that is just the untouched starter in ANY language counts as
+// empty: the starter gets captured as text in whatever language was active
+// when the user clicked in (typed and erased, etc.) and must not stick after
+// a language switch — the field should show the current language's starter.
+export const isBareStarter = (txt, ph) =>
+  typeof txt === 'string' && Boolean(ph) &&
+  ['en', 'ru', 'uz'].some((l) => txt.trim() === starterFor(l, ph).trim())
+
 export const UI = {
   appName: { en: 'EQ Trainer', ru: 'EQ Тренер', uz: 'EQ Trener' },
   tagline: { en: 'Grow your emotional intelligence — the Goleman way', ru: 'Развивайте эмоциональный интеллект по методу Гоулмана', uz: 'Goleman usulida hissiy intellektni rivojlantiring' },

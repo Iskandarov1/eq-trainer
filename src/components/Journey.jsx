@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react'
 import { AppCtx } from '../App.jsx'
-import { L, WEEKS, UI, starterFor } from '../content.js'
+import { L, WEEKS, UI, starterFor, isBareStarter } from '../content.js'
 import { weekForDay, journeyStats, todayKey, fmtDate, CHECKIN_SLOTS } from '../store.js'
 import BreathingGuide from './BreathingGuide.jsx'
 
@@ -216,17 +216,18 @@ function DayView({ day, isToday }) {
                     </label>
                   )
                 const prefill = f.ph ? starterFor(lang, f.ph) : ''
+                const shown = val == null || isBareStarter(val, f.ph) ? prefill : val
                 if (f.t === 'text')
                   return (
                     <div key={f.id}>
                       {f.label && <label className="field-label">{L(lang, f.label)}</label>}
-                      <input type="text" value={val ?? prefill} onChange={(e) => setField(p.id, f.id, e.target.value)} />
+                      <input type="text" value={shown} onChange={(e) => setField(p.id, f.id, e.target.value)} />
                     </div>
                   )
                 return (
                   <div key={f.id}>
                     {f.label && <label className="field-label">{L(lang, f.label)}</label>}
-                    <textarea value={val ?? prefill} onChange={(e) => setField(p.id, f.id, e.target.value)} />
+                    <textarea value={shown} onChange={(e) => setField(p.id, f.id, e.target.value)} />
                   </div>
                 )
               })}
@@ -299,12 +300,6 @@ const hhmm = (iso) => {
   return `${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`
 }
 
-// A draft that is just the untouched sentence starter (in ANY language — it got
-// stored in whatever language was active when the user clicked in and typed
-// nothing lasting) counts as empty, so the shown starter follows the language
-// switch instead of sticking to the old one.
-const bareStarter = (txt, ph) =>
-  ['en', 'ru', 'uz'].some((l) => txt.trim() === starterFor(l, ph).trim())
 
 function DailyCheckin() {
   const { data, update, lang, t, go, sync, notify } = useContext(AppCtx)
@@ -320,7 +315,7 @@ function DailyCheckin() {
       const c = (d.checkins[today] ||= {})
       for (const [s, , ph] of CHECKIN_PARTS) {
         const v = d.journey.ritual[s]
-        if (v?.trim() && !bareStarter(v, ph) && !c[s]) c[s] = { text: v }
+        if (v?.trim() && !isBareStarter(v, ph) && !c[s]) c[s] = { text: v }
       }
     })
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -345,7 +340,7 @@ function DailyCheckin() {
           const saved = Boolean(slot?.savedAt)
           const starter = starterFor(lang, ph)
           const raw = slot?.text ?? ''
-          const empty = !raw.trim() || bareStarter(raw, ph)
+          const empty = !raw.trim() || isBareStarter(raw, ph)
           const text = empty ? '' : raw
           return (
             <div key={key}>
