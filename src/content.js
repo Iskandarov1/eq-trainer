@@ -551,13 +551,13 @@ export const WEEKS = [
         fields: [
           { id: 'morningFeel', t: 'text', label: { en: 'Morning check-in', ru: 'Утренний чек-ин', uz: 'Ertalabki tekshiruv' }, ph: { en: 'I feel…', ru: 'Я чувствую…', uz: 'Hozir his qilayotganim —…' } },
           { id: 'morningWhy', t: 'text', ph: { en: 'I might be feeling this because…', ru: 'Возможно, я чувствую это, потому что…', uz: 'Sababi, ehtimol,…' } },
-          { id: 'morningHow', t: 'text', ph: { en: 'It affects my behavior by…', ru: 'На моё поведение это влияет так…', uz: 'Bu xatti-harakatimga taʼsiri —…' } },
+          { id: 'morningHow', t: 'text', ph: { en: 'It affects my behavior by…', ru: 'На моё поведение это влияет так…', uz: 'Buning xatti-harakatimga taʼsiri —…' } },
           { id: 'noonFeel', t: 'text', label: { en: 'Noon check-in', ru: 'Дневной чек-ин', uz: 'Kunduzgi tekshiruv' }, ph: { en: 'I feel…', ru: 'Я чувствую…', uz: 'Hozir his qilayotganim —…' } },
           { id: 'noonWhy', t: 'text', ph: { en: 'I might be feeling this because…', ru: 'Возможно, я чувствую это, потому что…', uz: 'Sababi, ehtimol,…' } },
-          { id: 'noonHow', t: 'text', ph: { en: 'It affects my behavior by…', ru: 'На моё поведение это влияет так…', uz: 'Bu xatti-harakatimga taʼsiri —…' } },
+          { id: 'noonHow', t: 'text', ph: { en: 'It affects my behavior by…', ru: 'На моё поведение это влияет так…', uz: 'Buning xatti-harakatimga taʼsiri —…' } },
           { id: 'eveningFeel', t: 'text', label: { en: 'Evening check-in', ru: 'Вечерний чек-ин', uz: 'Kechki tekshiruv' }, ph: { en: 'I feel…', ru: 'Я чувствую…', uz: 'Hozir his qilayotganim —…' } },
           { id: 'eveningWhy', t: 'text', ph: { en: 'I might be feeling this because…', ru: 'Возможно, я чувствую это, потому что…', uz: 'Sababi, ehtimol,…' } },
-          { id: 'eveningHow', t: 'text', ph: { en: 'It affects my behavior by…', ru: 'На моё поведение это влияет так…', uz: 'Bu xatti-harakatimga taʼsiri —…' } },
+          { id: 'eveningHow', t: 'text', ph: { en: 'It affects my behavior by…', ru: 'На моё поведение это влияет так…', uz: 'Buning xatti-harakatimga taʼsiri —…' } },
         ],
       },
       {
