@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { L, UI } from '../content.js'
-import { signIn, signUp, resendConfirmation } from '../api.js'
+import { signIn, signUp, resendConfirmation, requestPasswordReset } from '../api.js'
 
 /* First-run gate when Supabase is configured and nobody has signed in on this
    device yet. Runs OUTSIDE the app context (there is no user yet), so language
@@ -12,13 +12,15 @@ export default function AuthScreen({ onAuthed, initial }) {
   })
   // `initial` seeds the starting screen; used by the dev-only ?auth= preview so
   // every state can be reviewed before the backend exists.
-  const [mode, setMode] = useState(initial === 'signup' ? 'signup' : 'signin') // 'signin' | 'signup'
+  const [mode, setMode] = useState(
+    initial === 'signup' ? 'signup' : initial === 'reset' ? 'reset' : 'signin') // 'signin' | 'signup' | 'reset'
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState(null)
   const [pending, setPending] = useState(initial === 'pending' ? 'you@example.com' : null) // email awaiting confirmation
   const [resent, setResent] = useState(false)
+  const [resetSent, setResetSent] = useState(null)
   const t = (k, ...args) => {
     const v = L(lang, UI[k])
     return typeof v === 'function' ? v(...args) : v
@@ -48,6 +50,42 @@ export default function AuthScreen({ onAuthed, initial }) {
     } finally {
       setBusy(false)
     }
+  }
+
+  if (mode === 'reset') {
+    return (
+      <div className="auth-screen">
+        <div className="auth-card">
+          <div className="logo-mark" style={{ margin: '0 auto 10px' }}>EQ</div>
+          <h1 className="serif" style={{ textAlign: 'center' }}>{t('authResetTitle')}</h1>
+          {resetSent ? (
+            <p className="muted" style={{ textAlign: 'center', margin: '12px 0' }}>{t('authResetSent', resetSent)}</p>
+          ) : (
+            <>
+              <p className="muted small" style={{ textAlign: 'center', margin: '8px 0 14px' }}>{t('authResetBody')}</p>
+              <form className="grid" style={{ gap: 12 }} onSubmit={async (e) => {
+                e.preventDefault()
+                if (busy) return
+                setBusy(true)
+                try { await requestPasswordReset(email.trim()); setResetSent(email.trim()) } catch { setError(t('authErrNetwork')) } finally { setBusy(false) }
+              }}>
+                <div>
+                  <label className="field-label" htmlFor="reset-email">{t('authEmail')}</label>
+                  <input id="reset-email" type="email" required autoComplete="email"
+                    value={email} onChange={(e) => setEmail(e.target.value)} />
+                </div>
+                {error && <div className="auth-error">{error}</div>}
+                <button className="btn" type="submit" disabled={busy}>{busy ? '…' : t('authResetSend')}</button>
+              </form>
+            </>
+          )}
+          <button className="linklike" style={{ margin: '14px auto 0', display: 'block' }}
+            onClick={() => { setMode('signin'); setResetSent(null); setError(null) }}>
+            {t('authBackToSignIn')}
+          </button>
+        </div>
+      </div>
+    )
   }
 
   if (pending) {
@@ -115,7 +153,12 @@ export default function AuthScreen({ onAuthed, initial }) {
           onClick={() => { setMode(mode === 'signin' ? 'signup' : 'signin'); setError(null) }}>
           {mode === 'signin' ? t('authToSignUp') : t('authToSignIn')}
         </button>
-        <p className="small muted" style={{ textAlign: 'center', marginTop: 16 }}>{t('authForgot')}</p>
+        {mode === 'signin' && (
+          <button className="linklike" style={{ margin: '10px auto 0', display: 'block' }}
+            onClick={() => { setMode('reset'); setError(null) }}>
+            {t('authForgot')}
+          </button>
+        )}
       </div>
     </div>
   )

@@ -52,6 +52,30 @@ export async function resendConfirmation(email) {
   if (error) throw error
 }
 
+export async function requestPasswordReset(email) {
+  const { error } = await supabase.auth.resetPasswordForEmail(email, {
+    redirectTo: window.location.origin,
+  })
+  if (error) throw error
+}
+
+export async function updatePassword(newPassword) {
+  const { data, error } = await supabase.auth.updateUser({ password: newPassword })
+  if (error) throw error
+  if (data?.user) rememberUser({ uid: data.user.id, email: data.user.email })
+}
+
+/* supabase-js consumes the recovery token from the URL hash on load and emits
+   PASSWORD_RECOVERY. Nothing listened for it before, so a recovery link opened
+   the app as a normal session with no way to actually set a new password. */
+export function onPasswordRecovery(cb) {
+  if (!isConfigured) return () => {}
+  const { data } = supabase.auth.onAuthStateChange((event) => {
+    if (event === 'PASSWORD_RECOVERY') cb()
+  })
+  return () => data.subscription.unsubscribe()
+}
+
 export async function signIn(email, password) {
   const { data, error } = await supabase.auth.signInWithPassword({ email, password })
   if (error) throw error

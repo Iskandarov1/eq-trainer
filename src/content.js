@@ -279,11 +279,22 @@ export const UI = {
   authErrExists: { en: 'This email is already registered', ru: 'Эта почта уже зарегистрирована', uz: 'Bu pochta allaqachon roʻyxatdan oʻtgan' },
   authErrWeak: { en: 'Password must be at least 8 characters', ru: 'Пароль должен быть не короче 8 символов', uz: 'Parol kamida 8 belgidan iborat boʻlishi kerak' },
   authErrNetwork: { en: 'No connection — try again', ru: 'Нет соединения — попробуйте ещё раз', uz: 'Aloqa yoʻq — qayta urinib koʻring' },
-  authForgot: {
-    en: 'Forgot your password? Contact the administrator.',
-    ru: 'Забыли пароль? Обратитесь к администратору.',
-    uz: 'Parolni unutdingizmi? Administratorga murojaat qiling.',
+  authForgot: { en: 'Forgot your password?', ru: 'Забыли пароль?', uz: 'Parolni unutdingizmi?' },
+  authResetTitle: { en: 'Reset your password', ru: 'Сброс пароля', uz: 'Parolni tiklash' },
+  authResetBody: {
+    en: 'Enter your email and we will send you a link to set a new password.',
+    ru: 'Введите почту, и мы пришлём ссылку для установки нового пароля.',
+    uz: 'Pochtangizni kiriting — yangi parol oʻrnatish uchun havola yuboramiz.',
   },
+  authResetSend: { en: 'Send the link', ru: 'Отправить ссылку', uz: 'Havolani yuborish' },
+  authResetSent: {
+    en: (email) => `If ${email} has an account, a reset link is on its way.`,
+    ru: (email) => `Если у ${email} есть аккаунт, ссылка для сброса уже отправлена.`,
+    uz: (email) => `Agar ${email} uchun hisob mavjud boʻlsa, tiklash havolasi yuborildi.`,
+  },
+  authNewTitle: { en: 'Choose a new password', ru: 'Выберите новый пароль', uz: 'Yangi parol tanlang' },
+  authNewSave: { en: 'Save the new password', ru: 'Сохранить новый пароль', uz: 'Yangi parolni saqlash' },
+  authNewDone: { en: 'Password changed', ru: 'Пароль изменён', uz: 'Parol oʻzgartirildi' },
 
   // ---- legacy data migration ----
   migrateTitle: {

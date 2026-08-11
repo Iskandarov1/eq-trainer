@@ -12,6 +12,7 @@ import Breathe from './components/Breathe.jsx'
 import Reports from './components/Reports.jsx'
 import Privacy from './components/Privacy.jsx'
 import AuthScreen from './components/AuthScreen.jsx'
+import ResetPassword from './components/ResetPassword.jsx'
 
 export const AppCtx = React.createContext(null)
 
@@ -22,14 +23,24 @@ export const AppCtx = React.createContext(null)
    user out of their own cached data. */
 export default function App() {
   const [user, setUser] = useState(undefined) // undefined=resolving, null=needs sign-in
+  const [recovering, setRecovering] = useState(false)
   useEffect(() => { api.resolveUser().then(setUser) }, [])
+  useEffect(() => api.onPasswordRecovery(() => setRecovering(true)), [])
 
   // Dev-only: the auth screens are unreachable until Supabase is configured, so
-  // `?auth`, `?auth=signup` and `?auth=pending` render them for visual review.
-  // import.meta.env.DEV is false in the production build, so this branch is
-  // dropped at build time.
+  // `?auth`, `?auth=signup`, `?auth=pending`, `?auth=reset` and
+  // `?auth=newpassword` render them for visual review. import.meta.env.DEV is
+  // false in the production build, so this branch is dropped at build time.
   if (import.meta.env.DEV && new URLSearchParams(window.location.search).has('auth')) {
-    return <AuthScreen onAuthed={() => {}} initial={new URLSearchParams(window.location.search).get('auth')} />
+    const which = new URLSearchParams(window.location.search).get('auth')
+    if (which === 'newpassword') return <ResetPassword onDone={() => {}} />
+    return <AuthScreen onAuthed={() => {}} initial={which} />
+  }
+
+  // A recovery link lands here with a token in the URL hash; supabase-js
+  // consumes it and fires PASSWORD_RECOVERY.
+  if (recovering) {
+    return <ResetPassword onDone={() => { setRecovering(false); window.location.replace(window.location.pathname) }} />
   }
 
   if (user === undefined) return null
