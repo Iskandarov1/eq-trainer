@@ -124,7 +124,8 @@ h3 { font-size: 16px; }
 .btn.sm { padding: 9px 18px; min-height: 40px; font-size: 13px; }
 .btn:disabled { opacity: 0.4; cursor: default; transform: none; }
 
-textarea, input[type='text'], input[type='date'], input[type='search'] {
+textarea, input[type='text'], input[type='date'], input[type='search'],
+input[type='email'], input[type='password'] {
   width: 100%; padding: 12px 14px; border: 1.5px solid transparent; border-radius: 8px;
   background: var(--surface-2); color: var(--ink); transition: border-color 0.15s; resize: vertical;
 }
@@ -371,6 +372,8 @@ label.field-label { display: block; font-weight: 600; font-size: 13.5px; margin-
 .auth-screen { min-height: 100vh; display: grid; place-items: center; padding: 24px 16px; }
 .auth-card { background: var(--surface); border-radius: var(--radius); box-shadow: var(--shadow-lg); padding: 34px 30px; width: 100%; max-width: 400px; }
 .auth-error { font-size: 13.5px; color: #b3402a; background: #b3402a14; background: color-mix(in srgb, #b3402a 8%, transparent); border-radius: 10px; padding: 10px 12px; }
+.auth-intro { margin: 14px 0 18px; padding: 14px 16px; background: #f6f2ea; border-radius: var(--radius); }
+.auth-intro p { margin: 4px 0 0; }
 
 .migrate-list { margin: 8px 0 0 18px; font-size: 14.5px; display: grid; gap: 4px; }
 

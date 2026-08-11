@@ -55,9 +55,17 @@ export default function AuthScreen({ onAuthed }) {
         </div>
         <div className="logo-mark" style={{ margin: '0 auto 10px' }}>EQ</div>
         <h1 className="serif" style={{ textAlign: 'center' }}>{t('appName')}</h1>
-        <p className="muted small" style={{ textAlign: 'center', margin: '6px 0 18px' }}>
+        <p className="muted small" style={{ textAlign: 'center', margin: '6px 0 4px' }}>
           {mode === 'signin' ? t('authSignInHint') : t('authSignUpHint')}
         </p>
+        {mode === 'signup' && (
+          <div className="auth-intro">
+            <h2 style={{ marginBottom: 6 }}>{t('authIntroTitle')}</h2>
+            <p className="muted small">{t('authIntroWhat')}</p>
+            <p className="muted small">{t('authIntroTime')}</p>
+            <p className="muted small">{t('authIntroPrivate')}</p>
+          </div>
+        )}
         <form onSubmit={submit} className="grid" style={{ gap: 12 }}>
           <div>
             <label className="field-label" htmlFor="auth-email">{t('authEmail')}</label>

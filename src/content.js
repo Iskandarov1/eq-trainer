@@ -235,6 +235,26 @@ export const UI = {
     ru: 'Создайте личный аккаунт — ваши ответы видите только вы.',
     uz: 'Shaxsiy hisob yarating — javoblaringizni faqat oʻzingiz koʻrasiz.',
   },
+  authIntroTitle: {
+    en: 'Train your emotional intelligence',
+    ru: 'Тренируйте эмоциональный интеллект',
+    uz: 'Hissiy intellektingizni mashq qiling',
+  },
+  authIntroWhat: {
+    en: 'A 30-day guided practice based on Daniel Goleman’s work, plus modules for anger, shame and fear.',
+    ru: 'Тридцатидневная практика по работам Дэниела Гоулмана, плюс модули по гневу, стыду и страху.',
+    uz: 'Daniel Goulmanning ishlariga asoslangan 30 kunlik mashq, hamda gʻazab, uyat va qoʻrquv modullari.',
+  },
+  authIntroTime: {
+    en: 'About 5–10 minutes a day.',
+    ru: 'Примерно 5–10 минут в день.',
+    uz: 'Kuniga taxminan 5–10 daqiqa.',
+  },
+  authIntroPrivate: {
+    en: 'What you write is yours alone — no one else can read it.',
+    ru: 'Написанное принадлежит только вам — никто другой не может это прочитать.',
+    uz: 'Yozganlaringiz faqat sizniki — boshqa hech kim oʻqiy olmaydi.',
+  },
   authEmail: { en: 'Email', ru: 'Эл. почта', uz: 'Elektron pochta' },
   authPassword: { en: 'Password (min 8 characters)', ru: 'Пароль (мин. 8 символов)', uz: 'Parol (kamida 8 belgi)' },
   authSignIn: { en: 'Sign in', ru: 'Войти', uz: 'Kirish' },
