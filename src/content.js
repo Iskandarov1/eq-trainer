@@ -190,6 +190,17 @@ export const UI = {
     uz: 'Javoblaringiz shaxsiy hisobingiz bilan sinxronlanadi — ularni faqat oʻzingiz oʻqiy olasiz.',
   },
 
+  // ---- account deletion ----
+  deleteAccount: { en: 'Delete account', ru: 'Удалить аккаунт', uz: 'Hisobni oʻchirish' },
+  deleteTitle: { en: 'Delete your account?', ru: 'Удалить ваш аккаунт?', uz: 'Hisobingiz oʻchirilsinmi?' },
+  deleteBody: {
+    en: 'This removes every entry, every stored PDF and your login itself. It cannot be undone. Export your data first if you want to keep a copy.',
+    ru: 'Это удалит все записи, все сохранённые PDF и сам вход. Отменить нельзя. Сначала выгрузите данные, если хотите сохранить копию.',
+    uz: 'Bu barcha yozuvlarni, saqlangan PDF fayllarni va kirish hisobingizni oʻchiradi. Buni qaytarib boʻlmaydi. Nusxa saqlamoqchi boʻlsangiz, avval maʼlumotlaringizni yuklab oling.',
+  },
+  deleteConfirm: { en: 'Yes, delete everything', ru: 'Да, удалить всё', uz: 'Ha, hammasini oʻchirish' },
+  deleteFailed: { en: 'Could not delete — try again', ru: 'Не удалось удалить — попробуйте ещё раз', uz: 'Oʻchirib boʻlmadi — qayta urinib koʻring' },
+
   // ---- privacy ----
   privacyNav: { en: 'Privacy', ru: 'Конфиденциальность', uz: 'Maxfiylik' },
   privacyTitle: { en: 'Your privacy', ru: 'Ваша конфиденциальность', uz: 'Sizning maxfiyligingiz' },

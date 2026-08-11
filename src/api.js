@@ -88,9 +88,14 @@ export async function signOut() {
   rememberUser(null)
 }
 
-export async function changePassword(newPassword) {
-  const { error } = await supabase.auth.updateUser({ password: newPassword })
+/* Irreversible: removes the caller's rows, stored PDFs and login. The queue and
+   local cache are cleared by the caller, otherwise a flush would try to
+   re-create rows that no longer have an account to belong to. */
+export async function deleteAccount() {
+  const { error } = await supabase.rpc('delete_own_account')
   if (error) throw error
+  try { await supabase.auth.signOut() } catch { /* the account is already gone */ }
+  rememberUser(null)
 }
 
 // ---------- sync state (for the header indicator) ----------

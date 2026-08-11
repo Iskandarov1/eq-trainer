@@ -58,6 +58,7 @@ function TrainerApp({ user }) {
   const [toast, setToast] = useState(null)
   const [importOffer, setImportOffer] = useState(null)
   const [signOutWarn, setSignOutWarn] = useState(false)
+  const [deleteWarn, setDeleteWarn] = useState(false)
   const toastTimer = useRef(null)
 
   // The sync layer reads state through this ref; update() refreshes it
@@ -192,6 +193,19 @@ function TrainerApp({ user }) {
     window.location.reload()
   }
 
+  const doDeleteAccount = async () => {
+    try {
+      await api.deleteAccount()
+      localStorage.removeItem(storageK)
+      localStorage.removeItem(`eqTrainerQueue:${user.uid}`)
+      localStorage.removeItem(`eqMigrationDone:${user.uid}`)
+      window.location.reload()
+    } catch {
+      setDeleteWarn(false)
+      notify(t('deleteFailed'))
+    }
+  }
+
   const importRef = useRef(null)
   const onImport = (e) => {
     const file = e.target.files?.[0]
@@ -270,6 +284,8 @@ function TrainerApp({ user }) {
           <span>{user.email}</span>
           <span className="sep">·</span>
           <button className="linklike" onClick={requestSignOut}>{t('signOut')}</button>
+          <span className="sep">·</span>
+          <button className="linklike" onClick={() => setDeleteWarn(true)}>{t('deleteAccount')}</button>
         </div>
       )}
       <div className="trust-note">{cloud ? t('trustNoteCloud') : t('trustNote')}</div>
@@ -303,6 +319,20 @@ function TrainerApp({ user }) {
               <button className="btn ghost sm" onClick={() => setSignOutWarn(false)}>{t('cancel')}</button>
               <button className="btn ghost sm" onClick={() => doSignOut(false)}>{t('signOutKeep')}</button>
               <button className="btn sm" onClick={() => { api.flush(); setSignOutWarn(false); notify(t('syncStarted')) }}>{t('syncFirst')}</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {deleteWarn && (
+        <div className="modal-bg" onClick={() => setDeleteWarn(false)}>
+          <div className="modal" onClick={(e) => e.stopPropagation()}>
+            <h2>{t('deleteTitle')}</h2>
+            <p className="muted" style={{ margin: '10px 0' }}>{t('deleteBody')}</p>
+            <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end', marginTop: 14, flexWrap: 'wrap' }}>
+              <button className="btn ghost sm" onClick={() => setDeleteWarn(false)}>{t('cancel')}</button>
+              <button className="btn ghost sm" onClick={() => exportJSON(data)}>{t('exportData')}</button>
+              <button className="btn sm" onClick={doDeleteAccount}>{t('deleteConfirm')}</button>
             </div>
           </div>
         </div>

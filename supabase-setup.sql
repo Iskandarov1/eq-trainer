@@ -80,3 +80,37 @@ create policy reports_insert on storage.objects for insert to authenticated
   with check (bucket_id = 'reports' and (storage.foldername(name))[1] = (select auth.uid())::text);
 
 -- Deliberately NO update/delete storage policies: the PDF archive is append-only.
+
+-- ============ Self-service erasure ============
+-- security definer is required for two reasons: a user cannot delete their own
+-- auth.users record, and the reports bucket has no delete policy by design
+-- (append-only, above). auth.uid() inside the function is still the CALLER's
+-- id, so this can only ever erase the caller's own account.
+--
+-- profiles, journey_days and entries all declare
+--   references auth.users(id) on delete cascade
+-- so deleting the auth user removes every row. Only storage needs explicit
+-- handling, because objects are addressed by folder name, not a foreign key.
+
+create or replace function public.delete_own_account()
+returns void
+language plpgsql
+security definer
+set search_path = public, auth, storage
+as $$
+declare
+  me uuid := auth.uid();
+begin
+  if me is null then
+    raise exception 'not authenticated';
+  end if;
+
+  delete from storage.objects
+   where bucket_id = 'reports'
+     and (storage.foldername(name))[1] = me::text;
+
+  delete from auth.users where id = me;
+end $$;
+
+revoke all on function public.delete_own_account() from public, anon;
+grant execute on function public.delete_own_account() to authenticated;
