@@ -2,7 +2,8 @@
 
 Grow your emotional intelligence — the Daniel Goleman way. Live at **https://eq-trainer.com**.
 
-- **30-Day Journey** — four guided weeks (Self-Awareness → Self-Management → Social Awareness → Relationship Management) with daily practices, day-by-day unlocking, streaks, and the Day-31 EI Ritual.
+- **30-Day Journey** — four guided weeks (Self-Awareness → Self-Management → Social Awareness → Relationship Management) with daily practices, day-by-day unlocking, and streaks.
+- **Daily check-in** — the EI Ritual as a per-day record: morning intention, daytime check-in, evening reflection, each with its own Save/Edit. Drafts persist while you type; saved days become permanent records in Reports.
 - **Next Level** — master Anger, Shame, and Fear: interactive 4-step lessons, guided practice forms (with a 4-7-8 breathing exercise), a searchable journal with first-vs-latest comparison, mastery scores, and intensity charts.
 - **Dashboard** — progress rings, weekly summary chart, achievement badges, and personalized insights.
 - **English + Русский + Oʻzbekcha**, switchable any time.
