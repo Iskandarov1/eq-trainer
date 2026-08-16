@@ -1,71 +1,83 @@
-# EQ Trainer — Supabase setup (owner's guide)
+# EQ Trainer — backend (self-hosted Supabase)
 
-One-time setup, ~20 minutes (plus waiting for DNS to propagate). After this the app has multi-user accounts, a common database, and PDF report storage. You do steps 1–4 yourself — they involve your account credentials and your domain registrar — then hand over the two values from step 5.
+The backend is **self-hosted on your own server**, not on supabase.com. It was
+provisioned on 2026-08-16 and is running. This file is the operator's guide.
 
-## 1. Create the account and project
+## What is running
 
-1. Go to https://supabase.com → **Start your project** → sign up with your email (or GitHub). Use a strong password and enable 2FA (Account → Security) — this account is the master key to all users' data.
-2. Create a **New project**:
-   - Name: `eq-trainer`
-   - Database password: generate and store it somewhere safe (you rarely need it, but don't lose it)
-   - Region: **Europe (Frankfurt) — eu-central-1**
-   - Plan: Free
-3. Wait ~2 minutes while the project provisions.
+On `169.58.92.31`, under `/opt/supabase`:
 
-## 2. Run the database setup script
+- **Postgres** with the app schema (`profiles`, `journey_days`, `checkins`, `entries`), row-level security, the private `reports` storage bucket, and `delete_own_account()`.
+- **GoTrue** (auth), **PostgREST** (the REST API), **Storage**, and the gateway — plus Studio, realtime and edge-functions from the standard stack.
+- Everything binds to **127.0.0.1 only**. Nothing in the stack is reachable from the internet directly.
 
-1. In the left sidebar: **SQL Editor** → **New query**.
-2. Open `supabase-setup.sql` (next to this file), copy ALL of it, paste, press **Run**.
-3. It should finish with "Success. No rows returned". Run it only once.
+The app reaches it **on its own origin**: nginx on `eq-trainer.com` proxies
+`/auth/v1`, `/rest/v1` and `/storage/v1` to the gateway on `127.0.0.1:8000`.
+That is why `src/config.js` says `SUPABASE_URL = 'https://eq-trainer.com'` — no
+separate API subdomain, no second certificate, no CORS preflight.
 
-This creates the tables, the author-only security rules (row-level security), the private `reports` storage bucket for PDFs, and the `delete_own_account()` function behind the app's "Delete account" action.
+Secrets live in `/opt/supabase/.env`. **Back that file up somewhere off the
+server**: without `JWT_SECRET`, a restored database cannot validate any existing
+token or API key.
 
-## 3. Email sending (do this before the auth settings)
+## The one thing still missing: email
 
-The built-in Supabase mailer is capped at a few messages per hour and is not meant for production. The app is public, so set up a real sender first.
+`ENABLE_EMAIL_AUTOCONFIRM=true` is currently set, which means **signup does not
+require confirming the email address**. That was necessary to test the stack
+before an email sender existed. It is not what should ship publicly — it lets
+anyone register with an address they do not own, and password reset cannot work
+without email either.
 
-1. Create a free account at https://resend.com (3,000 emails/month free).
-2. Add the domain `eq-trainer.com` and copy the DNS records it shows you.
-3. At your domain registrar, add those records (one TXT for SPF, one TXT for DKIM). **Without them, confirmation mail lands in spam and signup silently fails for real users.**
-4. Wait until Resend shows the domain as **Verified**, then create an SMTP credential.
-5. In Supabase: **Project Settings → Authentication → SMTP Settings** → enable custom SMTP and paste the Resend host, port, username and password. Sender address: `no-reply@eq-trainer.com`.
+To finish:
 
-(Brevo — 300 emails/day free — works the same way if Resend is unavailable to you. Set up one, not both.)
+1. Create a free account at https://resend.com (3,000/month) and add the domain `eq-trainer.com`.
+2. Add the DNS records it shows you at GoDaddy (your domain → DNS → Add record). Without them, mail lands in spam.
+3. Wait for **Verified**, then create an SMTP credential.
+4. On the server, in `/opt/supabase/.env`:
+   ```
+   SMTP_HOST=<from resend>
+   SMTP_PORT=587
+   SMTP_USER=<from resend>
+   SMTP_PASS=<from resend>
+   SMTP_ADMIN_EMAIL=no-reply@eq-trainer.com
+   SMTP_SENDER_NAME=EQ Trainer
+   ENABLE_EMAIL_AUTOCONFIRM=false
+   ```
+5. `cd /opt/supabase && sh run.sh restart auth`
+6. Test with a real external address: sign up, confirm the link arrives (check spam), and run a password reset.
 
-## 4. Auth settings
-
-1. Sidebar: **Authentication** → **Sign In / Providers** → **Email**:
-   - **Confirm email: ON** — the app is public. Without it, anyone can register using an email address they do not own, including someone else's.
-   - **Minimum password length: 8**
-2. **Authentication** → **URL Configuration**:
-   - **Site URL:** `https://eq-trainer.com`
-   - **Redirect URLs:** add `https://eq-trainer.com` — confirmation and password-reset links fail silently without it.
-3. Save.
-
-## 5. What to hand over
-
-Sidebar: **Project Settings** → **API**. Copy these two values:
-
-- **Project URL** (looks like `https://abcdefgh.supabase.co`)
-- **anon / public key** (a long string starting with `eyJ…`)
-
-These two are **safe to share and to commit into the app** — they only allow what the security rules permit. NEVER share the `service_role` key or your dashboard password with anyone.
-
-## 6. Where the values go
-
-Paste both into `src/config.js` in this project, then publish with `npm run deploy`.
+Brevo (300/day free) works the same way if Resend is unavailable. Set up one, not both.
 
 ## Day-2 operations
 
-- **Add nobody manually** — signup is open and self-service: each user registers with email + password and activates their account via the emailed confirmation link.
-- **Forgot password**: users reset it themselves — "Forgot your password?" on the sign-in screen emails them a link. No admin action needed.
-- **Deleting an account**: users do this themselves from the bottom of any page; it removes their entries, their stored PDFs and their login. There is no undo and no backup kept for them.
-- **Pausing**: a free project **pauses after ~7 days with zero traffic**. Symptom: the app says "offline / not synced" while the internet works. The keep-alive cron (`scripts/keepalive.cron`, installed on 169.58.92.31) prevents this by touching the API daily. If it ever happens anyway: dashboard → **Restore project** (~2 minutes, no data lost). If the app becomes critical, the Pro plan ($25/mo) removes pausing entirely.
-- **Backups / portability**: Database → Backups (daily on free tier). Everything is standard PostgreSQL + files; a full export is possible at any time, so moving to another host later is a data migration, not a rewrite.
+- **Managing the stack**: `cd /opt/supabase` then `sh run.sh status | start | stop | restart [service] | logs [service]`.
+- **Add nobody manually** — signup is open and self-service.
+- **Forgot password**: users reset it themselves once SMTP is configured. Until then, there is no self-service reset.
+- **Deleting an account**: users do it themselves from the bottom of any page. It removes their rows and login immediately; the archived PDFs are removed from disk by the sweeper within 15 minutes.
+- **No pausing.** That was a hosted-free-tier limitation and does not apply here.
+- **Disk**: the whole box has ~80 GB free. At roughly 16 KB per archived report, storage is not a near-term concern — but it grows with every save, so watch `df -h`.
 
-## Security notes (read once)
+## Backups — these are now your responsibility
 
-- Each user can read/write **only their own rows and their own PDF folder** — enforced by the database server, not by app code.
-- You, as the project owner, can technically see raw data in the dashboard. The agreed policy is **author-only**: don't. The app's privacy note tells every user exactly this, so the promise is now public, not internal.
-- The app's local cache and login token live in each user's browser storage; anyone with access to that browser profile could read them. That is why sign-out clears the local copy once everything is synced.
-- Signup is open to anyone on the internet. If bot registrations ever appear, Supabase supports a CAPTCHA on auth endpoints (Authentication → Attack Protection) — deliberately left off until there is a reason for it.
+`/opt/supabase/backup.sh` runs nightly at 03:23 (`/etc/cron.d/supabase-backup`),
+writing to `/var/backups/supabase`:
+
+- `db_*.sql.gz` — `pg_dumpall`, so roles and grants are included, not just tables
+- `storage_*.tar.gz` — the archived PDFs
+- `env_*.bak` — the secrets, without which a restore cannot validate tokens
+
+14 days are kept. **They are written to the same disk as the data they protect.**
+That defends against a bad migration or an accidental deletion — *not* against
+losing the server. Set `BACKUP_REMOTE` at the top of `backup.sh` to an scp target
+to close that gap; that is the single most valuable thing left to do here.
+
+Restore outline: `zcat db_<stamp>.sql.gz | docker compose exec -T db psql -U postgres`,
+untar the storage archive over `/opt/supabase/volumes/storage`, restore `.env`, restart.
+**Rehearse this before you need it** — an untested backup is a guess.
+
+## Security notes
+
+- Each user can read and write **only their own rows and their own PDF folder**, enforced by the database, not by app code. Verified against a real second account: cross-user reads return empty, cross-user writes are refused, and another user's PDF returns an error.
+- The `anon` key in `src/config.js` is public by design and safe to commit. The `service_role` key in `/opt/supabase/.env` is not — it bypasses every policy.
+- You hold the database. You can read anyone's journal. The app's privacy note tells users exactly that, so the promise not to is public.
+- Signup is open to the internet. If bots ever appear, GoTrue supports a CAPTCHA (`GOTRUE_SECURITY_CAPTCHA_ENABLED`) — deliberately off until there is a reason.

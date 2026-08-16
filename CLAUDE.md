@@ -16,6 +16,7 @@ Personal emotional-intelligence trainer based on Daniel Goleman's framework. Sou
 
 ## Architecture
 - `src/App.jsx` — auth shell (`App`) + the trainer (`TrainerApp`, rendered with `key={uid}` so a user switch fully remounts state); route state object (`{page, emotion?}`), header/nav, breadcrumbs, toast, export/import, legacy-import modal, sign-out flow, sync badge.
+- **Backend is SELF-HOSTED** (Docker stack on the project server, `/opt/supabase`), not supabase.com. `SUPABASE_URL` is the app's own origin because nginx proxies `/auth/v1`, `/rest/v1` and `/storage/v1` to `127.0.0.1:8000`; nothing in the stack listens publicly. Operator guide: `SETUP.md`. Deleting storage rows in SQL requires `set_config('storage.allow_delete_query','true',true)` — self-hosted Storage installs a trigger that blocks direct deletes — and the bytes are removed separately by `scripts/storage-sweep.sh`.
 - `src/api.js` — the ONLY module that touches Supabase (auth, Postgres, Storage). Local-first: per-user offline op queue (`eqTrainerQueue:<uid>`), debounced dirty markers, flush engine with error classes, pull+queue-aware merge. With `src/config.js` empty the app runs in v1 local mode under the legacy storage key.
 - `src/pdf.js` — client-side PDF reports (pdf-lib + fontkit + `src/fonts/` base64 subsetted Noto Sans; fonts are inlined as base64 modules rather than fetched assets). Loaded via dynamic `import()` so it stays out of the first paint.
 - `src/components/AuthScreen.jsx` — trilingual sign-in/sign-up (own local lang state, `eqAuthLang`).

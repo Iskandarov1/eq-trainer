@@ -124,6 +124,13 @@ begin
     raise exception 'not authenticated';
   end if;
 
+  -- storage.protect_delete() blocks direct SQL deletes on storage.objects so
+  -- callers cannot orphan files on disk. This is its sanctioned opt-in, and
+  -- set_config(..., true) scopes it to THIS transaction only, so it can never
+  -- leak into another statement. The rows go now; the bytes are removed from
+  -- disk by scripts/storage-sweep.sh, which deletes objects with no DB row.
+  perform set_config('storage.allow_delete_query', 'true', true);
+
   delete from storage.objects
    where bucket_id = 'reports'
      and (storage.foldername(name))[1] = me::text;

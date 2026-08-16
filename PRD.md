@@ -61,7 +61,8 @@ A personal emotional-intelligence trainer that turns Daniel Goleman's EI framewo
 - **The auth screen explains the app** before asking for an email: what it is, ~5–10 minutes a day, and that entries are private.
 - **Privacy note** reachable from every page, including local mode, stating plainly what is stored, who can read it (with the honest owner-access caveat), where it lives, and how to erase it.
 - **Self-service throughout:** email confirmation, password reset, account deletion — no admin in the loop.
-- **Operations:** `npm run deploy` builds and publishes; `scripts/keepalive.cron` stops the free Supabase project pausing after 7 idle days.
+- **Operations:** `npm run deploy` builds and publishes.
+- **Backend is self-hosted (2026-08-16, owner-directed):** the Supabase stack runs in Docker on the project's own server rather than supabase.com — no storage cap, no idle pausing, no third party holding users' journals, and no extra cost. The API is proxied by nginx on the app's own origin (`/auth/v1`, `/rest/v1`, `/storage/v1` → `127.0.0.1:8000`), so there is no API subdomain and no CORS. In exchange, backups are the project's own responsibility: `backup.sh` nightly, plus `scripts/storage-sweep.sh` every 15 minutes to remove archived PDFs left orphaned by account deletion.
 
 ## 4. Non-goals (v1)
 - No push notifications; no automated test suite (manual QA checklist in README). (Uzbek localization was a v1 non-goal, shipped 2026-07-30; accounts/sync/backend were v1 non-goals, shipped 2026-08-05 — see §3.5–3.6.)
