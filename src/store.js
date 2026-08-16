@@ -8,13 +8,17 @@ const DEFAULTS = {
   lang: 'en',
   journey: { startDate: null, days: {}, ritual: { morning: '', day: '', evening: '' } },
   entries: { anger: [], shame: [], fear: [], envy: [] },
+  // daily check-ins: { 'YYYY-MM-DD': { morning|day|evening: { text, savedAt? } } }
+  // savedAt present = saved & locked in the UI; absent = editable draft
+  checkins: {},
 }
 
 export const EMOTION_KEYS = ['anger', 'shame', 'fear', 'envy']
+export const CHECKIN_SLOTS = ['morning', 'day', 'evening']
 
-// crypto.randomUUID is unavailable on file:// and plain-HTTP origins (dist is
-// opened from disk). The fallback must still be a REAL RFC-4122 v4 uuid — the
-// server's entries.id column is uuid-typed and ids are the idempotency key.
+// crypto.randomUUID is unavailable on plain-HTTP origins. The fallback is kept
+// (harmless) and must still produce a REAL RFC-4122 v4 uuid — the server's
+// entries.id column is uuid-typed and ids are the idempotency key.
 export const newId = () => {
   if (globalThis.crypto?.randomUUID) return crypto.randomUUID()
   const b = new Uint8Array(16)
@@ -47,7 +51,26 @@ export function normalizeData(d) {
       fear: validEntries(d.entries?.fear),
       envy: validEntries(d.entries?.envy ?? d.entries?.jealousy), // 'jealousy' was this module's key for a brief window
     },
+    checkins: normalizeCheckins(d.checkins),
   }
+}
+
+// Drafts (text, no savedAt) survive normalization on purpose — an unsaved
+// morning answer must still be there when the page reopens in the afternoon.
+function normalizeCheckins(c) {
+  if (!c || typeof c !== 'object' || Array.isArray(c)) return {}
+  const out = {}
+  for (const [date, ci] of Object.entries(c)) {
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(date) || !ci || typeof ci !== 'object') continue
+    const day = {}
+    for (const s of CHECKIN_SLOTS) {
+      const v = ci[s]
+      if (!v || typeof v !== 'object' || typeof v.text !== 'string') continue
+      day[s] = typeof v.savedAt === 'string' ? { text: v.text, savedAt: v.savedAt } : { text: v.text }
+    }
+    if (Object.keys(day).length) out[date] = day
+  }
+  return out
 }
 
 // ritual was a single string before it split into morning/day/evening parts
@@ -106,6 +129,13 @@ export const LOCALES = { en: 'en-GB', ru: 'ru-RU' }
 // token), so Uzbek dates are always formatted manually: dd.mm.yyyy / "23-iyul 2026, 10:01".
 const UZ_MONTHS = ['yanvar', 'fevral', 'mart', 'aprel', 'may', 'iyun', 'iyul', 'avgust', 'sentabr', 'oktabr', 'noyabr', 'dekabr']
 const two = (n) => String(n).padStart(2, '0')
+
+// Local calendar date — check-in day boundaries follow the device clock,
+// same as the journey's currentDay()
+export const todayKey = () => {
+  const d = new Date()
+  return `${d.getFullYear()}-${two(d.getMonth() + 1)}-${two(d.getDate())}`
+}
 
 export const fmtDate = (lang, iso) => {
   const d = new Date(iso)

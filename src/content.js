@@ -8,6 +8,30 @@ export const starterFor = (lang, ph) => {
   return (s.endsWith('…') ? s.slice(0, -1).trimEnd() : s) + ' '
 }
 
+// A stored value that is just the untouched starter in ANY language counts as
+// empty: the starter gets captured as text in whatever language was active
+// when the user clicked in (typed and erased, etc.) and must not stick after
+// a language switch — the field should show the current language's starter.
+export const isBareStarter = (txt, ph) =>
+  typeof txt === 'string' && Boolean(ph) &&
+  ['en', 'ru', 'uz'].some((l) => txt.trim() === starterFor(l, ph).trim())
+
+// The starter is the FIXED template part of an answer ("I feel …"), owner
+// decision 2026-08-12: when an answer still begins with the field's starter in
+// any language, that prefix renders in the CURRENT language — only the user's
+// own continuation stays as typed. Display-time only; stored text never mutates.
+// The full starter (with its trailing space) must match, so real words that
+// merely share letters with a starter ("I feelings…") are never touched.
+export const localizeStarter = (txt, ph, lang) => {
+  if (typeof txt !== 'string' || !ph) return txt
+  for (const l of ['en', 'ru', 'uz']) {
+    const s = starterFor(l, ph) // ends with ' '
+    if (txt.startsWith(s)) return starterFor(lang, ph) + txt.slice(s.length)
+    if (txt.trim() === s.trim()) return starterFor(lang, ph)
+  }
+  return txt
+}
+
 export const UI = {
   appName: { en: 'EQ Trainer', ru: 'EQ Тренер', uz: 'EQ Trener' },
   tagline: { en: 'Grow your emotional intelligence — the Goleman way', ru: 'Развивайте эмоциональный интеллект по методу Гоулмана', uz: 'Goleman usulida hissiy intellektni rivojlantiring' },
@@ -110,8 +134,25 @@ export const UI = {
     ru: '«В отличие от IQ, который почти не меняется в течение жизни, эмоциональный интеллект может меняться… этому можно научиться в любой момент жизни.» — Дэниел Гоулман',
     uz: '«Umr boʻyi deyarli oʻzgarmaydigan IQ dan farqli oʻlaroq, hissiy intellekt oʻzgara oladi… uni hayotning istalgan pallasida oʻrganish mumkin.» — Daniel Goleman',
   },
-  ritualTitle: { en: 'Final Challenge: Day 31 and beyond', ru: 'Финальный вызов: день 31 и далее', uz: 'Yakuniy sinov: 31-kun va undan keyin' },
-  ritualIntro: { en: 'Create your Emotional Intelligence Ritual:', ru: 'Создайте свой ритуал эмоционального интеллекта:', uz: 'Oʻz hissiy intellekt ritualingizni yarating:' },
+  checkinTitle: { en: 'Daily check-in', ru: 'Ежедневный чек-ин', uz: 'Kundalik tekshiruv' },
+  checkinIntro: {
+    en: 'Your Emotional Intelligence Ritual — fill in each part during the day and press Save. A new check-in starts every morning; saved days are kept in Reports.',
+    ru: 'Ваш ритуал эмоционального интеллекта — заполняйте каждую часть в течение дня и нажимайте «Сохранить». Каждое утро начинается новый чек-ин; сохранённые дни хранятся в «Отчётах».',
+    uz: 'Hissiy intellekt ritualingiz — kun davomida har bir qismini toʻldirib, «Saqlash» tugmasini bosing. Har tong yangi tekshiruv boshlanadi; saqlangan kunlar «Hisobotlar»da turadi.',
+  },
+  checkinSave: { en: 'Save', ru: 'Сохранить', uz: 'Saqlash' },
+  checkinEdit: { en: 'Edit', ru: 'Изменить', uz: 'Tahrirlash' },
+  checkinSavedAt: {
+    en: (time) => `Saved · ${time}`,
+    ru: (time) => `Сохранено · ${time}`,
+    uz: (time) => `Saqlandi · ${time}`,
+  },
+  checkinHistory: { en: 'Previous days', ru: 'Прошлые дни', uz: 'Oʻtgan kunlar' },
+  checkinHistoryHint: {
+    en: 'Every saved day is kept as a record in Reports.',
+    ru: 'Каждый сохранённый день хранится как запись в «Отчётах».',
+    uz: 'Har bir saqlangan kun «Hisobotlar»da yozuv sifatida saqlanadi.',
+  },
   ritualMorning: { en: 'Morning: 2-min intention', ru: 'Утро: 2-минутное намерение', uz: 'Ertalab: 2 daqiqalik niyat' },
   ritualDay: { en: 'Daytime: 1 emotional check-in', ru: 'День: 1 эмоциональный чек-ин', uz: 'Kunduzi: 1 ta hissiy tekshiruv' },
   ritualEvening: { en: 'Evening: 5-min reflection journal', ru: 'Вечер: 5-минутная рефлексия', uz: 'Kechqurun: 5 daqiqalik mulohaza' },
@@ -604,13 +645,13 @@ export const WEEKS = [
         fields: [
           { id: 'morningFeel', t: 'text', label: { en: 'Morning check-in', ru: 'Утренний чек-ин', uz: 'Ertalabki tekshiruv' }, ph: { en: 'I feel…', ru: 'Я чувствую…', uz: 'Hozir his qilayotganim —…' } },
           { id: 'morningWhy', t: 'text', ph: { en: 'I might be feeling this because…', ru: 'Возможно, я чувствую это, потому что…', uz: 'Sababi, ehtimol,…' } },
-          { id: 'morningHow', t: 'text', ph: { en: 'It affects my behavior by…', ru: 'На моё поведение это влияет так…', uz: 'Bu xatti-harakatimga taʼsiri —…' } },
+          { id: 'morningHow', t: 'text', ph: { en: 'It affects my behavior by…', ru: 'На моё поведение это влияет так…', uz: 'Buning xatti-harakatimga taʼsiri —…' } },
           { id: 'noonFeel', t: 'text', label: { en: 'Noon check-in', ru: 'Дневной чек-ин', uz: 'Kunduzgi tekshiruv' }, ph: { en: 'I feel…', ru: 'Я чувствую…', uz: 'Hozir his qilayotganim —…' } },
           { id: 'noonWhy', t: 'text', ph: { en: 'I might be feeling this because…', ru: 'Возможно, я чувствую это, потому что…', uz: 'Sababi, ehtimol,…' } },
-          { id: 'noonHow', t: 'text', ph: { en: 'It affects my behavior by…', ru: 'На моё поведение это влияет так…', uz: 'Bu xatti-harakatimga taʼsiri —…' } },
+          { id: 'noonHow', t: 'text', ph: { en: 'It affects my behavior by…', ru: 'На моё поведение это влияет так…', uz: 'Buning xatti-harakatimga taʼsiri —…' } },
           { id: 'eveningFeel', t: 'text', label: { en: 'Evening check-in', ru: 'Вечерний чек-ин', uz: 'Kechki tekshiruv' }, ph: { en: 'I feel…', ru: 'Я чувствую…', uz: 'Hozir his qilayotganim —…' } },
           { id: 'eveningWhy', t: 'text', ph: { en: 'I might be feeling this because…', ru: 'Возможно, я чувствую это, потому что…', uz: 'Sababi, ehtimol,…' } },
-          { id: 'eveningHow', t: 'text', ph: { en: 'It affects my behavior by…', ru: 'На моё поведение это влияет так…', uz: 'Bu xatti-harakatimga taʼsiri —…' } },
+          { id: 'eveningHow', t: 'text', ph: { en: 'It affects my behavior by…', ru: 'На моё поведение это влияет так…', uz: 'Buning xatti-harakatimga taʼsiri —…' } },
         ],
       },
       {
@@ -1077,3 +1118,10 @@ export const BADGES = [
   { id: 'envyNavigator', need: 10, scope: 'envy', name: { en: 'Envy Navigator', ru: 'Навигатор зависти', uz: 'Hasad navigatori' }, desc: { en: '10 envy practices', ru: '10 практик с завистью', uz: '10 ta hasad amaliyoti' } },
   { id: 'emotionMaster', need: 30, scope: 'total', name: { en: 'Emotion Master', ru: 'Мастер эмоций', uz: 'His-tuygʻular ustasi' }, desc: { en: '30 total practices across all emotions', ru: '30 практик по всем эмоциям', uz: 'Barcha his-tuygʻular boʻyicha jami 30 ta amaliyot' } },
 ]
+
+// field id -> its starter template, for renderers that only have the stored
+// key (entry reports/PDF); form components use f.ph directly
+export const FIELD_PHS = {}
+for (const m of Object.values(MODULES))
+  for (const s of m.practiceSteps)
+    for (const f of s.fields || []) if (f.ph) FIELD_PHS[f.id] = f.ph

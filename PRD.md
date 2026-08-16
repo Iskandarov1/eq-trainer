@@ -21,7 +21,7 @@ A personal emotional-intelligence trainer that turns Daniel Goleman's EI framewo
   - **W3 (15–21) Social Awareness:** empathy practice, non-verbal cues, "Other Lens" journaling, mindful listening.
   - **W4 (22–30) Relationship Management:** intentional connection, difficult-conversation rehearsal, conflict alchemy, relationship journal.
 - Day gating (one day at a time), day completion, streaks, progress stats.
-- **Day 31+:** the EI Ritual (morning intention / daytime check-in / evening reflection) + personal ritual text + Goleman's final words.
+- **Daily check-in (reworked 2026-08-11, owner-directed):** the EI Ritual (morning intention / daytime check-in / evening reflection) is a per-calendar-day record shown to **everyone from day 1** (no longer gated behind day 30). Each of the three parts has its own **Save/Edit** button: Save locks the answer (records the time, syncs, archives a PDF snapshot), Edit unlocks it; unsaved drafts persist locally so a half-typed morning answer survives reopening the page in the afternoon. Each new day starts blank; saved days are permanent records listed under the block (last 7) and in Reports.
 
 ### 3.2 Next Level (from the docx spec)
 - Reachable from nav **and breadcrumbs**; breadcrumb "Next Level" shows the 3 modules.
@@ -46,13 +46,13 @@ A personal emotional-intelligence trainer that turns Daniel Goleman's EI framewo
 ### 3.5 Multi-user accounts + common database (added 2026-08-05)
 - **Backend:** Supabase free tier (Frankfurt) — email+password auth (open signup, **confirm-email on** since the 2026-08-11 public launch), Postgres with row-level security, private Storage bucket for PDF archives. One-time setup: `SETUP.md` + `supabase-setup.sql`. All backend access goes through `src/api.js` (swap-friendly). While `src/config.js` is empty the app runs in v1 local mode.
 - **Privacy: author-only.** RLS + storage policies restrict every row/file to its author. Disclosed caveat: the Supabase project owner can technically query raw data; team policy is not to.
-- **Local-first sync:** the app renders from the per-user localStorage cache; a per-user offline op queue pushes in the background (entries = idempotent client-uuid inserts, 23505 = success; journey days = split-column upserts so a stale fields push can never revert `done`; profile = debounced upsert; PDFs regenerated at flush, upload 409 = success). Pull-and-merge on start; queue-aware merge; error classes: retry/backoff vs 401 refresh vs 429 backoff vs quarantine.
+- **Local-first sync:** the app renders from the per-user localStorage cache; a per-user offline op queue pushes in the background (entries = idempotent client-uuid inserts, 23505 = success; journey days = split-column upserts so a stale fields push can never revert `done`; check-in slots = per-slot-column upserts, drafts never pushed; profile = debounced upsert; PDFs regenerated at flush, upload 409 = success). Pull-and-merge on start; queue-aware merge; error classes: retry/backoff vs 401 refresh vs 429 backoff vs quarantine.
 - **Legacy migration:** first sign-in on a device with v1 data offers a previewed, confirmed import (re-keys non-uuid ids; renames — never deletes — the old key).
 - **Sign-out:** wipes the local cache when fully synced; warns when unsynced changes exist.
 - **Public launch (2026-08-11):** the audience became the public rather than the original internal team, so signup requires a confirmed email address, users reset their own passwords, and account deletion (`delete_own_account()`) is self-service. Design: `docs/superpowers/specs/2026-08-11-public-launch-readiness-design.md`.
 
 ### 3.6 Reports section (added 2026-08-05)
-- Every saved answer is a daily written record: one record per emotion-practice entry and per completed journey day.
+- Every saved answer is a daily written record: one record per emotion-practice entry, per completed journey day, and per daily check-in day (added 2026-08-11).
 - **Reports** nav page: month-grouped list (newest first), filter by practice, each record opens as a formatted in-app page and downloads as a styled PDF (`2026-08-05 — Anger Practice.pdf`), generated client-side (pdf-lib + embedded subsetted Noto Sans — full Cyrillic + Uzbek ʻ/ʼ).
 - On every save the PDF is also archived to the user's private storage folder as `<uid>/<YYYY-MM-DD>_<practice>_<hhmmss>.pdf` (append-only, ASCII keys).
 

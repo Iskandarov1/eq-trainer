@@ -3,7 +3,7 @@
 // a per-user offline queue. Swapping the backend later = rewriting this file.
 import { createClient } from '@supabase/supabase-js'
 import { SUPABASE_URL, SUPABASE_ANON_KEY } from './config.js'
-import { normalizeData, EMOTION_KEYS } from './store.js'
+import { normalizeData, EMOTION_KEYS, CHECKIN_SLOTS } from './store.js'
 
 export const isConfigured = Boolean(SUPABASE_URL && SUPABASE_ANON_KEY)
 
@@ -118,8 +118,10 @@ function setState(patch) {
 //   {t:'entry',   id, emotion}
 //   {t:'day',     day, cols:'fields'|'done'}   // split columns: a stale fields
 //                                              // push can never revert done
+//   {t:'checkin', date, slot}                  // per-slot column, same split-
+//                                              // column safety as journey days
 //   {t:'profile'}
-//   {t:'pdf', kind:'entry'|'day', refId}       // refId = entry id | day number
+//   {t:'pdf', kind:'entry'|'day'|'checkin', refId}  // entry id | day number | date
 const qKey = () => `eqTrainerQueue:${uid}`
 const quarantineKey = () => `eqTrainerQuarantine:${uid}`
 
@@ -141,6 +143,7 @@ function writeQueue(q) {
 const opKey = (op) =>
   op.t === 'entry' ? `entry:${op.id}`
   : op.t === 'day' ? `day:${op.day}:${op.cols}`
+  : op.t === 'checkin' ? `checkin:${op.date}:${op.slot}`
   : op.t === 'pdf' ? `pdf:${op.kind}:${op.refId}`
   : 'profile'
 
@@ -281,6 +284,14 @@ async function pushOp(op) {
       : { user_id: uid, day: parseInt(op.day, 10), fields: d.fields || {} }
     const { error } = await supabase.from('journey_days').upsert(row, { onConflict: 'user_id,day' })
     if (error) throw error
+  } else if (op.t === 'checkin') {
+    const s = data?.checkins?.[op.date]?.[op.slot]
+    if (!s?.savedAt) return // unsaved draft (or deleted) — nothing to publish
+    const { error } = await supabase.from('checkins').upsert(
+      { user_id: uid, date: op.date, [op.slot]: s },
+      { onConflict: 'user_id,date' },
+    )
+    if (error) throw error
   } else if (op.t === 'profile') {
     const { error } = await supabase.from('profiles').upsert({
       id: uid,
@@ -319,19 +330,27 @@ export function fullSyncOps(data) {
       ops.push({ t: 'pdf', kind: 'entry', refId: e.id })
     }
   }
+  for (const [date, ci] of Object.entries(data.checkins || {})) {
+    let anySaved = false
+    for (const s of CHECKIN_SLOTS) {
+      if (ci[s]?.savedAt) { ops.push({ t: 'checkin', date, slot: s }); anySaved = true }
+    }
+    if (anySaved) ops.push({ t: 'pdf', kind: 'checkin', refId: date })
+  }
   return ops
 }
 
 // ---------- pull + merge ----------
 export async function pullAll() {
-  const [p, d, e] = await Promise.all([
+  const [p, d, e, c] = await Promise.all([
     supabase.from('profiles').select('*').maybeSingle(),
     supabase.from('journey_days').select('*'),
     supabase.from('entries').select('*'),
+    supabase.from('checkins').select('*'),
   ])
-  const firstError = p.error || d.error || e.error
+  const firstError = p.error || d.error || e.error || c.error
   if (firstError) throw firstError
-  return { profile: p.data, days: d.data || [], entries: e.data || [] }
+  return { profile: p.data, days: d.data || [], entries: e.data || [], checkins: c.data || [] }
 }
 
 // Queue-aware merge: rows with a pending local op are locally newer → local
@@ -356,6 +375,16 @@ export function mergeRemote(local, remote) {
     // done never reverts, whatever the source says
     next.done = next.done || !!local_?.done || !!row.done
     merged.journey.days[day] = next
+  }
+  for (const row of remote.checkins || []) {
+    const date = row.date
+    const next = { ...(merged.checkins[date] || {}) }
+    for (const s of CHECKIN_SLOTS) {
+      // a pending local op means this slot is locally newer — local wins
+      if (pendingKeys.has(`checkin:${date}:${s}`)) continue
+      if (row[s]) next[s] = row[s]
+    }
+    if (Object.keys(next).length) merged.checkins[date] = next
   }
   for (const k of EMOTION_KEYS) {
     const have = new Set(merged.entries[k].map((x) => x.id))

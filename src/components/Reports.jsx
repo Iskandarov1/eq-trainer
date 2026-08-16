@@ -1,7 +1,7 @@
 import React, { useContext, useMemo, useState } from 'react'
 import { AppCtx } from '../App.jsx'
-import { L, EMOTION_NAMES, FIELD_LABELS, optionLabel, UI } from '../content.js'
-import { EMOTION_KEYS, fmtDate, fmtDateTime, fmtMonthYear, weekForDay, entryText } from '../store.js'
+import { L, EMOTION_NAMES, FIELD_LABELS, FIELD_PHS, optionLabel, UI, isBareStarter, localizeStarter } from '../content.js'
+import { EMOTION_KEYS, CHECKIN_SLOTS, fmtDate, fmtDateTime, fmtMonthYear, weekForDay, entryText } from '../store.js'
 
 /* Reports — every saved answer as a daily written record: read in-app as a
    formatted page, download as PDF. The list is derived from local data, so it
@@ -29,25 +29,37 @@ export default function Reports() {
           : new Date().toISOString())
       list.push({ id: `d:${day}`, kind: 'day', at, day, dayData: dd, exact })
     }
+    for (const [date, ci] of Object.entries(data.checkins)) {
+      const times = CHECKIN_SLOTS.map((s) => ci[s]?.savedAt).filter(Boolean).sort()
+      if (!times.length) continue // drafts only — not a record yet
+      list.push({ id: `c:${date}`, kind: 'checkin', at: times[times.length - 1], date, ci, exact: true })
+    }
     return list.sort((a, b) => new Date(b.at) - new Date(a.at))
   }, [data])
 
   const filtered = records.filter((r) =>
-    filter === 'all' ? true : filter === 'journey' ? r.kind === 'day' : r.emotion === filter)
+    filter === 'all' ? true
+    : filter === 'journey' ? r.kind === 'day'
+    : filter === 'checkin' ? r.kind === 'checkin'
+    : r.emotion === filter)
 
   const open = openId && filtered.find((r) => r.id === openId)
 
   const title = (r) =>
     r.kind === 'entry'
       ? t('reportEntryTitle', L(lang, EMOTION_NAMES[r.emotion]))
-      : `${t('reportDayTitle', r.day)} — ${L(lang, weekForDay(Number(r.day))?.title ?? { en: '' })}`
+      : r.kind === 'checkin'
+        ? t('checkinTitle')
+        : `${t('reportDayTitle', r.day)} — ${L(lang, weekForDay(Number(r.day))?.title ?? { en: '' })}`
 
   const download = async (r) => {
     try {
-      const { buildEntryReport, buildDayReport, downloadPdf } = await import('../pdf.js')
+      const { buildEntryReport, buildDayReport, buildCheckinReport, downloadPdf } = await import('../pdf.js')
       const built = r.kind === 'entry'
         ? await buildEntryReport({ entry: r.entry, emotion: r.emotion, lang, uid: user.uid })
-        : await buildDayReport({ day: r.day, dayData: r.dayData, lang, uid: user.uid })
+        : r.kind === 'checkin'
+          ? await buildCheckinReport({ date: r.date, checkin: r.ci, lang, uid: user.uid })
+          : await buildDayReport({ day: r.day, dayData: r.dayData, lang, uid: user.uid })
       const d = new Date(r.at)
       const stamp = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
       downloadPdf(built.bytes, `${stamp} — ${title(r)}.pdf`)
@@ -77,6 +89,7 @@ export default function Reports() {
 
   const chips = [
     ['all', t('reportsAll')],
+    ['checkin', t('checkinTitle')],
     ...EMOTION_KEYS.map((k) => [k, L(lang, EMOTION_NAMES[k])]),
     ['journey', t('journey')],
   ]
@@ -108,6 +121,11 @@ export default function Reports() {
                     {r.kind === 'entry' && r.entry.intensity ? ` · ${t('intensity')}: ${r.entry.intensity}/10` : ''}
                   </div>
                   {r.kind === 'entry' && <div className="preview">{entryText(r.entry).slice(0, 110)}</div>}
+                  {r.kind === 'checkin' && (
+                    <div className="preview">
+                      {CHECKIN_SLOTS.filter((s) => r.ci[s]?.savedAt).map((s) => r.ci[s].text).join(' · ').slice(0, 110)}
+                    </div>
+                  )}
                 </div>
                 <button className="btn ghost sm" onClick={(e) => { e.stopPropagation(); download(r) }}>
                   {t('reportDownload')}
@@ -136,7 +154,9 @@ function ReportView({ r, title, onBack, onDownload }) {
           {r.exact ? fmtDateTime(lang, r.at) : fmtDate(lang, r.at)}
           {r.kind === 'entry' && r.entry.intensity ? ` · ${t('intensity')}: ${r.entry.intensity}/10` : ''}
         </div>
-        {r.kind === 'entry' ? <EntryBody e={r.entry} /> : <DayBody day={r.day} dayData={r.dayData} />}
+        {r.kind === 'entry' ? <EntryBody e={r.entry} />
+          : r.kind === 'checkin' ? <CheckinBody ci={r.ci} />
+          : <DayBody day={r.day} dayData={r.dayData} />}
         <div style={{ textAlign: 'right', marginTop: 20 }}>
           <button className="btn sm" onClick={onDownload}>{t('reportDownload')}</button>
         </div>
@@ -159,7 +179,7 @@ function EntryBody({ e }) {
               ? fmtDate(lang, v)
               : k === 'emotion' || k === 'threat'
                 ? optionLabel(lang, String(v))
-                : String(v)
+                : localizeStarter(String(v), FIELD_PHS[k], lang)
         if (!val) return null
         return (
           <div key={k} className="report-field">
@@ -168,6 +188,25 @@ function EntryBody({ e }) {
           </div>
         )
       })}
+    </div>
+  )
+}
+
+const CHECKIN_LABELS = { morning: 'ritualMorning', day: 'ritualDay', evening: 'ritualEvening' }
+const CHECKIN_PHS = { morning: UI.ritualMorningPh, day: UI.ritualDayPh, evening: UI.ritualEveningPh }
+
+function CheckinBody({ ci }) {
+  const { lang, t } = useContext(AppCtx)
+  return (
+    <div className="report-body">
+      {CHECKIN_SLOTS.map((s) =>
+        ci[s]?.savedAt ? (
+          <div key={s} className="report-field">
+            <div className="k caps">{t(CHECKIN_LABELS[s])}</div>
+            <div className="v">{localizeStarter(ci[s].text, CHECKIN_PHS[s], lang)}</div>
+          </div>
+        ) : null,
+      )}
     </div>
   )
 }
@@ -181,7 +220,7 @@ function DayBody({ day, dayData }) {
       {week.practices.map((p) => {
         const answered = (p.fields || []).filter((f) => {
           const v = dayData.fields?.[`${p.id}.${f.id}`]
-          return v !== undefined && v !== null && v !== '' && f.t !== 'breathing'
+          return v !== undefined && v !== null && v !== '' && f.t !== 'breathing' && !isBareStarter(v, f.ph)
         })
         if (!answered.length) return null
         return (
@@ -192,7 +231,7 @@ function DayBody({ day, dayData }) {
               return (
                 <div key={f.id} className="report-field">
                   {f.label && <div className="k caps">{L(lang, f.label)}</div>}
-                  <div className="v">{typeof v === 'boolean' ? (v ? L(lang, UI.yesWord) : '—') : String(v)}</div>
+                  <div className="v">{typeof v === 'boolean' ? (v ? L(lang, UI.yesWord) : '—') : localizeStarter(String(v), f.ph, lang)}</div>
                 </div>
               )
             })}
