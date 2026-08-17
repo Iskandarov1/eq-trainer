@@ -42,6 +42,26 @@ an alternative to the link.
   is that, not a fault).
 - After changing any `SMTP_*` or auth setting: `cd /opt/supabase && docker compose up -d --force-recreate auth`
 
+## Connecting a database client (DataGrip, psql, TablePlus)
+
+Postgres is loopback-only and must stay that way, so clients reach it through an
+**SSH tunnel** — DataGrip has this built in (Data Source → SSH/SSL tab).
+
+- SSH: `root@169.58.92.31`, port 22, your key
+- Then host `127.0.0.1`, **port 5433**, database `postgres`, user `postgres`, password = `POSTGRES_PASSWORD` in `/opt/supabase/.env`
+
+**Use 5433, not 5432.** The published 5432 is the supavisor pooler: it rejects a
+plain `postgres` username (`no tenant identifier provided`) and needs
+`postgres.your-tenant-id` instead, and being a pooler it does not support every
+client feature. 5433 is the database itself, published by `docker-compose.override.yml`.
+
+App data lives in `public` (`profiles`, `journey_days`, `checkins`, `entries`);
+accounts are in the `auth` schema and archived PDFs in `storage.objects`.
+
+Connecting as `postgres` **bypasses row-level security** — that is the point for
+debugging, but it means the client shows every user's journal. Treat it the way
+the privacy note promises you will.
+
 ## Day-2 operations
 
 - **Managing the stack**: `cd /opt/supabase` then `sh run.sh status | start | stop | restart [service] | logs [service]`.
