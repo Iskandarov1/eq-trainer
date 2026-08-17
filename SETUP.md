@@ -42,6 +42,21 @@ an alternative to the link.
   is that, not a fault).
 - After changing any `SMTP_*` or auth setting: `cd /opt/supabase && docker compose up -d --force-recreate auth`
 
+## Opening the Supabase dashboard (Studio)
+
+Studio is not published on the domain — it is an admin surface with full
+database access, so it stays loopback-only and is reached over SSH:
+
+```
+ssh -N -L 8000:127.0.0.1:8000 root@169.58.92.31
+```
+
+Then open <http://localhost:8000>. The gateway asks for basic auth:
+`DASHBOARD_USERNAME` / `DASHBOARD_PASSWORD` from `/opt/supabase/.env`.
+
+Table Editor, Authentication → Users, SQL Editor, Storage and Logs all work.
+Studio connects as an admin and therefore sees past row-level security.
+
 ## Connecting a database client (DataGrip, psql, TablePlus)
 
 Postgres is loopback-only and must stay that way, so clients reach it through an
