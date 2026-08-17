@@ -20,33 +20,27 @@ Secrets live in `/opt/supabase/.env`. **Back that file up somewhere off the
 server**: without `JWT_SECRET`, a restored database cannot validate any existing
 token or API key.
 
-## The one thing still missing: email
+## Email (configured 2026-08-17)
 
-`ENABLE_EMAIL_AUTOCONFIRM=true` is currently set, which means **signup does not
-require confirming the email address**. That was necessary to test the stack
-before an email sender existed. It is not what should ship publicly — it lets
-anyone register with an address they do not own, and password reset cannot work
-without email either.
+Mail goes out through **Resend** (free tier: 3,000/month, 100/day, one domain),
+sending as `no-reply@eq-trainer.com`. DKIM, SPF and the bounce MX are published
+on `eq-trainer.com` and verified. `ENABLE_EMAIL_AUTOCONFIRM=false`, so signup
+requires confirming the address.
 
-To finish:
+Verified working end to end: confirmation mail **delivered** to an external
+address (not spam), its link activates the account, password reset delivers and
+lands on the set-new-password screen, and the 6-digit code in each mail works as
+an alternative to the link.
 
-1. Create a free account at https://resend.com (3,000/month) and add the domain `eq-trainer.com`.
-2. Add the DNS records it shows you at GoDaddy (your domain → DNS → Add record). Without them, mail lands in spam.
-3. Wait for **Verified**, then create an SMTP credential.
-4. On the server, in `/opt/supabase/.env`:
-   ```
-   SMTP_HOST=<from resend>
-   SMTP_PORT=587
-   SMTP_USER=<from resend>
-   SMTP_PASS=<from resend>
-   SMTP_ADMIN_EMAIL=no-reply@eq-trainer.com
-   SMTP_SENDER_NAME=EQ Trainer
-   ENABLE_EMAIL_AUTOCONFIRM=false
-   ```
-5. `cd /opt/supabase && sh run.sh restart auth`
-6. Test with a real external address: sign up, confirm the link arrives (check spam), and run a password reset.
-
-Brevo (300/day free) works the same way if Resend is unavailable. Set up one, not both.
+- SMTP settings live in `/opt/supabase/.env` (`SMTP_*`). The password is a Resend
+  API key with sending access only — rotate it in the Resend dashboard and update
+  that one value if it ever leaks.
+- **`ADDITIONAL_REDIRECT_URLS` must list every origin a link may return to.**
+  It is `https://eq-trainer.com` only. Adding `http://localhost:5173` temporarily
+  is how to test recovery locally; remove it afterwards.
+- GoTrue rate-limits password-reset mail per address (a 429 on repeated requests
+  is that, not a fault).
+- After changing any `SMTP_*` or auth setting: `cd /opt/supabase && docker compose up -d --force-recreate auth`
 
 ## Day-2 operations
 

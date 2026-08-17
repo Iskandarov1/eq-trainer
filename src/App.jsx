@@ -23,7 +23,9 @@ export const AppCtx = React.createContext(null)
    user out of their own cached data. */
 export default function App() {
   const [user, setUser] = useState(undefined) // undefined=resolving, null=needs sign-in
-  const [recovering, setRecovering] = useState(false)
+  // Seeded from the URL because the PASSWORD_RECOVERY event can fire before
+  // this component mounts; the listener below is the belt to this braces.
+  const [recovering, setRecovering] = useState(() => api.isRecoveryLink())
   useEffect(() => { api.resolveUser().then(setUser) }, [])
   useEffect(() => api.onPasswordRecovery(() => setRecovering(true)), [])
 
@@ -44,7 +46,7 @@ export default function App() {
   }
 
   if (user === undefined) return null
-  if (user === null) return <AuthScreen onAuthed={setUser} />
+  if (user === null) return <AuthScreen onAuthed={setUser} onRecovery={() => setRecovering(true)} />
   return <TrainerApp key={user.uid} user={user} />
 }
 

@@ -327,6 +327,17 @@ export const UI = {
   authResend: { en: 'Send it again', ru: 'Отправить ещё раз', uz: 'Qayta yuborish' },
   authResent: { en: 'Sent', ru: 'Отправлено', uz: 'Yuborildi' },
   authBackToSignIn: { en: '‹ Back to sign in', ru: '‹ Назад ко входу', uz: '‹ Kirishga qaytish' },
+  authCodeLabel: {
+    en: 'Or enter the 6-digit code from the email',
+    ru: 'Или введите 6-значный код из письма',
+    uz: 'Yoki xatdagi 6 xonali kodni kiriting',
+  },
+  authCodeConfirm: { en: 'Confirm', ru: 'Подтвердить', uz: 'Tasdiqlash' },
+  authErrCode: {
+    en: 'That code is wrong or has expired',
+    ru: 'Код неверный или устарел',
+    uz: 'Kod notoʻgʻri yoki muddati oʻtgan',
+  },
   authErrInvalid: { en: 'Wrong email or password', ru: 'Неверная почта или пароль', uz: 'Pochta yoki parol notoʻgʻri' },
   authErrExists: { en: 'This email is already registered', ru: 'Эта почта уже зарегистрирована', uz: 'Bu pochta allaqachon roʻyxatdan oʻtgan' },
   authErrWeak: { en: 'Password must be at least 8 characters', ru: 'Пароль должен быть не короче 8 символов', uz: 'Parol kamida 8 belgidan iborat boʻlishi kerak' },

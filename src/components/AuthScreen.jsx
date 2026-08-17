@@ -1,11 +1,35 @@
 import React, { useState } from 'react'
 import { L, UI } from '../content.js'
-import { signIn, signUp, resendConfirmation, requestPasswordReset } from '../api.js'
+import { signIn, signUp, resendConfirmation, requestPasswordReset, verifySignupCode, verifyRecoveryCode } from '../api.js'
 
 /* First-run gate when Supabase is configured and nobody has signed in on this
    device yet. Runs OUTSIDE the app context (there is no user yet), so language
    is local state remembered per device. */
-export default function AuthScreen({ onAuthed, initial }) {
+/* The confirmation and recovery emails both end with "Alternatively, enter the
+   code: 123456". Without this the app made that sentence a lie, and the code is
+   the only route that works when the link opens in a different browser than the
+   one the user started in. */
+function CodeForm({ t, code, setCode, busy, error, onSubmit }) {
+  return (
+    <form
+      className="grid" style={{ gap: 10, marginTop: 16, textAlign: 'left' }}
+      onSubmit={(e) => { e.preventDefault(); if (!busy && code.trim()) onSubmit() }}
+    >
+      <div>
+        <label className="field-label" htmlFor="auth-code">{t('authCodeLabel')}</label>
+        <input id="auth-code" type="text" inputMode="numeric" autoComplete="one-time-code"
+          pattern="[0-9]*" maxLength={8} value={code}
+          onChange={(e) => setCode(e.target.value.replace(/\D/g, ''))} />
+      </div>
+      {error && <div className="auth-error">{error}</div>}
+      <button className="btn" type="submit" disabled={busy || !code.trim()}>
+        {busy ? '…' : t('authCodeConfirm')}
+      </button>
+    </form>
+  )
+}
+
+export default function AuthScreen({ onAuthed, onRecovery, initial }) {
   const [lang, setLang] = useState(() => {
     const l = localStorage.getItem('eqAuthLang')
     return l === 'ru' || l === 'uz' || l === 'en' ? l : 'en'
@@ -21,6 +45,7 @@ export default function AuthScreen({ onAuthed, initial }) {
   const [pending, setPending] = useState(initial === 'pending' ? 'you@example.com' : null) // email awaiting confirmation
   const [resent, setResent] = useState(false)
   const [resetSent, setResetSent] = useState(null)
+  const [code, setCode] = useState('')
   const t = (k, ...args) => {
     const v = L(lang, UI[k])
     return typeof v === 'function' ? v(...args) : v
@@ -59,7 +84,17 @@ export default function AuthScreen({ onAuthed, initial }) {
           <div className="logo-mark" style={{ margin: '0 auto 10px' }}>EQ</div>
           <h1 className="serif" style={{ textAlign: 'center' }}>{t('authResetTitle')}</h1>
           {resetSent ? (
-            <p className="muted" style={{ textAlign: 'center', margin: '12px 0' }}>{t('authResetSent', resetSent)}</p>
+            <>
+              <p className="muted" style={{ textAlign: 'center', margin: '12px 0' }}>{t('authResetSent', resetSent)}</p>
+              <CodeForm
+                t={t} code={code} setCode={setCode} busy={busy} error={error}
+                onSubmit={async () => {
+                  setBusy(true); setError(null)
+                  try { await verifyRecoveryCode(resetSent, code); onRecovery?.() }
+                  catch { setError(t('authErrCode')) } finally { setBusy(false) }
+                }}
+              />
+            </>
           ) : (
             <>
               <p className="muted small" style={{ textAlign: 'center', margin: '8px 0 14px' }}>{t('authResetBody')}</p>
@@ -96,6 +131,16 @@ export default function AuthScreen({ onAuthed, initial }) {
           <h1 className="serif">{t('authCheckTitle')}</h1>
           <p className="muted" style={{ margin: '10px 0' }}>{t('authCheckBody', pending)}</p>
           <p className="small muted">{t('authCheckSpam')}</p>
+          <CodeForm
+            t={t} code={code} setCode={setCode} busy={busy} error={error}
+            onSubmit={async () => {
+              setBusy(true); setError(null)
+              try {
+                const u = await verifySignupCode(pending, code)
+                onAuthed({ ...u, offline: false })
+              } catch { setError(t('authErrCode')) } finally { setBusy(false) }
+            }}
+          />
           <button className="btn ghost sm" style={{ marginTop: 14 }} disabled={resent}
             onClick={async () => {
               try { await resendConfirmation(pending); setResent(true) } catch { /* rate-limited: the first mail is still on its way */ }

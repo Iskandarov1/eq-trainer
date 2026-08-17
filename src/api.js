@@ -7,12 +7,23 @@ import { normalizeData, EMOTION_KEYS, CHECKIN_SLOTS } from './store.js'
 
 export const isConfigured = Boolean(SUPABASE_URL && SUPABASE_ANON_KEY)
 
-// detectSessionInUrl off: no OAuth redirects exist, and URL-hash parsing on
-// file:// paths is pointless risk. Session persists in localStorage (works on
-// file:// — the whole app already depends on localStorage there).
+// Captured BEFORE the client is constructed: detectSessionInUrl strips the hash
+// as soon as it parses it, and PASSWORD_RECOVERY can fire before React has
+// mounted a listener — so neither the hash nor the event is reliable alone.
+const linkType = typeof window !== 'undefined'
+  ? new URLSearchParams(window.location.hash.slice(1)).get('type')
+  : null
+export const isRecoveryLink = () => linkType === 'recovery'
+
+// detectSessionInUrl MUST be on: confirmation and password-recovery links come
+// back with the session in the URL hash, and with it off the client never reads
+// them — recovery silently dropped the user on the sign-in screen with no
+// password to type, which is the one thing recovery exists to avoid. It was off
+// because the app also ran from file://, where no redirect ever landed; that
+// path was retired 2026-08-11.
 const supabase = isConfigured
   ? createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
-      auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: false },
+      auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true },
     })
   : null
 
@@ -49,6 +60,21 @@ export async function signUp(email, password) {
 
 export async function resendConfirmation(email) {
   const { error } = await supabase.auth.resend({ type: 'signup', email })
+  if (error) throw error
+}
+
+/* The emails offer a 6-digit code as an alternative to the link ("Alternatively,
+   enter the code: 123456"), which matters when the link opens in a different
+   browser than the one the user signed up in — laptop signup, phone inbox. */
+export async function verifySignupCode(email, code) {
+  const { data, error } = await supabase.auth.verifyOtp({ email, token: code.trim(), type: 'signup' })
+  if (error) throw error
+  rememberUser({ uid: data.user.id, email: data.user.email })
+  return { uid: data.user.id, email: data.user.email }
+}
+
+export async function verifyRecoveryCode(email, code) {
+  const { error } = await supabase.auth.verifyOtp({ email, token: code.trim(), type: 'recovery' })
   if (error) throw error
 }
 
