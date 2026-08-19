@@ -186,6 +186,14 @@ function DayView({ day, isToday }) {
     })
     sync.dayFields(day)
   }
+  // A field counts as answered only with real content — untouched starters and
+  // unchecked boxes don't (the practice Save button stays disabled without it)
+  const answered = (p, f) => {
+    const v = dayData.fields[`${p.id}.${f.id}`]
+    if (f.t === 'breathing') return false
+    if (f.t === 'check') return !!v
+    return v != null && String(v).trim() !== '' && !isBareStarter(v, f.ph)
+  }
 
   return (
     <div className="card week-card" style={{ '--wcolor': w.color }}>
@@ -199,41 +207,97 @@ function DayView({ day, isToday }) {
       <div className="quote" style={{ margin: '12px 0', borderColor: w.color }}>{L(lang, w.quote)}</div>
       <h3 style={{ margin: '14px 0 10px' }}>{t('todayPractices')}</h3>
       <div className="grid">
-        {w.practices.map((p) => (
-          <div key={p.id} className="pstep" style={{ '--accent': w.color }}>
-            <h3>{L(lang, p.title)}</h3>
-            <p className="muted small" style={{ marginBottom: 12 }}>{L(lang, p.desc)}</p>
-            <div className="grid" style={{ gap: 12 }}>
-              {p.fields.map((f) => {
-                const val = dayData.fields[`${p.id}.${f.id}`]
-                if (f.t === 'breathing')
-                  return <BreathingGuide key={f.id} pattern={f.pattern} target={f.target} />
-                if (f.t === 'check')
-                  return (
-                    <label key={f.id} className={`opt-row ${val ? 'on' : ''}`} style={{ '--accent': w.color }}>
-                      <input type="checkbox" checked={!!val} onChange={(e) => setField(p.id, f.id, e.target.checked)} />
-                      <span>{L(lang, f.label)}</span>
-                    </label>
-                  )
-                const prefill = f.ph ? starterFor(lang, f.ph) : ''
-                const shown = val == null || isBareStarter(val, f.ph) ? prefill : localizeStarter(val, f.ph, lang)
-                if (f.t === 'text')
-                  return (
-                    <div key={f.id}>
-                      {f.label && <label className="field-label">{L(lang, f.label)}</label>}
-                      <input type="text" value={shown} onChange={(e) => setField(p.id, f.id, e.target.value)} />
-                    </div>
-                  )
-                return (
-                  <div key={f.id}>
-                    {f.label && <label className="field-label">{L(lang, f.label)}</label>}
-                    <textarea value={shown} onChange={(e) => setField(p.id, f.id, e.target.value)} />
+        {w.practices.map((p) => {
+          const savedAt = dayData.saves?.[p.id]
+          const hasAnswer = (p.fields || []).some((f) => answered(p, f))
+          return (
+            <div key={p.id} className="pstep" style={{ '--accent': w.color }}>
+              <h3>{L(lang, p.title)}</h3>
+              <p className="muted small" style={{ marginBottom: 12 }}>{L(lang, p.desc)}</p>
+              {savedAt ? (
+                <>
+                  <div className="grid" style={{ gap: 12 }}>
+                    {p.fields.filter((f) => answered(p, f)).map((f) => {
+                      const val = dayData.fields[`${p.id}.${f.id}`]
+                      return (
+                        <div key={f.id}>
+                          {f.label && f.t !== 'check' && <label className="field-label">{L(lang, f.label)}</label>}
+                          <div className="checkin-saved">
+                            {f.t === 'check' ? `✓ ${L(lang, f.label)}` : localizeStarter(String(val), f.ph, lang)}
+                          </div>
+                        </div>
+                      )
+                    })}
                   </div>
-                )
-              })}
+                  <div className="checkin-foot">
+                    <span className="caps">{t('checkinSavedAt', hhmm(savedAt))}</span>
+                    <button
+                      className="btn ghost sm"
+                      onClick={() => {
+                        update((d) => { if (d.journey.days[day]?.saves) delete d.journey.days[day].saves[p.id] })
+                        sync.dayFields(day)
+                      }}
+                    >
+                      {t('checkinEdit')}
+                    </button>
+                  </div>
+                </>
+              ) : (
+                <>
+                  <div className="grid" style={{ gap: 12 }}>
+                    {p.fields.map((f) => {
+                      const val = dayData.fields[`${p.id}.${f.id}`]
+                      if (f.t === 'breathing')
+                        return <BreathingGuide key={f.id} pattern={f.pattern} target={f.target} />
+                      if (f.t === 'check')
+                        return (
+                          <label key={f.id} className={`opt-row ${val ? 'on' : ''}`} style={{ '--accent': w.color }}>
+                            <input type="checkbox" checked={!!val} onChange={(e) => setField(p.id, f.id, e.target.checked)} />
+                            <span>{L(lang, f.label)}</span>
+                          </label>
+                        )
+                      const prefill = f.ph ? starterFor(lang, f.ph) : ''
+                      const shown = val == null || isBareStarter(val, f.ph) ? prefill : localizeStarter(val, f.ph, lang)
+                      if (f.t === 'text')
+                        return (
+                          <div key={f.id}>
+                            {f.label && <label className="field-label">{L(lang, f.label)}</label>}
+                            <input type="text" value={shown} onChange={(e) => setField(p.id, f.id, e.target.value)} />
+                          </div>
+                        )
+                      return (
+                        <div key={f.id}>
+                          {f.label && <label className="field-label">{L(lang, f.label)}</label>}
+                          <textarea value={shown} onChange={(e) => setField(p.id, f.id, e.target.value)} />
+                        </div>
+                      )
+                    })}
+                  </div>
+                  <div className="checkin-foot" style={{ justifyContent: 'flex-end' }}>
+                    <button
+                      className="btn sm"
+                      disabled={!hasAnswer}
+                      onClick={() => {
+                        update((d) => {
+                          const dd = (d.journey.days[day] ||= { fields: {}, done: false })
+                          for (const f of p.fields || []) {
+                            const k = `${p.id}.${f.id}`
+                            if (typeof dd.fields[k] === 'string') dd.fields[k] = dd.fields[k].trim()
+                          }
+                          ;(dd.saves ||= {})[p.id] = new Date().toISOString()
+                        })
+                        sync.dayFields(day)
+                        notify(t('saved'))
+                      }}
+                    >
+                      {t('checkinSave')}
+                    </button>
+                  </div>
+                </>
+              )}
             </div>
-          </div>
-        ))}
+          )
+        })}
       </div>
       <div style={{ marginTop: 16, textAlign: 'right' }}>
         <button
