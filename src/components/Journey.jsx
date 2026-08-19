@@ -194,6 +194,19 @@ function DayView({ day, isToday }) {
     if (f.t === 'check') return !!v
     return v != null && String(v).trim() !== '' && !isBareStarter(v, f.ph)
   }
+  // Save/Edit units: normally the whole practice card is one unit (stamp key =
+  // practice id). With p.saveGroups every labeled field opens a new unit
+  // (stamp key = practice id + first field id) — Week 1's morning/noon/evening
+  // check-in groups each get their own Save/Edit.
+  const saveUnits = (p) => {
+    if (!p.saveGroups) return [{ id: p.id, fields: p.fields || [] }]
+    const units = []
+    for (const f of p.fields || []) {
+      if (f.label || !units.length) units.push({ id: `${p.id}.${f.id}`, fields: [] })
+      units[units.length - 1].fields.push(f)
+    }
+    return units
+  }
 
   return (
     <div className="card week-card" style={{ '--wcolor': w.color }}>
@@ -207,97 +220,101 @@ function DayView({ day, isToday }) {
       <div className="quote" style={{ margin: '12px 0', borderColor: w.color }}>{L(lang, w.quote)}</div>
       <h3 style={{ margin: '14px 0 10px' }}>{t('todayPractices')}</h3>
       <div className="grid">
-        {w.practices.map((p) => {
-          const savedAt = dayData.saves?.[p.id]
-          const hasAnswer = (p.fields || []).some((f) => answered(p, f))
-          return (
-            <div key={p.id} className="pstep" style={{ '--accent': w.color }}>
-              <h3>{L(lang, p.title)}</h3>
-              <p className="muted small" style={{ marginBottom: 12 }}>{L(lang, p.desc)}</p>
-              {savedAt ? (
-                <>
-                  <div className="grid" style={{ gap: 12 }}>
-                    {p.fields.filter((f) => answered(p, f)).map((f) => {
-                      const val = dayData.fields[`${p.id}.${f.id}`]
-                      return (
-                        <div key={f.id}>
-                          {f.label && f.t !== 'check' && <label className="field-label">{L(lang, f.label)}</label>}
-                          <div className="checkin-saved">
-                            {f.t === 'check' ? `✓ ${L(lang, f.label)}` : localizeStarter(String(val), f.ph, lang)}
-                          </div>
-                        </div>
-                      )
-                    })}
-                  </div>
-                  <div className="checkin-foot">
-                    <span className="caps">{t('checkinSavedAt', hhmm(savedAt))}</span>
-                    <button
-                      className="btn ghost sm"
-                      onClick={() => {
-                        update((d) => { if (d.journey.days[day]?.saves) delete d.journey.days[day].saves[p.id] })
-                        sync.dayFields(day)
-                      }}
-                    >
-                      {t('checkinEdit')}
-                    </button>
-                  </div>
-                </>
-              ) : (
-                <>
-                  <div className="grid" style={{ gap: 12 }}>
-                    {p.fields.map((f) => {
-                      const val = dayData.fields[`${p.id}.${f.id}`]
-                      if (f.t === 'breathing')
-                        return <BreathingGuide key={f.id} pattern={f.pattern} target={f.target} />
-                      if (f.t === 'check')
-                        return (
-                          <label key={f.id} className={`opt-row ${val ? 'on' : ''}`} style={{ '--accent': w.color }}>
-                            <input type="checkbox" checked={!!val} onChange={(e) => setField(p.id, f.id, e.target.checked)} />
-                            <span>{L(lang, f.label)}</span>
-                          </label>
-                        )
-                      const prefill = f.ph ? starterFor(lang, f.ph) : ''
-                      const shown = val == null || isBareStarter(val, f.ph) ? prefill : localizeStarter(val, f.ph, lang)
-                      if (f.t === 'text')
+        {w.practices.map((p) => (
+          <div key={p.id} className="pstep" style={{ '--accent': w.color }}>
+            <h3>{L(lang, p.title)}</h3>
+            <p className="muted small" style={{ marginBottom: 12 }}>{L(lang, p.desc)}</p>
+            <div className="grid" style={{ gap: 12 }}>
+              {saveUnits(p).map((u) => {
+                const savedAt = dayData.saves?.[u.id]
+                const hasAnswer = u.fields.some((f) => answered(p, f))
+                if (savedAt)
+                  return (
+                    <div key={u.id}>
+                      <div className="grid" style={{ gap: 12 }}>
+                        {u.fields.filter((f) => answered(p, f)).map((f) => {
+                          const val = dayData.fields[`${p.id}.${f.id}`]
+                          return (
+                            <div key={f.id}>
+                              {f.label && f.t !== 'check' && <label className="field-label">{L(lang, f.label)}</label>}
+                              <div className="checkin-saved">
+                                {f.t === 'check' ? `✓ ${L(lang, f.label)}` : localizeStarter(String(val), f.ph, lang)}
+                              </div>
+                            </div>
+                          )
+                        })}
+                      </div>
+                      <div className="checkin-foot">
+                        <span className="caps">{t('checkinSavedAt', hhmm(savedAt))}</span>
+                        <button
+                          className="btn ghost sm"
+                          onClick={() => {
+                            update((d) => { if (d.journey.days[day]?.saves) delete d.journey.days[day].saves[u.id] })
+                            sync.dayFields(day)
+                          }}
+                        >
+                          {t('checkinEdit')}
+                        </button>
+                      </div>
+                    </div>
+                  )
+                return (
+                  <div key={u.id}>
+                    <div className="grid" style={{ gap: 12 }}>
+                      {u.fields.map((f) => {
+                        const val = dayData.fields[`${p.id}.${f.id}`]
+                        if (f.t === 'breathing')
+                          return <BreathingGuide key={f.id} pattern={f.pattern} target={f.target} />
+                        if (f.t === 'check')
+                          return (
+                            <label key={f.id} className={`opt-row ${val ? 'on' : ''}`} style={{ '--accent': w.color }}>
+                              <input type="checkbox" checked={!!val} onChange={(e) => setField(p.id, f.id, e.target.checked)} />
+                              <span>{L(lang, f.label)}</span>
+                            </label>
+                          )
+                        const prefill = f.ph ? starterFor(lang, f.ph) : ''
+                        const shown = val == null || isBareStarter(val, f.ph) ? prefill : localizeStarter(val, f.ph, lang)
+                        if (f.t === 'text')
+                          return (
+                            <div key={f.id}>
+                              {f.label && <label className="field-label">{L(lang, f.label)}</label>}
+                              <input type="text" value={shown} onChange={(e) => setField(p.id, f.id, e.target.value)} />
+                            </div>
+                          )
                         return (
                           <div key={f.id}>
                             {f.label && <label className="field-label">{L(lang, f.label)}</label>}
-                            <input type="text" value={shown} onChange={(e) => setField(p.id, f.id, e.target.value)} />
+                            <textarea value={shown} onChange={(e) => setField(p.id, f.id, e.target.value)} />
                           </div>
                         )
-                      return (
-                        <div key={f.id}>
-                          {f.label && <label className="field-label">{L(lang, f.label)}</label>}
-                          <textarea value={shown} onChange={(e) => setField(p.id, f.id, e.target.value)} />
-                        </div>
-                      )
-                    })}
+                      })}
+                    </div>
+                    <div className="checkin-foot" style={{ justifyContent: 'flex-end' }}>
+                      <button
+                        className="btn sm"
+                        disabled={!hasAnswer}
+                        onClick={() => {
+                          update((d) => {
+                            const dd = (d.journey.days[day] ||= { fields: {}, done: false })
+                            for (const f of u.fields) {
+                              const k = `${p.id}.${f.id}`
+                              if (typeof dd.fields[k] === 'string') dd.fields[k] = dd.fields[k].trim()
+                            }
+                            ;(dd.saves ||= {})[u.id] = new Date().toISOString()
+                          })
+                          sync.dayFields(day)
+                          notify(t('saved'))
+                        }}
+                      >
+                        {t('checkinSave')}
+                      </button>
+                    </div>
                   </div>
-                  <div className="checkin-foot" style={{ justifyContent: 'flex-end' }}>
-                    <button
-                      className="btn sm"
-                      disabled={!hasAnswer}
-                      onClick={() => {
-                        update((d) => {
-                          const dd = (d.journey.days[day] ||= { fields: {}, done: false })
-                          for (const f of p.fields || []) {
-                            const k = `${p.id}.${f.id}`
-                            if (typeof dd.fields[k] === 'string') dd.fields[k] = dd.fields[k].trim()
-                          }
-                          ;(dd.saves ||= {})[p.id] = new Date().toISOString()
-                        })
-                        sync.dayFields(day)
-                        notify(t('saved'))
-                      }}
-                    >
-                      {t('checkinSave')}
-                    </button>
-                  </div>
-                </>
-              )}
+                )
+              })}
             </div>
-          )
-        })}
+          </div>
+        ))}
       </div>
       <div style={{ marginTop: 16, textAlign: 'right' }}>
         <button

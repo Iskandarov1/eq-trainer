@@ -542,6 +542,8 @@ export const WEEKS = [
     practices: [
       {
         id: 'checkins',
+        // Each labeled field opens its own Save/Edit group (morning/noon/evening)
+        saveGroups: true,
         title: { en: 'Emotional Check-Ins (3×/day)', ru: 'Эмоциональные чек-ины (3 раза в день)', uz: 'Hissiy tekshiruvlar (kuniga 3 marta)' },
         desc: {
           en: 'Pause morning, noon and evening. Ask: What am I feeling right now? Why might I be feeling this way? How is this emotion affecting my behavior? Write it down. Don’t judge it. Just notice.',
