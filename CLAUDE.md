@@ -3,7 +3,7 @@
 Personal emotional-intelligence trainer based on Daniel Goleman's framework. Source-of-truth docs: `..\Daniel Goleman 1 month plan.pdf` and `..\Add a _Next Level_ section .docx`. Product spec: `PRD.md`.
 
 ## Stack
-- React 18 + Vite 6 (`base: './'` — the build must keep working when `dist/index.html` is opened from disk via `file://`). Single JS bundle only — `file://` cannot load split chunks, so never introduce dynamic `import()` or manualChunks.
+- React 18 + Vite 6 (`base: './'` — the build must keep working when `dist/index.html` is opened from disk via `file://`). Single JS bundle only — `file://` cannot load split chunks, so never introduce dynamic `import()` or manualChunks. The inline `fileProtocolClassicScript` plugin in vite.config.js rewrites the built index.html to a classic deferred script and strips `crossorigin` (module scripts are CORS-blocked on `file://`); that stays safe only while the bundle contains no import/export/import.meta.
 - recharts for charts; `@supabase/supabase-js` (backend, via `src/api.js` only); `pdf-lib` + `@pdf-lib/fontkit` (client-side PDF reports). Plain CSS in `src/styles.css`. No TypeScript, no router — add no further dependencies.
 
 ## Commands
