@@ -5,7 +5,7 @@ import { PDFDocument, rgb } from 'pdf-lib'
 import fontkit from '@pdf-lib/fontkit'
 import notoRegularB64 from './fonts/notoSansRegular.js'
 import notoBoldB64 from './fonts/notoSansBold.js'
-import { L, UI, EMOTION_NAMES, FIELD_LABELS, FIELD_PHS, optionLabel, isBareStarter, localizeStarter } from './content.js'
+import { L, UI, EMOTION_NAMES, FIELD_LABELS, FIELD_PHS, optionLabel, isBareStarter, localizeStarter, checkinSlotParts, CHECKIN_SLOT_LABELS } from './content.js'
 import { fmtDate, fmtDateTime, weekForDay, CHECKIN_SLOTS } from './store.js'
 
 const A4 = [595.28, 841.89]
@@ -202,9 +202,6 @@ export async function buildDayReport({ day, dayData, lang, uid }) {
 
 /* ---------------- daily check-in report ---------------- */
 
-const CHECKIN_LABELS = { morning: 'ritualMorning', day: 'ritualDay', evening: 'ritualEvening' }
-const CHECKIN_PHS = { morning: UI.ritualMorningPh, day: UI.ritualDayPh, evening: UI.ritualEveningPh }
-
 export async function buildCheckinReport({ date, checkin, lang, uid }) {
   const { doc, fontR, fontB } = await newDoc()
   const w = makeWriter(doc, fontR, fontB)
@@ -219,8 +216,10 @@ export async function buildCheckinReport({ date, checkin, lang, uid }) {
     if (!s?.savedAt) continue
     const at = new Date(s.savedAt)
     const hhmm = `${String(at.getHours()).padStart(2, '0')}:${String(at.getMinutes()).padStart(2, '0')}`
-    w.text(`${L(lang, UI[CHECKIN_LABELS[slot]])} · ${hhmm}`.toUpperCase(), { size: 8.5, bold: true, color: SOFT, gap: 1 })
-    w.text(localizeStarter(s.text, CHECKIN_PHS[slot], lang), { size: 11, gap: 10 })
+    w.text(`${L(lang, CHECKIN_SLOT_LABELS[slot])} · ${hhmm}`.toUpperCase(), { size: 8.5, bold: true, color: SOFT, gap: 1 })
+    const parts = checkinSlotParts(s, slot)
+    parts.forEach(({ v, ph }, i) =>
+      w.text(localizeStarter(v, ph, lang), { size: 11, gap: i === parts.length - 1 ? 10 : 4 }))
   }
 
   w.footerAll('EQ Trainer')

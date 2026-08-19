@@ -55,8 +55,10 @@ export function normalizeData(d) {
   }
 }
 
-// Drafts (text, no savedAt) survive normalization on purpose — an unsaved
-// morning answer must still be there when the page reopens in the afternoon.
+// Drafts (no savedAt) survive normalization on purpose — an unsaved morning
+// answer must still be there when the page reopens in the afternoon. Slots
+// come in two shapes: { text } (plain check-in, weeks 2-4) and { fields:
+// { intention/feel/why/how } } (merged Week-1 card); both may carry savedAt.
 function normalizeCheckins(c) {
   if (!c || typeof c !== 'object' || Array.isArray(c)) return {}
   const out = {}
@@ -65,8 +67,17 @@ function normalizeCheckins(c) {
     const day = {}
     for (const s of CHECKIN_SLOTS) {
       const v = ci[s]
-      if (!v || typeof v !== 'object' || typeof v.text !== 'string') continue
-      day[s] = typeof v.savedAt === 'string' ? { text: v.text, savedAt: v.savedAt } : { text: v.text }
+      if (!v || typeof v !== 'object') continue
+      const slot = {}
+      if (typeof v.text === 'string') slot.text = v.text
+      if (v.fields && typeof v.fields === 'object' && !Array.isArray(v.fields)) {
+        const f = {}
+        for (const [k, x] of Object.entries(v.fields)) if (typeof x === 'string') f[k] = x
+        if (Object.keys(f).length) slot.fields = f
+      }
+      if (slot.text === undefined && !slot.fields) continue
+      if (typeof v.savedAt === 'string') slot.savedAt = v.savedAt
+      day[s] = slot
     }
     if (Object.keys(day).length) out[date] = day
   }

@@ -1,6 +1,6 @@
 import React, { useContext, useMemo, useState } from 'react'
 import { AppCtx } from '../App.jsx'
-import { L, EMOTION_NAMES, FIELD_LABELS, FIELD_PHS, optionLabel, UI, isBareStarter, localizeStarter } from '../content.js'
+import { L, EMOTION_NAMES, FIELD_LABELS, FIELD_PHS, optionLabel, UI, isBareStarter, localizeStarter, checkinSlotParts, CHECKIN_SLOT_LABELS } from '../content.js'
 import { EMOTION_KEYS, CHECKIN_SLOTS, fmtDate, fmtDateTime, fmtMonthYear, weekForDay, entryText } from '../store.js'
 import { buildEntryReport, buildDayReport, buildCheckinReport, downloadPdf } from '../pdf.js'
 
@@ -123,7 +123,9 @@ export default function Reports() {
                   {r.kind === 'entry' && <div className="preview">{entryText(r.entry).slice(0, 110)}</div>}
                   {r.kind === 'checkin' && (
                     <div className="preview">
-                      {CHECKIN_SLOTS.filter((s) => r.ci[s]?.savedAt).map((s) => r.ci[s].text).join(' · ').slice(0, 110)}
+                      {CHECKIN_SLOTS.filter((s) => r.ci[s]?.savedAt)
+                        .flatMap((s) => checkinSlotParts(r.ci[s], s).map((p) => p.v))
+                        .join(' · ').slice(0, 110)}
                     </div>
                   )}
                 </div>
@@ -192,18 +194,17 @@ function EntryBody({ e }) {
   )
 }
 
-const CHECKIN_LABELS = { morning: 'ritualMorning', day: 'ritualDay', evening: 'ritualEvening' }
-const CHECKIN_PHS = { morning: UI.ritualMorningPh, day: UI.ritualDayPh, evening: UI.ritualEveningPh }
-
 function CheckinBody({ ci }) {
-  const { lang, t } = useContext(AppCtx)
+  const { lang } = useContext(AppCtx)
   return (
     <div className="report-body">
       {CHECKIN_SLOTS.map((s) =>
         ci[s]?.savedAt ? (
           <div key={s} className="report-field">
-            <div className="k caps">{t(CHECKIN_LABELS[s])}</div>
-            <div className="v">{localizeStarter(ci[s].text, CHECKIN_PHS[s], lang)}</div>
+            <div className="k caps">{L(lang, CHECKIN_SLOT_LABELS[s])}</div>
+            {checkinSlotParts(ci[s], s).map(({ v, ph }, i) => (
+              <div key={i} className="v">{localizeStarter(v, ph, lang)}</div>
+            ))}
           </div>
         ) : null,
       )}

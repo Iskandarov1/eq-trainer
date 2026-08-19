@@ -526,6 +526,13 @@ export const EMOTION_NAMES = {
 }
 
 // ---------------- 30-DAY JOURNEY (from the Goleman 1-month plan PDF) ----------------
+// Shared check-in question starters — used by the legacy Week-1 practice
+// definition (kept for old saved data) AND the merged Week-1 daily check-in
+// card (CHECKIN_SUB below). One source so translation fixes never diverge.
+const PH_FEEL = { en: 'I feel…', ru: 'Я чувствую…', uz: 'Hozir his qilayotganim —…' }
+const PH_WHY = { en: 'I might be feeling this because…', ru: 'Возможно, я чувствую это, потому что…', uz: 'Sababi, ehtimol,…' }
+const PH_HOW = { en: 'It affects my behavior by…', ru: 'На моё поведение это влияет так…', uz: 'Buning xatti-harakatimga taʼsiri —…' }
+
 export const WEEKS = [
   {
     id: 'w1',
@@ -542,6 +549,10 @@ export const WEEKS = [
     practices: [
       {
         id: 'checkins',
+        // Replaced by the merged Week-1 daily check-in card (CHECKIN_SUB) on
+        // 2026-08-19 — kept ONLY so old saved answers keep rendering in
+        // Reports/day PDFs. The day screen skips legacy practices.
+        legacy: true,
         // Each labeled field opens its own Save/Edit group (morning/noon/evening)
         saveGroups: true,
         title: { en: 'Emotional Check-Ins (3×/day)', ru: 'Эмоциональные чек-ины (3 раза в день)', uz: 'Hissiy tekshiruvlar (kuniga 3 marta)' },
@@ -551,15 +562,15 @@ export const WEEKS = [
           uz: 'Ertalab, kunduzi va kechqurun toʻxtang. Oʻzingizdan soʻrang: Hozir nimani his qilyapman? Nega shunday his qilayotgan boʻlishim mumkin? Bu his-tuygʻu xatti-harakatimga qanday taʼsir qilyapti? Yozib qoʻying. Baholamang. Shunchaki kuzating.',
         },
         fields: [
-          { id: 'morningFeel', t: 'text', label: { en: 'Morning check-in', ru: 'Утренний чек-ин', uz: 'Ertalabki tekshiruv' }, ph: { en: 'I feel…', ru: 'Я чувствую…', uz: 'Hozir his qilayotganim —…' } },
-          { id: 'morningWhy', t: 'text', ph: { en: 'I might be feeling this because…', ru: 'Возможно, я чувствую это, потому что…', uz: 'Sababi, ehtimol,…' } },
-          { id: 'morningHow', t: 'text', ph: { en: 'It affects my behavior by…', ru: 'На моё поведение это влияет так…', uz: 'Buning xatti-harakatimga taʼsiri —…' } },
-          { id: 'noonFeel', t: 'text', label: { en: 'Noon check-in', ru: 'Дневной чек-ин', uz: 'Kunduzgi tekshiruv' }, ph: { en: 'I feel…', ru: 'Я чувствую…', uz: 'Hozir his qilayotganim —…' } },
-          { id: 'noonWhy', t: 'text', ph: { en: 'I might be feeling this because…', ru: 'Возможно, я чувствую это, потому что…', uz: 'Sababi, ehtimol,…' } },
-          { id: 'noonHow', t: 'text', ph: { en: 'It affects my behavior by…', ru: 'На моё поведение это влияет так…', uz: 'Buning xatti-harakatimga taʼsiri —…' } },
-          { id: 'eveningFeel', t: 'text', label: { en: 'Evening check-in', ru: 'Вечерний чек-ин', uz: 'Kechki tekshiruv' }, ph: { en: 'I feel…', ru: 'Я чувствую…', uz: 'Hozir his qilayotganim —…' } },
-          { id: 'eveningWhy', t: 'text', ph: { en: 'I might be feeling this because…', ru: 'Возможно, я чувствую это, потому что…', uz: 'Sababi, ehtimol,…' } },
-          { id: 'eveningHow', t: 'text', ph: { en: 'It affects my behavior by…', ru: 'На моё поведение это влияет так…', uz: 'Buning xatti-harakatimga taʼsiri —…' } },
+          { id: 'morningFeel', t: 'text', label: { en: 'Morning check-in', ru: 'Утренний чек-ин', uz: 'Ertalabki tekshiruv' }, ph: PH_FEEL },
+          { id: 'morningWhy', t: 'text', ph: PH_WHY },
+          { id: 'morningHow', t: 'text', ph: PH_HOW },
+          { id: 'noonFeel', t: 'text', label: { en: 'Noon check-in', ru: 'Дневной чек-ин', uz: 'Kunduzgi tekshiruv' }, ph: PH_FEEL },
+          { id: 'noonWhy', t: 'text', ph: PH_WHY },
+          { id: 'noonHow', t: 'text', ph: PH_HOW },
+          { id: 'eveningFeel', t: 'text', label: { en: 'Evening check-in', ru: 'Вечерний чек-ин', uz: 'Kechki tekshiruv' }, ph: PH_FEEL },
+          { id: 'eveningWhy', t: 'text', ph: PH_WHY },
+          { id: 'eveningHow', t: 'text', ph: PH_HOW },
         ],
       },
       {
@@ -1033,3 +1044,47 @@ export const FIELD_PHS = {}
 for (const m of Object.values(MODULES))
   for (const s of m.practiceSteps)
     for (const f of s.fields || []) if (f.ph) FIELD_PHS[f.id] = f.ph
+
+// Merged Week-1 daily check-in (owner decision 2026-08-19): during Week 1 the
+// check-in renders INSIDE Today's practices as one card whose morning/day/
+// evening parts each combine the intention question with the Week-1
+// feel/why/how questions — nothing repeats. Answers store per sub-field in
+// checkins[date][slot].fields (weeks 2-4 keep the single-text slot shape).
+export const CHECKIN_SUB = {
+  morning: [
+    { id: 'intention', ph: UI.ritualMorningPh },
+    { id: 'feel', ph: PH_FEEL },
+    { id: 'why', ph: PH_WHY },
+    { id: 'how', ph: PH_HOW },
+  ],
+  day: [
+    { id: 'intention', ph: UI.ritualDayPh },
+    { id: 'feel', ph: PH_FEEL },
+    { id: 'why', ph: PH_WHY },
+    { id: 'how', ph: PH_HOW },
+  ],
+  evening: [
+    { id: 'intention', ph: UI.ritualEveningPh },
+    { id: 'feel', ph: PH_FEEL },
+    { id: 'why', ph: PH_WHY },
+    { id: 'how', ph: PH_HOW },
+  ],
+}
+export const CHECKIN_SLOT_LABELS = {
+  morning: { en: 'Morning check-in', ru: 'Утренний чек-ин', uz: 'Ertalabki tekshiruv' },
+  day: { en: 'Daytime check-in', ru: 'Дневной чек-ин', uz: 'Kunduzgi tekshiruv' },
+  evening: { en: 'Evening check-in', ru: 'Вечерний чек-ин', uz: 'Kechki tekshiruv' },
+}
+
+// Ordered display parts of one check-in slot for Reports and PDFs, handling
+// both slot shapes: [{ v, ph }] of real answers (bare starters dropped).
+export const checkinSlotParts = (slot, s) => {
+  if (slot?.fields)
+    return CHECKIN_SUB[s]
+      .map((sub) => ({ v: slot.fields[sub.id], ph: sub.ph }))
+      .filter(({ v, ph }) => typeof v === 'string' && v.trim() && !isBareStarter(v, ph))
+  const ph = CHECKIN_SUB[s][0].ph // plain slot answers the intention question
+  return typeof slot?.text === 'string' && slot.text.trim() && !isBareStarter(slot.text, ph)
+    ? [{ v: slot.text, ph }]
+    : []
+}
