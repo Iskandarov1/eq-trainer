@@ -16,6 +16,7 @@ create table public.journey_days (
   user_id uuid not null references auth.users(id) on delete cascade,
   day int not null check (day between 1 and 31),
   fields jsonb not null default '{}',
+  saves jsonb not null default '{}', -- per-practice Save stamps: { practiceId: ISO }
   done boolean not null default false,
   done_at timestamptz,
   updated_at timestamptz not null default now(),

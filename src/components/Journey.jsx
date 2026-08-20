@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react'
 import { AppCtx } from '../App.jsx'
-import { L, WEEKS, UI, starterFor, isBareStarter, localizeStarter } from '../content.js'
+import { L, WEEKS, UI, starterFor, isBareStarter, localizeStarter, CHECKIN_SUB, CHECKIN_SLOT_LABELS } from '../content.js'
 import { weekForDay, journeyStats, todayKey, fmtDate, CHECKIN_SLOTS } from '../store.js'
 import BreathingGuide from './BreathingGuide.jsx'
 
@@ -102,7 +102,9 @@ export default function Journey() {
         </>
       )}
 
-      <DailyCheckin />
+      {/* During Week 1 the check-in lives INSIDE today's practices (merged
+          card) — showing the standalone block too would repeat the questions */}
+      {cur > 7 && <DailyCheckin />}
     </div>
   )
 }
@@ -186,6 +188,27 @@ function DayView({ day, isToday }) {
     })
     sync.dayFields(day)
   }
+  // A field counts as answered only with real content — untouched starters and
+  // unchecked boxes don't (the practice Save button stays disabled without it)
+  const answered = (p, f) => {
+    const v = dayData.fields[`${p.id}.${f.id}`]
+    if (f.t === 'breathing') return false
+    if (f.t === 'check') return !!v
+    return v != null && String(v).trim() !== '' && !isBareStarter(v, f.ph)
+  }
+  // Save/Edit units: normally the whole practice card is one unit (stamp key =
+  // practice id). With p.saveGroups every labeled field opens a new unit
+  // (stamp key = practice id + first field id) — Week 1's morning/noon/evening
+  // check-in groups each get their own Save/Edit.
+  const saveUnits = (p) => {
+    if (!p.saveGroups) return [{ id: p.id, fields: p.fields || [] }]
+    const units = []
+    for (const f of p.fields || []) {
+      if (f.label || !units.length) units.push({ id: `${p.id}.${f.id}`, fields: [] })
+      units[units.length - 1].fields.push(f)
+    }
+    return units
+  }
 
   return (
     <div className="card week-card" style={{ '--wcolor': w.color }}>
@@ -199,35 +222,96 @@ function DayView({ day, isToday }) {
       <div className="quote" style={{ margin: '12px 0', borderColor: w.color }}>{L(lang, w.quote)}</div>
       <h3 style={{ margin: '14px 0 10px' }}>{t('todayPractices')}</h3>
       <div className="grid">
-        {w.practices.map((p) => (
+        {isToday && day <= 7 && <MergedCheckin color={w.color} />}
+        {w.practices.filter((p) => !p.legacy).map((p) => (
           <div key={p.id} className="pstep" style={{ '--accent': w.color }}>
             <h3>{L(lang, p.title)}</h3>
             <p className="muted small" style={{ marginBottom: 12 }}>{L(lang, p.desc)}</p>
             <div className="grid" style={{ gap: 12 }}>
-              {p.fields.map((f) => {
-                const val = dayData.fields[`${p.id}.${f.id}`]
-                if (f.t === 'breathing')
-                  return <BreathingGuide key={f.id} pattern={f.pattern} target={f.target} />
-                if (f.t === 'check')
+              {saveUnits(p).map((u) => {
+                const savedAt = dayData.saves?.[u.id]
+                const hasAnswer = u.fields.some((f) => answered(p, f))
+                if (savedAt)
                   return (
-                    <label key={f.id} className={`opt-row ${val ? 'on' : ''}`} style={{ '--accent': w.color }}>
-                      <input type="checkbox" checked={!!val} onChange={(e) => setField(p.id, f.id, e.target.checked)} />
-                      <span>{L(lang, f.label)}</span>
-                    </label>
-                  )
-                const prefill = f.ph ? starterFor(lang, f.ph) : ''
-                const shown = val == null || isBareStarter(val, f.ph) ? prefill : localizeStarter(val, f.ph, lang)
-                if (f.t === 'text')
-                  return (
-                    <div key={f.id}>
-                      {f.label && <label className="field-label">{L(lang, f.label)}</label>}
-                      <input type="text" value={shown} onChange={(e) => setField(p.id, f.id, e.target.value)} />
+                    <div key={u.id}>
+                      <div className="grid" style={{ gap: 12 }}>
+                        {u.fields.filter((f) => answered(p, f)).map((f) => {
+                          const val = dayData.fields[`${p.id}.${f.id}`]
+                          return (
+                            <div key={f.id}>
+                              {f.label && f.t !== 'check' && <label className="field-label">{L(lang, f.label)}</label>}
+                              <div className="checkin-saved">
+                                {f.t === 'check' ? `✓ ${L(lang, f.label)}` : localizeStarter(String(val), f.ph, lang)}
+                              </div>
+                            </div>
+                          )
+                        })}
+                      </div>
+                      <div className="checkin-foot">
+                        <span className="caps">{t('checkinSavedAt', hhmm(savedAt))}</span>
+                        <button
+                          className="btn ghost sm"
+                          onClick={() => {
+                            update((d) => { if (d.journey.days[day]?.saves) delete d.journey.days[day].saves[u.id] })
+                            sync.dayFields(day)
+                          }}
+                        >
+                          {t('checkinEdit')}
+                        </button>
+                      </div>
                     </div>
                   )
                 return (
-                  <div key={f.id}>
-                    {f.label && <label className="field-label">{L(lang, f.label)}</label>}
-                    <textarea value={shown} onChange={(e) => setField(p.id, f.id, e.target.value)} />
+                  <div key={u.id}>
+                    <div className="grid" style={{ gap: 12 }}>
+                      {u.fields.map((f) => {
+                        const val = dayData.fields[`${p.id}.${f.id}`]
+                        if (f.t === 'breathing')
+                          return <BreathingGuide key={f.id} pattern={f.pattern} target={f.target} />
+                        if (f.t === 'check')
+                          return (
+                            <label key={f.id} className={`opt-row ${val ? 'on' : ''}`} style={{ '--accent': w.color }}>
+                              <input type="checkbox" checked={!!val} onChange={(e) => setField(p.id, f.id, e.target.checked)} />
+                              <span>{L(lang, f.label)}</span>
+                            </label>
+                          )
+                        const prefill = f.ph ? starterFor(lang, f.ph) : ''
+                        const shown = val == null || isBareStarter(val, f.ph) ? prefill : localizeStarter(val, f.ph, lang)
+                        if (f.t === 'text')
+                          return (
+                            <div key={f.id}>
+                              {f.label && <label className="field-label">{L(lang, f.label)}</label>}
+                              <input type="text" value={shown} onChange={(e) => setField(p.id, f.id, e.target.value)} />
+                            </div>
+                          )
+                        return (
+                          <div key={f.id}>
+                            {f.label && <label className="field-label">{L(lang, f.label)}</label>}
+                            <textarea value={shown} onChange={(e) => setField(p.id, f.id, e.target.value)} />
+                          </div>
+                        )
+                      })}
+                    </div>
+                    <div className="checkin-foot" style={{ justifyContent: 'flex-end' }}>
+                      <button
+                        className="btn sm"
+                        disabled={!hasAnswer}
+                        onClick={() => {
+                          update((d) => {
+                            const dd = (d.journey.days[day] ||= { fields: {}, done: false })
+                            for (const f of u.fields) {
+                              const k = `${p.id}.${f.id}`
+                              if (typeof dd.fields[k] === 'string') dd.fields[k] = dd.fields[k].trim()
+                            }
+                            ;(dd.saves ||= {})[u.id] = new Date().toISOString()
+                          })
+                          sync.dayFields(day)
+                          notify(t('saved'))
+                        }}
+                      >
+                        {t('checkinSave')}
+                      </button>
+                    </div>
                   </div>
                 )
               })}
@@ -301,13 +385,12 @@ const hhmm = (iso) => {
 }
 
 
-function DailyCheckin() {
-  const { data, update, lang, t, go, sync, notify } = useContext(AppCtx)
+// One-time seed: text typed into the old persistent Ritual becomes today's
+// drafts, so nothing anyone already wrote is lost by the check-in feature.
+// Shared by the standalone card (weeks 2-4) and the merged Week-1 card.
+function useLegacyRitualSeed() {
+  const { data, update } = useContext(AppCtx)
   const today = todayKey()
-  const ci = data.checkins[today] || {}
-
-  // One-time seed: text typed into the old persistent Ritual becomes today's
-  // drafts, so nothing anyone already wrote is lost by this feature.
   useEffect(() => {
     const r = data.journey.ritual
     if (Object.keys(data.checkins).length || !(r.morning || r.day || r.evening)) return
@@ -320,6 +403,116 @@ function DailyCheckin() {
     })
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
+}
+
+/* Merged Week-1 check-in — rendered INSIDE Today's practices on today's
+   screen only (days 1-7). Each part combines the intention question with the
+   Week-1 feel/why/how questions; per-part Save/Edit. Answers store per
+   sub-field in checkins[today][slot].fields and become Daily check-in
+   records (Reports + PDF snapshots), not journey-day answers. */
+const slotFields = (slot) =>
+  slot?.fields ?? (typeof slot?.text === 'string' ? { intention: slot.text } : {})
+
+function MergedCheckin({ color }) {
+  const { data, update, lang, t, sync, notify } = useContext(AppCtx)
+  const today = todayKey()
+  const ci = data.checkins[today] || {}
+  useLegacyRitualSeed()
+
+  return (
+    <div className="pstep" style={{ '--accent': color }}>
+      <div style={{ display: 'flex', alignItems: 'baseline', gap: 10, flexWrap: 'wrap' }}>
+        <h3>{t('checkinTitle')}</h3>
+        <span className="caps" style={{ marginLeft: 'auto' }}>{fmtDate(lang, `${today}T12:00:00`)}</span>
+      </div>
+      <p className="muted small" style={{ marginBottom: 12 }}>{t('checkinIntro')}</p>
+      <div className="grid" style={{ gap: 12 }}>
+        {CHECKIN_SLOTS.map((s) => {
+          const slot = ci[s]
+          const f = slotFields(slot)
+          const real = (sub) => {
+            const v = f[sub.id]
+            return typeof v === 'string' && v.trim() !== '' && !isBareStarter(v, sub.ph)
+          }
+          const hasAnswer = CHECKIN_SUB[s].some(real)
+          return (
+            <div key={s}>
+              <label className="field-label">{L(lang, CHECKIN_SLOT_LABELS[s])}</label>
+              {slot?.savedAt ? (
+                <>
+                  <div className="grid" style={{ gap: 8 }}>
+                    {CHECKIN_SUB[s].filter(real).map((sub) => (
+                      <div key={sub.id} className="checkin-saved">{localizeStarter(f[sub.id], sub.ph, lang)}</div>
+                    ))}
+                  </div>
+                  <div className="checkin-foot">
+                    <span className="caps">{t('checkinSavedAt', hhmm(slot.savedAt))}</span>
+                    <button
+                      className="btn ghost sm"
+                      onClick={() => update((d) => { delete d.checkins[today][s].savedAt })}
+                    >
+                      {t('checkinEdit')}
+                    </button>
+                  </div>
+                </>
+              ) : (
+                <>
+                  <div className="grid" style={{ gap: 8 }}>
+                    {CHECKIN_SUB[s].map((sub) => {
+                      const raw = f[sub.id] ?? ''
+                      const empty = !raw.trim() || isBareStarter(raw, sub.ph)
+                      return (
+                        <input
+                          key={sub.id}
+                          type="text"
+                          value={empty ? starterFor(lang, sub.ph) : localizeStarter(raw, sub.ph, lang)}
+                          onChange={(e) => update((d) => {
+                            const c = (d.checkins[today] ||= {})
+                            const sl = (c[s] ||= {})
+                            const ff = (sl.fields ||= (typeof sl.text === 'string' ? { intention: sl.text } : {}))
+                            ff[sub.id] = e.target.value
+                            delete sl.text
+                          })}
+                        />
+                      )
+                    })}
+                  </div>
+                  <div className="checkin-foot" style={{ justifyContent: 'flex-end' }}>
+                    <button
+                      className="btn sm"
+                      disabled={!hasAnswer}
+                      onClick={() => {
+                        update((d) => {
+                          const cur = slotFields(d.checkins[today][s])
+                          const ff = {}
+                          for (const sub of CHECKIN_SUB[s]) {
+                            const v = cur[sub.id]
+                            if (typeof v === 'string' && v.trim() && !isBareStarter(v, sub.ph)) ff[sub.id] = v.trim()
+                          }
+                          d.checkins[today][s] = { fields: ff, savedAt: new Date().toISOString() }
+                        })
+                        sync.checkinSaved(today, s)
+                        notify(t('saved'))
+                      }}
+                    >
+                      {t('checkinSave')}
+                    </button>
+                  </div>
+                </>
+              )}
+            </div>
+          )
+        })}
+      </div>
+    </div>
+  )
+}
+
+function DailyCheckin() {
+  const { data, update, lang, t, go, sync, notify } = useContext(AppCtx)
+  const today = todayKey()
+  const ci = data.checkins[today] || {}
+  useLegacyRitualSeed()
 
   const history = Object.keys(data.checkins)
     .filter((d) => d !== today && CHECKIN_SLOTS.some((s) => data.checkins[d][s]?.savedAt))

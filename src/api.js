@@ -143,7 +143,8 @@ function setState(patch) {
 // reference — bytes are regenerated at flush (localStorage quota).
 //   {t:'entry',   id, emotion}
 //   {t:'day',     day, cols:'fields'|'done'}   // split columns: a stale fields
-//                                              // push can never revert done
+//                                              // push (fields + per-practice
+//                                              // saves stamps) never reverts done
 //   {t:'checkin', date, slot}                  // per-slot column, same split-
 //                                              // column safety as journey days
 //   {t:'profile'}
@@ -307,7 +308,7 @@ async function pushOp(op) {
     if (!d) return
     const row = op.cols === 'done'
       ? { user_id: uid, day: parseInt(op.day, 10), done: !!d.done, done_at: d.doneAt ?? new Date().toISOString() }
-      : { user_id: uid, day: parseInt(op.day, 10), fields: d.fields || {} }
+      : { user_id: uid, day: parseInt(op.day, 10), fields: d.fields || {}, saves: d.saves || {} }
     const { error } = await supabase.from('journey_days').upsert(row, { onConflict: 'user_id,day' })
     if (error) throw error
   } else if (op.t === 'checkin') {
@@ -396,7 +397,7 @@ export function mergeRemote(local, remote) {
     const fieldsPending = pendingKeys.has(`day:${day}:fields`)
     const donePending = pendingKeys.has(`day:${day}:done`)
     const next = local_ ? { ...local_ } : { fields: {}, done: false }
-    if (!fieldsPending) next.fields = row.fields || {}
+    if (!fieldsPending) { next.fields = row.fields || {}; next.saves = row.saves || {} }
     if (!donePending) { next.done = !!row.done; if (row.done_at) next.doneAt = row.done_at }
     // done never reverts, whatever the source says
     next.done = next.done || !!local_?.done || !!row.done

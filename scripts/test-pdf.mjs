@@ -31,7 +31,16 @@ const dayData = {
 }
 
 const checkin = {
-  morning: { text: 'Утром я буду держать паузу перед ответом — «сначала вдох, потом слова».', savedAt: '2026-08-11T09:12:00' },
+  // merged Week-1 shape: per-sub-field answers
+  morning: {
+    fields: {
+      intention: 'Утром я буду держать паузу перед ответом — «сначала вдох, потом слова».',
+      feel: 'I feel calm with a hint of worry.',
+      how: 'Buning xatti-harakatimga taʼsiri — sekinroq javob beraman.',
+    },
+    savedAt: '2026-08-11T09:12:00',
+  },
+  // plain shape (weeks 2-4)
   day: { text: 'Kunduzi oʻzimni kuzatdim: xotirjamlik, biroz charchoq. Tutuq belgisi: aʼlo.', savedAt: '2026-08-11T13:40:00' },
   evening: { text: 'In the evening I noticed the pause made the whole conversation softer.\nSecond line.', savedAt: '2026-08-11T21:03:00' },
 }
