@@ -181,6 +181,12 @@ function DayView({ day, isToday }) {
   const w = weekForDay(day)
   if (!w) return null
   const dayData = data.journey.days[day] || { fields: {}, done: false }
+  // The merged check-in card writes to TODAY's calendar record, so it only
+  // belongs on today's screen during days 1-7. Any other Week-1 day (browsing
+  // back, or a profile already past day 7) gets the day-scoped legacy practice
+  // instead — otherwise Week 1 loses its check-ins and hides answers saved
+  // there before the merge.
+  const showMerged = isToday && day <= 7
   const setField = (pid, fid, val) => {
     update((d) => {
       const dd = (d.journey.days[day] ||= { fields: {}, done: false })
@@ -222,8 +228,8 @@ function DayView({ day, isToday }) {
       <div className="quote" style={{ margin: '12px 0', borderColor: w.color }}>{L(lang, w.quote)}</div>
       <h3 style={{ margin: '14px 0 10px' }}>{t('todayPractices')}</h3>
       <div className="grid">
-        {isToday && day <= 7 && <MergedCheckin color={w.color} />}
-        {w.practices.filter((p) => !p.legacy).map((p) => (
+        {showMerged && <MergedCheckin color={w.color} />}
+        {w.practices.filter((p) => !p.legacy || !showMerged).map((p) => (
           <div key={p.id} className="pstep" style={{ '--accent': w.color }}>
             <h3>{L(lang, p.title)}</h3>
             <p className="muted small" style={{ marginBottom: 12 }}>{L(lang, p.desc)}</p>
