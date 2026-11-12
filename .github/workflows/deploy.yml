@@ -2,7 +2,9 @@
 # Only master can deploy (job guard below). Mirrors scripts/deploy.mjs: replace
 # assets/, upload index.html, fix permissions — keep the two in step.
 #
-# Required repository secrets:
+# Required secrets — on the `production` ENVIRONMENT (Settings → Environments),
+# whose deployment-branch rule allows only master (enforced by GitHub, unlike
+# the in-file `if:` guard, which stays as defence in depth):
 #   DEPLOY_SSH_KEY      private key whose public half is in root's authorized_keys
 #                       on 169.58.92.31 (dedicated CI key, comment github-actions-eq-trainer)
 #   DEPLOY_KNOWN_HOSTS  output of `ssh-keyscan 169.58.92.31` — pinned so a spoofed
