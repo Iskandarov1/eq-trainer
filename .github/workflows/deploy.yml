@@ -1,0 +1,75 @@
+# Manual deploy to eq-trainer.com — Actions tab → "Deploy" → Run workflow.
+# Only master can deploy (job guard below). Mirrors scripts/deploy.mjs: replace
+# assets/, upload index.html, fix permissions — keep the two in step.
+#
+# Required repository secrets:
+#   DEPLOY_SSH_KEY      private key whose public half is in root's authorized_keys
+#                       on 169.58.92.31 (dedicated CI key, comment github-actions-eq-trainer)
+#   DEPLOY_KNOWN_HOSTS  output of `ssh-keyscan 169.58.92.31` — pinned so a spoofed
+#                       host is rejected instead of trusted on first use
+name: Deploy
+
+on:
+  workflow_dispatch:
+
+# Never let two deploys interleave their rm/scp/chmod steps on the server
+concurrency:
+  group: deploy-production
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+env:
+  HOST: root@169.58.92.31
+  ROOT: /var/www/eq-trainer.com
+
+jobs:
+  deploy:
+    if: github.ref == 'refs/heads/master'
+    runs-on: ubuntu-latest
+    environment:
+      name: production
+      url: https://eq-trainer.com
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 20
+          cache: npm
+
+      # Build BEFORE the deploy key exists; no dependency install scripts run
+      - run: npm ci --ignore-scripts
+      - run: npm run build
+
+      - name: Configure SSH
+        env:
+          DEPLOY_SSH_KEY: ${{ secrets.DEPLOY_SSH_KEY }}
+          DEPLOY_KNOWN_HOSTS: ${{ secrets.DEPLOY_KNOWN_HOSTS }}
+        run: |
+          install -m 700 -d ~/.ssh
+          printf '%s\n' "$DEPLOY_SSH_KEY" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          printf '%s\n' "$DEPLOY_KNOWN_HOSTS" > ~/.ssh/known_hosts
+
+      # Replace assets/ rather than merging (hashed bundles would pile up), then
+      # make everything readable for nginx (www-data).
+      - name: Upload
+        run: |
+          ssh "$HOST" "rm -rf $ROOT/assets"
+          scp -r dist/index.html dist/assets "$HOST:$ROOT/"
+          ssh "$HOST" "chmod 644 $ROOT/index.html && find $ROOT/assets -type d -exec chmod 755 {} + && find $ROOT/assets -type f -exec chmod 644 {} +"
+
+      - name: Remove deploy key
+        if: always()
+        run: rm -f ~/.ssh/id_ed25519
+
+      - name: Smoke-test the live site
+        run: |
+          bundle=$(grep -o 'assets/index-[A-Za-z0-9_-]*\.js' dist/index.html)
+          curl -fsS https://eq-trainer.com/ | grep -q "$bundle"
+          curl -fsS -o /dev/null "https://eq-trainer.com/$bundle"
+          echo "Live: $bundle"
